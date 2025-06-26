@@ -1,8 +1,7 @@
-
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Crown, Arrow } from 'lucide-react';
+import { Crown } from 'lucide-react';
 
 const PremiumBanner = () => {
   return (
