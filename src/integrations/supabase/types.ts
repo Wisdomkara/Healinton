@@ -9,7 +9,259 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      blog_posts: {
+        Row: {
+          author: string | null
+          category: string | null
+          content: string
+          id: string
+          published_at: string | null
+          summary: string | null
+          title: string
+        }
+        Insert: {
+          author?: string | null
+          category?: string | null
+          content: string
+          id?: string
+          published_at?: string | null
+          summary?: string | null
+          title: string
+        }
+        Update: {
+          author?: string | null
+          category?: string | null
+          content?: string
+          id?: string
+          published_at?: string | null
+          summary?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
+      health_metrics: {
+        Row: {
+          blood_pressure_diastolic: number | null
+          blood_pressure_systolic: number | null
+          blood_sugar: number | null
+          id: string
+          recorded_at: string | null
+          user_id: string | null
+          weight: number | null
+        }
+        Insert: {
+          blood_pressure_diastolic?: number | null
+          blood_pressure_systolic?: number | null
+          blood_sugar?: number | null
+          id?: string
+          recorded_at?: string | null
+          user_id?: string | null
+          weight?: number | null
+        }
+        Update: {
+          blood_pressure_diastolic?: number | null
+          blood_pressure_systolic?: number | null
+          blood_sugar?: number | null
+          id?: string
+          recorded_at?: string | null
+          user_id?: string | null
+          weight?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "health_metrics_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hospital_bookings: {
+        Row: {
+          appointment_date: string
+          created_at: string | null
+          hospital_name: string
+          id: string
+          reason: string | null
+          status: string | null
+          user_id: string | null
+        }
+        Insert: {
+          appointment_date: string
+          created_at?: string | null
+          hospital_name: string
+          id?: string
+          reason?: string | null
+          status?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          appointment_date?: string
+          created_at?: string | null
+          hospital_name?: string
+          id?: string
+          reason?: string | null
+          status?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hospital_bookings_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          country: string | null
+          created_at: string | null
+          email: string | null
+          first_name: string | null
+          gender: string | null
+          id: string
+          illness_type: string | null
+          last_name: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          country?: string | null
+          created_at?: string | null
+          email?: string | null
+          first_name?: string | null
+          gender?: string | null
+          id: string
+          illness_type?: string | null
+          last_name?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          country?: string | null
+          created_at?: string | null
+          email?: string | null
+          first_name?: string | null
+          gender?: string | null
+          id?: string
+          illness_type?: string | null
+          last_name?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      reminders: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          is_completed: boolean | null
+          reminder_date: string
+          title: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_completed?: boolean | null
+          reminder_date: string
+          title: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_completed?: boolean | null
+          reminder_date?: string
+          title?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reminders_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shopping_lists: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_purchased: boolean | null
+          medication_name: string
+          pharmacy_name: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_purchased?: boolean | null
+          medication_name: string
+          pharmacy_name?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_purchased?: boolean | null
+          medication_name?: string
+          pharmacy_name?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shopping_lists_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      symptoms: {
+        Row: {
+          additional_notes: string | null
+          created_at: string | null
+          feedback: string | null
+          id: string
+          severity: number | null
+          symptoms: string
+          user_id: string | null
+        }
+        Insert: {
+          additional_notes?: string | null
+          created_at?: string | null
+          feedback?: string | null
+          id?: string
+          severity?: number | null
+          symptoms: string
+          user_id?: string | null
+        }
+        Update: {
+          additional_notes?: string | null
+          created_at?: string | null
+          feedback?: string | null
+          id?: string
+          severity?: number | null
+          symptoms?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "symptoms_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
