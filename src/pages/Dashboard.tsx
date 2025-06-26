@@ -5,9 +5,17 @@ import { Button } from '@/components/ui/button';
 import HealthMetricCard from '@/components/HealthMetricCard';
 import MealPlanCard from '@/components/MealPlanCard';
 import PremiumBanner from '@/components/PremiumBanner';
+import { useScrollAnimation, useStaggerAnimation } from '@/hooks/useScrollAnimation';
 import { Heart, Calendar, Bell, Clock, Settings, TrendingUp, Activity, Apple } from 'lucide-react';
 
 const Dashboard = () => {
+  const heroRef = useScrollAnimation();
+  const metricsRef = useStaggerAnimation();
+  const mealsRef = useStaggerAnimation();
+
+  // Mock user data - in a real app, this would come from authentication
+  const userName = "Sarah Johnson";
+
   const healthMetrics = [
     {
       title: 'Blood Pressure',
@@ -61,9 +69,9 @@ const Dashboard = () => {
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-6">
         {/* Welcome Section */}
-        <div className="mb-8">
+        <div ref={heroRef} className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            Good morning, Sarah! 👋
+            Good morning, {userName}! 👋
           </h1>
           <p className="text-gray-600 dark:text-gray-300">
             Here's your health overview for today
@@ -71,7 +79,7 @@ const Dashboard = () => {
         </div>
 
         {/* Quick Stats */}
-        <div className="grid md:grid-cols-3 gap-6 mb-8">
+        <div ref={metricsRef} className="grid md:grid-cols-3 gap-6 mb-8">
           {healthMetrics.map((metric, index) => (
             <HealthMetricCard key={index} {...metric} />
           ))}
@@ -93,7 +101,7 @@ const Dashboard = () => {
               View Full Week →
             </Button>
           </div>
-          <div className="grid md:grid-cols-2 gap-6">
+          <div ref={mealsRef} className="grid md:grid-cols-2 gap-6">
             {todaysMeals.map((meal, index) => (
               <MealPlanCard key={index} {...meal} />
             ))}

@@ -8,6 +8,8 @@ import Layout from "./components/Layout";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
+import Premium from "./pages/Premium";
+import Community from "./pages/Community";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,6 +24,8 @@ const App = () => (
           <Route path="/" element={<Layout />}>
             <Route index element={<Index />} />
             <Route path="dashboard" element={<Dashboard />} />
+            <Route path="premium" element={<Premium />} />
+            <Route path="community" element={<Community />} />
           </Route>
           <Route path="/auth" element={<Auth />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
