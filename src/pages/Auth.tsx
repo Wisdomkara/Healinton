@@ -1,11 +1,10 @@
-
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Heart } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -16,6 +15,7 @@ const Auth = () => {
     firstName: '',
     lastName: ''
   });
+  const navigate = useNavigate();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -28,6 +28,9 @@ const Auth = () => {
     e.preventDefault();
     // Auth logic will be implemented when Supabase is connected
     console.log('Auth form submitted:', formData);
+    
+    // For now, simulate successful authentication and redirect to dashboard
+    navigate('/dashboard');
   };
 
   return (

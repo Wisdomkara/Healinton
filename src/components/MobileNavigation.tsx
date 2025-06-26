@@ -1,15 +1,15 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Heart, User, Settings, Calendar } from 'lucide-react';
+import { Heart, LayoutDashboard, Users, Settings } from 'lucide-react';
 
 const MobileNavigation = () => {
   const location = useLocation();
 
   const navItems = [
     { icon: Heart, label: 'Home', path: '/' },
-    { icon: Calendar, label: 'Dashboard', path: '/dashboard' },
-    { icon: User, label: 'Community', path: '/community' },
+    { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
+    { icon: Users, label: 'Community', path: '/community' },
     { icon: Settings, label: 'Settings', path: '/settings' },
   ];
 
