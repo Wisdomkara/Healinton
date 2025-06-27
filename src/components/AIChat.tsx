@@ -4,7 +4,8 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { MessageSquare, Bot, User } from 'lucide-react';
+import { MessageSquare, Bot, User, Send } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 interface Message {
   id: string;
@@ -25,26 +26,6 @@ const AIChat = () => {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const generateAIResponse = (userMessage: string): string => {
-    const lowerMessage = userMessage.toLowerCase();
-    
-    if (lowerMessage.includes('blood pressure') || lowerMessage.includes('hypertension')) {
-      return "For blood pressure management, focus on reducing sodium intake, regular exercise, stress management, and taking medications as prescribed. Monitor your readings regularly and maintain a healthy weight.";
-    } else if (lowerMessage.includes('diabetes') || lowerMessage.includes('blood sugar')) {
-      return "Managing diabetes involves monitoring blood glucose levels, following a balanced diet with controlled carbohydrates, regular physical activity, and medication compliance. Consider keeping a food diary to track patterns.";
-    } else if (lowerMessage.includes('heart') || lowerMessage.includes('cardiac')) {
-      return "Heart health is supported by regular cardiovascular exercise, a heart-healthy diet rich in omega-3s, stress reduction, avoiding smoking, and following your cardiologist's recommendations.";
-    } else if (lowerMessage.includes('weight') || lowerMessage.includes('obesity')) {
-      return "Healthy weight management involves creating a sustainable caloric deficit through balanced nutrition and regular physical activity. Focus on whole foods, portion control, and building healthy habits gradually.";
-    } else if (lowerMessage.includes('medication') || lowerMessage.includes('medicine')) {
-      return "Always take medications as prescribed by your healthcare provider. Set reminders, don't skip doses, and discuss any side effects with your doctor. Never stop medications without medical guidance.";
-    } else if (lowerMessage.includes('exercise') || lowerMessage.includes('workout')) {
-      return "Start with activities you enjoy and gradually increase intensity. Aim for at least 150 minutes of moderate exercise weekly. Consult your doctor before starting new exercise programs, especially with chronic conditions.";
-    } else {
-      return "I understand you're looking for health guidance. For specific medical concerns, always consult with your healthcare provider. I can provide general wellness tips and help you understand health management basics. What specific area would you like to discuss?";
-    }
-  };
-
   const handleSendMessage = async () => {
     if (!input.trim()) return;
 
@@ -56,27 +37,44 @@ const AIChat = () => {
     };
 
     setMessages(prev => [...prev, userMessage]);
+    const currentInput = input;
     setInput('');
     setLoading(true);
 
-    // Simulate AI processing time
-    setTimeout(() => {
+    try {
+      const { data, error } = await supabase.functions.invoke('ai-chat', {
+        body: { message: currentInput }
+      });
+
+      if (error) throw error;
+
       const aiResponse: Message = {
         id: (Date.now() + 1).toString(),
-        text: generateAIResponse(input),
+        text: data.response || "I'm here to help with your health questions. Could you provide more details?",
         sender: 'ai',
         timestamp: new Date()
       };
+      
       setMessages(prev => [...prev, aiResponse]);
+    } catch (error) {
+      console.error('AI Chat Error:', error);
+      const errorResponse: Message = {
+        id: (Date.now() + 1).toString(),
+        text: "I'm having trouble connecting right now. For urgent health matters, please contact your healthcare provider directly.",
+        sender: 'ai',
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, errorResponse]);
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   return (
     <Card className="h-96 flex flex-col">
       <div className="p-4 border-b">
         <h3 className="text-lg font-semibold flex items-center">
-          <Bot className="h-5 w-5 mr-2 text-primary-600" />
+          <Bot className="h-5 w-5 mr-2 text-green-600" />
           AI Health Assistant
         </h3>
       </div>
@@ -87,7 +85,7 @@ const AIChat = () => {
             <div key={message.id} className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
               <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
                 message.sender === 'user'
-                  ? 'bg-primary-600 text-white'
+                  ? 'bg-green-600 text-white'
                   : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'
               }`}>
                 <div className="flex items-start space-x-2">
@@ -125,9 +123,10 @@ const AIChat = () => {
             onChange={(e) => setInput(e.target.value)}
             placeholder="Ask about your health..."
             onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+            disabled={loading}
           />
-          <Button onClick={handleSendMessage} disabled={loading}>
-            <MessageSquare className="h-4 w-4" />
+          <Button onClick={handleSendMessage} disabled={loading || !input.trim()}>
+            <Send className="h-4 w-4" />
           </Button>
         </div>
       </div>
