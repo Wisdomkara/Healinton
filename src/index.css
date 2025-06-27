@@ -65,23 +65,30 @@
   * {
     @apply border-border;
   }
+  html {
+    font-family: 'Lato', sans-serif;
+    width: 100%;
+    overflow-x: hidden;
+  }
   body {
     @apply bg-background text-foreground;
     font-family: 'Lato', sans-serif;
+    width: 100%;
+    overflow-x: hidden;
   }
 }
 
 @layer components {
   .healthcare-card {
-    @apply bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200;
+    @apply bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:shadow-md transition-all duration-200;
   }
   
   .animate-fade-in {
-    animation: fadeIn 0.6s ease-in-out;
+    animation: fadeIn 0.8s ease-in-out;
   }
   
   .animate-slide-up {
-    animation: slideUp 0.8s ease-out;
+    animation: slideUp 1s ease-out;
   }
   
   .animate-stagger {
@@ -94,12 +101,31 @@
   .animate-stagger:nth-child(4) { animation-delay: 0.4s; }
   .animate-stagger:nth-child(5) { animation-delay: 0.5s; }
   .animate-stagger:nth-child(6) { animation-delay: 0.6s; }
+
+  /* Modern button hover effects */
+  .btn-hover-scale {
+    @apply transition-all duration-200 hover:scale-105 hover:shadow-lg;
+  }
+
+  .btn-hover-glow {
+    @apply transition-all duration-300 hover:shadow-lg hover:shadow-green-500/25;
+  }
+
+  /* Card hover effects */
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-xl hover:-translate-y-1;
+  }
+
+  /* Input focus effects */
+  .input-focus {
+    @apply transition-all duration-200 focus:ring-2 focus:ring-green-500/20 focus:border-green-500;
+  }
 }
 
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(30px);
   }
   to {
     opacity: 1;
@@ -110,11 +136,22 @@
 @keyframes slideUp {
   from {
     opacity: 0;
-    transform: translateY(40px);
+    transform: translateY(50px);
   }
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
   }
 }
 
@@ -123,10 +160,77 @@
     opacity: 1;
   }
   50% {
-    opacity: 0.5;
+    opacity: 0.7;
+  }
+}
+
+@keyframes bounce-gentle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
   }
 }
 
 .animate-pulse {
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.5s ease-out;
+}
+
+.animate-bounce-gentle {
+  animation: bounce-gentle 2s ease-in-out infinite;
+}
+
+/* Responsive container */
+.container {
+  width: 100%;
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .container {
+    max-width: 640px;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    max-width: 768px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1024px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container {
+    max-width: 1280px;
+  }
+}
+
+@media (min-width: 1536px) {
+  .container {
+    max-width: 1536px;
+  }
+}
+
+/* Ensure full width without horizontal scroll */
+* {
+  box-sizing: border-box;
+}
+
+body, html {
+  width: 100%;
+  overflow-x: hidden;
 }

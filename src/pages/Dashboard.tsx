@@ -13,6 +13,7 @@ import ShoppingList from '@/components/ShoppingList';
 import AIChat from '@/components/AIChat';
 import HealthBlog from '@/components/HealthBlog';
 import Settings from '@/components/Settings';
+import NotificationCenter from '@/components/NotificationCenter';
 import PremiumBanner from '@/components/PremiumBanner';
 import { useScrollAnimation, useStaggerAnimation } from '@/hooks/useScrollAnimation';
 import { useAuth } from '@/hooks/useAuth';
@@ -117,6 +118,13 @@ const Dashboard = () => {
             <HospitalBooking />
           </div>
         );
+      case 'notifications':
+        return (
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Notification Center</h2>
+            <NotificationCenter />
+          </div>
+        );
       case 'reminders':
         return (
           <div>
@@ -148,7 +156,9 @@ const Dashboard = () => {
             {/* Quick Stats */}
             <div ref={metricsRef} className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {displayedHealthMetrics.map((metric, index) => (
-                <HealthMetricCard key={index} {...metric} />
+                <div key={index} className="transform hover:scale-105 transition-transform">
+                  <HealthMetricCard {...metric} />
+                </div>
               ))}
             </div>
 
@@ -165,18 +175,18 @@ const Dashboard = () => {
               </div>
               <div ref={mealsRef} className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {['morning', 'afternoon', 'night'].map((time) => (
-                  <Card key={time} className="healthcare-card">
+                  <Card key={time} className="healthcare-card hover:shadow-lg transition-all transform hover:scale-105">
                     <div className="p-4">
-                      <h3 className="font-semibold text-lg mb-3 capitalize">{time}</h3>
+                      <h3 className="font-semibold text-lg mb-3 capitalize text-green-700 dark:text-green-300">{time}</h3>
                       <div className="space-y-2">
-                        <div className="p-2 bg-green-50 dark:bg-green-900/20 rounded">
-                          <p className="text-sm font-medium">Low Budget</p>
+                        <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border-l-4 border-green-500">
+                          <p className="text-sm font-medium text-green-800 dark:text-green-300">Low Budget</p>
                           <p className="text-xs text-gray-600 dark:text-gray-300">
                             {todaysMealPlan[time as keyof typeof todaysMealPlan].low}
                           </p>
                         </div>
-                        <div className="p-2 bg-blue-50 dark:bg-blue-900/20 rounded">
-                          <p className="text-sm font-medium">High Budget</p>
+                        <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border-l-4 border-blue-500">
+                          <p className="text-sm font-medium text-blue-800 dark:text-blue-300">High Budget</p>
                           <p className="text-xs text-gray-600 dark:text-gray-300">
                             {todaysMealPlan[time as keyof typeof todaysMealPlan].high}
                           </p>
@@ -189,7 +199,7 @@ const Dashboard = () => {
             </div>
 
             {/* Health Tips */}
-            <Card className="healthcare-card">
+            <Card className="healthcare-card hover:shadow-lg transition-shadow">
               <div className="p-6">
                 <h3 className="text-xl font-semibold mb-4 flex items-center">
                   <Heart className="h-5 w-5 mr-2 text-green-600" />
@@ -197,7 +207,7 @@ const Dashboard = () => {
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {currentHealthTips.map((tip, index) => (
-                    <div key={index} className="p-4 bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-lg">
+                    <div key={index} className="p-4 bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-lg hover:shadow-md transition-shadow">
                       <div className="flex items-start space-x-3">
                         <div className="w-3 h-3 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
                         <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">{tip}</p>
@@ -210,13 +220,13 @@ const Dashboard = () => {
 
             {/* Quick Actions and AI Chat */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card className="healthcare-card">
+              <Card className="healthcare-card hover:shadow-lg transition-shadow">
                 <div className="p-6">
                   <h3 className="text-xl font-semibold mb-4">Quick Actions</h3>
                   <div className="grid grid-cols-2 gap-3">
                     <Button 
                       variant="outline" 
-                      className="h-auto p-4 flex-col space-y-2"
+                      className="h-auto p-4 flex-col space-y-2 hover:bg-green-50 hover:border-green-300 transition-all transform hover:scale-105"
                       onClick={() => setActiveSection('symptoms')}
                     >
                       <Clock className="h-5 w-5 text-green-600" />
@@ -224,32 +234,34 @@ const Dashboard = () => {
                     </Button>
                     <Button 
                       variant="outline" 
-                      className="h-auto p-4 flex-col space-y-2"
+                      className="h-auto p-4 flex-col space-y-2 hover:bg-blue-50 hover:border-blue-300 transition-all transform hover:scale-105"
                       onClick={() => setActiveSection('health-metrics')}
                     >
-                      <Heart className="h-5 w-5 text-green-600" />
+                      <Heart className="h-5 w-5 text-blue-600" />
                       <span className="text-sm font-medium">Track Vitals</span>
                     </Button>
                     <Button 
                       variant="outline" 
-                      className="h-auto p-4 flex-col space-y-2"
+                      className="h-auto p-4 flex-col space-y-2 hover:bg-purple-50 hover:border-purple-300 transition-all transform hover:scale-105"
                       onClick={() => setActiveSection('reminders')}
                     >
-                      <Bell className="h-5 w-5 text-green-600" />
+                      <Bell className="h-5 w-5 text-purple-600" />
                       <span className="text-sm font-medium">Set Reminder</span>
                     </Button>
                     <Button 
                       variant="outline" 
-                      className="h-auto p-4 flex-col space-y-2"
+                      className="h-auto p-4 flex-col space-y-2 hover:bg-orange-50 hover:border-orange-300 transition-all transform hover:scale-105"
                       onClick={() => setActiveSection('appointments')}
                     >
-                      <Calendar className="h-5 w-5 text-green-600" />
+                      <Calendar className="h-5 w-5 text-orange-600" />
                       <span className="text-sm font-medium">Book Checkup</span>
                     </Button>
                   </div>
                 </div>
               </Card>
-              <AIChat />
+              <div className="transform hover:scale-105 transition-transform">
+                <AIChat />
+              </div>
             </div>
           </div>
         );

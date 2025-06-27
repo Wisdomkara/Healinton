@@ -2,6 +2,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { 
   Home, 
   Heart, 
@@ -30,6 +31,7 @@ const Sidebar = ({ isOpen = true, onClose, onSectionChange, activeSection = 'ove
     { icon: Heart, label: 'Health Metrics', section: 'health-metrics' },
     { icon: Stethoscope, label: 'Symptoms', section: 'symptoms' },
     { icon: Calendar, label: 'Appointments', section: 'appointments' },
+    { icon: Bell, label: 'Notifications', section: 'notifications', badge: 3 },
     { icon: Bell, label: 'Reminders', section: 'reminders' },
     { icon: ShoppingCart, label: 'Shopping List', section: 'shopping' },
     { icon: MessageSquare, label: 'AI Chat', section: 'chat' },
@@ -62,7 +64,7 @@ const Sidebar = ({ isOpen = true, onClose, onSectionChange, activeSection = 'ove
               variant="ghost"
               size="sm"
               onClick={onClose}
-              className="md:hidden"
+              className="md:hidden hover:scale-110 transition-transform"
             >
               <X className="h-4 w-4" />
             </Button>
@@ -76,15 +78,20 @@ const Sidebar = ({ isOpen = true, onClose, onSectionChange, activeSection = 'ove
               <Button
                 key={item.section}
                 variant={isActive ? "default" : "ghost"}
-                className={`w-full justify-start ${
+                className={`w-full justify-start transition-all transform hover:scale-105 ${
                   isActive 
-                    ? 'bg-green-600 text-white hover:bg-green-700' 
-                    : 'text-gray-700 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-gray-700'
+                    ? 'bg-green-600 text-white hover:bg-green-700 shadow-md' 
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-gray-700 hover:text-green-600'
                 }`}
                 onClick={() => handleNavClick(item.section)}
               >
                 <Icon className="h-4 w-4 mr-3" />
-                {item.label}
+                <span className="flex-1 text-left">{item.label}</span>
+                {item.badge && (
+                  <Badge variant="destructive" className="text-xs ml-auto">
+                    {item.badge}
+                  </Badge>
+                )}
               </Button>
             );
           })}
