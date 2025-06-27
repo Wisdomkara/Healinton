@@ -12,48 +12,80 @@ import {
   FileText, 
   Settings,
   Stethoscope,
-  TrendingUp
+  X
 } from 'lucide-react';
 
-const Sidebar = () => {
+interface SidebarProps {
+  isOpen?: boolean;
+  onClose?: () => void;
+  onSectionChange?: (section: string) => void;
+  activeSection?: string;
+}
+
+const Sidebar = ({ isOpen = true, onClose, onSectionChange, activeSection = 'overview' }: SidebarProps) => {
   const location = useLocation();
 
   const navItems = [
-    { icon: Home, label: 'Dashboard', path: '/dashboard' },
-    { icon: Heart, label: 'Health Metrics', path: '/dashboard/health' },
-    { icon: Stethoscope, label: 'Symptoms', path: '/dashboard/symptoms' },
-    { icon: Calendar, label: 'Appointments', path: '/dashboard/appointments' },
-    { icon: Bell, label: 'Reminders', path: '/dashboard/reminders' },
-    { icon: ShoppingCart, label: 'Shopping List', path: '/dashboard/shopping' },
-    { icon: MessageSquare, label: 'AI Chat', path: '/dashboard/chat' },
-    { icon: FileText, label: 'Health Blog', path: '/dashboard/blog' },
-    { icon: Settings, label: 'Settings', path: '/dashboard/settings' }
+    { icon: Home, label: 'Dashboard', section: 'overview' },
+    { icon: Heart, label: 'Health Metrics', section: 'health-metrics' },
+    { icon: Stethoscope, label: 'Symptoms', section: 'symptoms' },
+    { icon: Calendar, label: 'Appointments', section: 'appointments' },
+    { icon: Bell, label: 'Reminders', section: 'reminders' },
+    { icon: ShoppingCart, label: 'Shopping List', section: 'shopping' },
+    { icon: MessageSquare, label: 'AI Chat', section: 'chat' },
+    { icon: FileText, label: 'Health Blog', section: 'blog' },
+    { icon: Settings, label: 'Settings', section: 'settings' }
   ];
 
+  const handleNavClick = (section: string) => {
+    if (onSectionChange) {
+      onSectionChange(section);
+    }
+    if (onClose) {
+      onClose();
+    }
+  };
+
   return (
-    <div className="w-64 bg-white dark:bg-gray-800 shadow-lg h-full">
+    <div className={`
+      fixed md:relative z-50 bg-white dark:bg-gray-800 shadow-lg h-full transition-transform duration-300 ease-in-out
+      ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+      w-64 md:w-64
+    `}>
       <div className="p-6">
-        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
-          Health Hub
-        </h2>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+            Health Hub
+          </h2>
+          {onClose && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onClose}
+              className="md:hidden"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
         <nav className="space-y-2">
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive = location.pathname === item.path;
+            const isActive = activeSection === item.section;
             return (
-              <Link key={item.path} to={item.path}>
-                <Button
-                  variant={isActive ? "default" : "ghost"}
-                  className={`w-full justify-start ${
-                    isActive 
-                      ? 'bg-primary-600 text-white' 
-                      : 'text-gray-700 dark:text-gray-300 hover:bg-primary-50 dark:hover:bg-gray-700'
-                  }`}
-                >
-                  <Icon className="h-4 w-4 mr-3" />
-                  {item.label}
-                </Button>
-              </Link>
+              <Button
+                key={item.section}
+                variant={isActive ? "default" : "ghost"}
+                className={`w-full justify-start ${
+                  isActive 
+                    ? 'bg-green-600 text-white hover:bg-green-700' 
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-gray-700'
+                }`}
+                onClick={() => handleNavClick(item.section)}
+              >
+                <Icon className="h-4 w-4 mr-3" />
+                {item.label}
+              </Button>
             );
           })}
         </nav>

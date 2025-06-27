@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -12,15 +11,30 @@ import { useToast } from '@/hooks/use-toast';
 
 const countries = [
   'Nigeria', 'Ghana', 'Kenya', 'South Africa', 'Egypt', 'Morocco', 
-  'Tanzania', 'Uganda', 'Ethiopia', 'Cameroon', 'Other'
+  'Tanzania', 'Uganda', 'Ethiopia', 'Cameroon', 'Algeria', 'Angola',
+  'Burkina Faso', 'Burundi', 'Botswana', 'Central African Republic',
+  'Chad', 'Congo', 'Democratic Republic of Congo', 'Djibouti',
+  'Equatorial Guinea', 'Eritrea', 'Eswatini', 'Gabon', 'Gambia',
+  'Guinea', 'Guinea-Bissau', 'Ivory Coast', 'Lesotho', 'Liberia',
+  'Libya', 'Madagascar', 'Malawi', 'Mali', 'Mauritania', 'Mauritius',
+  'Mozambique', 'Namibia', 'Niger', 'Rwanda', 'Sao Tome and Principe',
+  'Senegal', 'Seychelles', 'Sierra Leone', 'Somalia', 'South Sudan',
+  'Sudan', 'Togo', 'Tunisia', 'Zambia', 'Zimbabwe', 'Other'
 ];
 
 const illnesses = [
   { value: 'hypertension', label: 'Hypertension (High Blood Pressure)' },
-  { value: 'diabetes', label: 'Diabetes' },
+  { value: 'diabetes', label: 'Diabetes (Type 1 & 2)' },
   { value: 'heart_disease', label: 'Heart Disease' },
-  { value: 'obesity', label: 'Obesity' },
-  { value: 'high_cholesterol', label: 'High Cholesterol' }
+  { value: 'obesity', label: 'Obesity & Weight Management' },
+  { value: 'high_cholesterol', label: 'High Cholesterol' },
+  { value: 'asthma', label: 'Asthma & Respiratory Issues' },
+  { value: 'arthritis', label: 'Arthritis & Joint Pain' },
+  { value: 'kidney_disease', label: 'Kidney Disease' },
+  { value: 'liver_disease', label: 'Liver Disease' },
+  { value: 'thyroid_disorders', label: 'Thyroid Disorders' },
+  { value: 'anxiety_depression', label: 'Anxiety & Depression' },
+  { value: 'chronic_pain', label: 'Chronic Pain Management' }
 ];
 
 const Auth = () => {
@@ -98,9 +112,8 @@ const Auth = () => {
         } else {
           toast({
             title: "Account Created",
-            description: "Please check your email to verify your account"
+            description: "Please check your email to verify your account, then click the link to return to dashboard"
           });
-          navigate('/dashboard');
         }
       }
     } finally {
@@ -109,30 +122,30 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100 dark:from-green-950 dark:via-background dark:to-green-900 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100 dark:from-green-950 dark:via-gray-900 dark:to-green-900 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
           <Link to="/" className="inline-flex items-center space-x-2 hover:opacity-80 transition-opacity">
-            <div className="bg-gradient-to-r from-green-600 to-green-800 p-3 rounded-xl">
+            <div className="bg-gradient-to-r from-green-600 to-green-800 p-3 rounded-xl shadow-lg">
               <Heart className="h-8 w-8 text-white" />
             </div>
             <span className="text-3xl font-bold bg-gradient-to-r from-green-600 to-green-800 bg-clip-text text-transparent">
               Carevital
             </span>
           </Link>
-          <p className="text-gray-600 dark:text-gray-300 mt-2">
+          <p className="text-gray-600 dark:text-gray-300 mt-2 text-sm">
             {isLogin ? 'Welcome back to your health journey' : 'Start your personalized health journey'}
           </p>
         </div>
 
-        <Card className="bg-white/90 dark:bg-gray-800/90 backdrop-blur shadow-xl border border-green-200 dark:border-green-800">
+        <Card className="bg-white/95 dark:bg-gray-800/95 backdrop-blur shadow-xl border-2 border-green-200 dark:border-green-800">
           <div className="p-6">
             <div className="text-center mb-6">
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
                 {isLogin ? 'Sign In' : 'Create Account'}
               </h1>
-              <p className="text-gray-600 dark:text-gray-300 mt-1">
+              <p className="text-gray-600 dark:text-gray-300 mt-1 text-sm">
                 {isLogin 
                   ? 'Access your personalized health dashboard' 
                   : 'Join thousands managing their health with Carevital'
@@ -145,7 +158,7 @@ const Auth = () => {
                 <>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="firstName">First Name</Label>
+                      <Label htmlFor="firstName" className="text-gray-900 dark:text-white font-medium">First Name</Label>
                       <Input
                         id="firstName"
                         name="firstName"
@@ -153,11 +166,11 @@ const Auth = () => {
                         required
                         value={formData.firstName}
                         onChange={handleInputChange}
-                        className="mt-1"
+                        className="mt-1 border-green-200 focus:border-green-500 focus:ring-green-500"
                       />
                     </div>
                     <div>
-                      <Label htmlFor="lastName">Last Name</Label>
+                      <Label htmlFor="lastName" className="text-gray-900 dark:text-white font-medium">Last Name</Label>
                       <Input
                         id="lastName"
                         name="lastName"
@@ -165,48 +178,52 @@ const Auth = () => {
                         required
                         value={formData.lastName}
                         onChange={handleInputChange}
-                        className="mt-1"
+                        className="mt-1 border-green-200 focus:border-green-500 focus:ring-green-500"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <Label htmlFor="gender">Gender</Label>
+                    <Label htmlFor="gender" className="text-gray-900 dark:text-white font-medium">Gender</Label>
                     <Select value={formData.gender} onValueChange={(value) => handleSelectChange('gender', value)}>
-                      <SelectTrigger className="mt-1">
+                      <SelectTrigger className="mt-1 border-green-200 focus:border-green-500 focus:ring-green-500 bg-white dark:bg-gray-800 z-50">
                         <SelectValue placeholder="Select your gender" />
                       </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="male">Male</SelectItem>
-                        <SelectItem value="female">Female</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
+                      <SelectContent className="bg-white dark:bg-gray-800 border-green-200 shadow-xl z-50">
+                        <SelectItem value="male" className="hover:bg-green-50 dark:hover:bg-green-900/20">Male</SelectItem>
+                        <SelectItem value="female" className="hover:bg-green-50 dark:hover:bg-green-900/20">Female</SelectItem>
+                        <SelectItem value="other" className="hover:bg-green-50 dark:hover:bg-green-900/20">Other</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
 
                   <div>
-                    <Label htmlFor="country">Country</Label>
+                    <Label htmlFor="country" className="text-gray-900 dark:text-white font-medium">Country</Label>
                     <Select value={formData.country} onValueChange={(value) => handleSelectChange('country', value)}>
-                      <SelectTrigger className="mt-1">
+                      <SelectTrigger className="mt-1 border-green-200 focus:border-green-500 focus:ring-green-500 bg-white dark:bg-gray-800 z-40">
                         <SelectValue placeholder="Select your country" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="bg-white dark:bg-gray-800 border-green-200 shadow-xl max-h-60 overflow-y-auto z-40">
                         {countries.map(country => (
-                          <SelectItem key={country} value={country}>{country}</SelectItem>
+                          <SelectItem key={country} value={country} className="hover:bg-green-50 dark:hover:bg-green-900/20">
+                            {country}
+                          </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
                   </div>
 
                   <div>
-                    <Label htmlFor="illness">Health Condition to Manage</Label>
+                    <Label htmlFor="illness" className="text-gray-900 dark:text-white font-medium">Health Condition to Manage</Label>
                     <Select value={formData.illnessType} onValueChange={(value) => handleSelectChange('illnessType', value)}>
-                      <SelectTrigger className="mt-1">
+                      <SelectTrigger className="mt-1 border-green-200 focus:border-green-500 focus:ring-green-500 bg-white dark:bg-gray-800 z-30">
                         <SelectValue placeholder="Select condition to manage" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="bg-white dark:bg-gray-800 border-green-200 shadow-xl max-h-60 overflow-y-auto z-30">
                         {illnesses.map(illness => (
-                          <SelectItem key={illness.value} value={illness.value}>{illness.label}</SelectItem>
+                          <SelectItem key={illness.value} value={illness.value} className="hover:bg-green-50 dark:hover:bg-green-900/20">
+                            {illness.label}
+                          </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -215,7 +232,7 @@ const Auth = () => {
               )}
 
               <div>
-                <Label htmlFor="email">Email Address</Label>
+                <Label htmlFor="email" className="text-gray-900 dark:text-white font-medium">Email Address</Label>
                 <Input
                   id="email"
                   name="email"
@@ -223,13 +240,13 @@ const Auth = () => {
                   required
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="mt-1"
+                  className="mt-1 border-green-200 focus:border-green-500 focus:ring-green-500"
                   placeholder="your.email@example.com"
                 />
               </div>
 
               <div>
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password" className="text-gray-900 dark:text-white font-medium">Password</Label>
                 <Input
                   id="password"
                   name="password"
@@ -237,14 +254,14 @@ const Auth = () => {
                   required
                   value={formData.password}
                   onChange={handleInputChange}
-                  className="mt-1"
+                  className="mt-1 border-green-200 focus:border-green-500 focus:ring-green-500"
                   placeholder="••••••••"
                 />
               </div>
 
               {!isLogin && (
                 <div>
-                  <Label htmlFor="confirmPassword">Confirm Password</Label>
+                  <Label htmlFor="confirmPassword" className="text-gray-900 dark:text-white font-medium">Confirm Password</Label>
                   <Input
                     id="confirmPassword"
                     name="confirmPassword"
@@ -252,7 +269,7 @@ const Auth = () => {
                     required
                     value={formData.confirmPassword}
                     onChange={handleInputChange}
-                    className="mt-1"
+                    className="mt-1 border-green-200 focus:border-green-500 focus:ring-green-500"
                     placeholder="••••••••"
                   />
                 </div>
@@ -261,7 +278,7 @@ const Auth = () => {
               <Button 
                 type="submit" 
                 disabled={loading} 
-                className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white"
+                className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold py-3 rounded-lg shadow-lg transition-all duration-200"
               >
                 {loading ? 'Processing...' : (isLogin ? 'Sign In' : 'Create Account')}
               </Button>
@@ -271,7 +288,7 @@ const Auth = () => {
               <button
                 type="button"
                 onClick={() => setIsLogin(!isLogin)}
-                className="text-green-600 hover:text-green-700 font-medium transition-colors"
+                className="text-green-600 hover:text-green-700 font-medium transition-colors underline"
               >
                 {isLogin 
                   ? "Don't have an account? Sign up" 
