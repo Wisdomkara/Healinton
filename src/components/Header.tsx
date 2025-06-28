@@ -17,20 +17,20 @@ const Header = () => {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white dark:bg-gray-900 shadow-sm">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full max-w-none px-4 sm:px-6 lg:px-8 mx-auto">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2 hover:opacity-80 transition-all transform hover:scale-105">
+          <Link to="/" className="flex items-center space-x-2 hover:opacity-80 transition-all transform hover:scale-105 flex-shrink-0">
             <div className="bg-gradient-to-r from-green-600 to-green-700 p-2 rounded-xl shadow-md">
-              <Heart className="h-6 w-6 text-white" />
+              <Heart className="h-5 w-5 md:h-6 md:w-6 text-white" />
             </div>
-            <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-green-800 bg-clip-text text-transparent">
+            <span className="text-xl md:text-2xl font-bold bg-gradient-to-r from-green-600 to-green-800 bg-clip-text text-transparent">
               Carevital
             </span>
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
+          <nav className="hidden md:flex items-center space-x-6 lg:space-x-8">
             <Link to="/dashboard" className="text-gray-700 dark:text-gray-300 hover:text-green-600 transition-colors font-medium hover:scale-105 transform">
               Dashboard
             </Link>
@@ -46,19 +46,19 @@ const Header = () => {
           </nav>
 
           {/* Actions */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 md:space-x-4">
             <ThemeToggle />
             
             {user ? (
               <>
                 {/* Notifications for authenticated users */}
                 <Button variant="ghost" size="icon" className="relative hover:scale-110 transition-transform hover:bg-gray-100 dark:hover:bg-gray-800">
-                  <Bell className="h-5 w-5" />
-                  <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full"></span>
+                  <Bell className="h-4 w-4 md:h-5 md:w-5" />
+                  <span className="absolute -top-1 -right-1 h-2 w-2 md:h-3 md:w-3 bg-red-500 rounded-full"></span>
                 </Button>
                 
                 <Button variant="ghost" size="icon" className="hover:scale-110 transition-transform hover:bg-gray-100 dark:hover:bg-gray-800">
-                  <User className="h-5 w-5" />
+                  <User className="h-4 w-4 md:h-5 md:w-5" />
                 </Button>
                 
                 <Button 
@@ -74,10 +74,10 @@ const Header = () => {
             ) : (
               <>
                 <Button variant="ghost" size="icon" className="hover:scale-110 transition-transform hover:bg-gray-100 dark:hover:bg-gray-800">
-                  <User className="h-5 w-5" />
+                  <User className="h-4 w-4 md:h-5 md:w-5" />
                 </Button>
                 <Link to="/auth">
-                  <Button className="bg-green-600 hover:bg-green-700 transform hover:scale-105 transition-all shadow-md hover:shadow-lg">
+                  <Button className="bg-green-600 hover:bg-green-700 transform hover:scale-105 transition-all shadow-md hover:shadow-lg text-sm md:text-base px-3 md:px-4">
                     Get Started
                   </Button>
                 </Link>

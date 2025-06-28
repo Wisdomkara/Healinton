@@ -63,18 +63,15 @@
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-border box-border;
   }
   html {
     font-family: 'Lato', sans-serif;
-    width: 100%;
-    overflow-x: hidden;
+    @apply w-full overflow-x-hidden;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground w-full overflow-x-hidden;
     font-family: 'Lato', sans-serif;
-    width: 100%;
-    overflow-x: hidden;
   }
 }
 
@@ -115,28 +112,19 @@
     animation: gradientShift 6s ease infinite;
   }
 
-  /* Modern button hover effects */
-  .btn-hover-scale {
-    @apply transition-all duration-200 hover:scale-105 hover:shadow-lg;
-  }
-
-  .btn-hover-glow {
-    @apply transition-all duration-300 hover:shadow-lg hover:shadow-green-500/25;
-  }
-
-  /* Card hover effects */
-  .card-hover {
-    @apply transition-all duration-300 hover:shadow-xl hover:-translate-y-1;
-  }
-
-  /* Input focus effects */
-  .input-focus {
-    @apply transition-all duration-200 focus:ring-2 focus:ring-green-500/20 focus:border-green-500;
-  }
-
-  /* Mobile responsive utilities */
-  .container-responsive {
-    @apply w-full max-w-none px-4 sm:px-6 lg:px-8 xl:max-w-7xl xl:mx-auto;
+  /* Mobile-first responsive design */
+  @media (max-width: 640px) {
+    .text-4xl {
+      @apply text-2xl leading-tight;
+    }
+    
+    .text-6xl {
+      @apply text-3xl leading-tight;
+    }
+    
+    .text-5xl {
+      @apply text-2xl leading-tight;
+    }
   }
 }
 
@@ -235,95 +223,4 @@
 
 .animate-bounce-gentle {
   animation: bounce-gentle 2s ease-in-out infinite;
-}
-
-/* Responsive container */
-.container {
-  width: 100%;
-  max-width: 100%;
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
-
-@media (min-width: 640px) {
-  .container {
-    max-width: 640px;
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
-  }
-}
-
-@media (min-width: 768px) {
-  .container {
-    max-width: 768px;
-  }
-}
-
-@media (min-width: 1024px) {
-  .container {
-    max-width: 1024px;
-  }
-}
-
-@media (min-width: 1280px) {
-  .container {
-    max-width: 1280px;
-  }
-}
-
-@media (min-width: 1536px) {
-  .container {
-    max-width: 1536px;
-  }
-}
-
-/* Ensure full width without horizontal scroll */
-* {
-  box-sizing: border-box;
-}
-
-body, html {
-  width: 100%;
-  overflow-x: hidden;
-}
-
-/* Mobile-first responsive design */
-@media (max-width: 640px) {
-  .container {
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-  
-  .text-4xl {
-    font-size: 2rem;
-    line-height: 2.5rem;
-  }
-  
-  .text-6xl {
-    font-size: 2.5rem;
-    line-height: 3rem;
-  }
-}
-
-/* Improved button hover effects */
-.btn {
-  @apply transition-all duration-200 transform hover:scale-105 hover:shadow-lg;
-}
-
-.btn:active {
-  @apply scale-95;
-}
-
-/* Card hover effects with backdrop */
-.card-gradient {
-  backdrop-filter: blur(10px);
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.dark .card-gradient {
-  background: linear-gradient(135deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.05));
-  border: 1px solid rgba(255, 255, 255, 0.1);
 }
