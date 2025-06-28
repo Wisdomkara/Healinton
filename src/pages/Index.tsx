@@ -1,15 +1,26 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import HealthMetricCard from '@/components/HealthMetricCard';
 import MealPlanCard from '@/components/MealPlanCard';
 import PremiumBanner from '@/components/PremiumBanner';
+import Loader from '@/components/Loader';
 import { useAuth } from '@/hooks/useAuth';
 import { Heart, User, Calendar, Stethoscope, Clock, Settings, Shield, Users, TrendingUp, Smartphone, CheckCircle } from 'lucide-react';
 
 const Index = () => {
   const { user } = useAuth();
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate app loading
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const healthMetrics = [
     {
@@ -94,6 +105,10 @@ const Index = () => {
     'Connect with healthcare providers',
     'Track progress over time'
   ];
+
+  if (isLoading) {
+    return <Loader />;
+  }
 
   return (
     <div className="min-h-screen bg-background w-full overflow-x-hidden">
@@ -268,9 +283,11 @@ const Index = () => {
                 <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white text-center sm:text-left">
                   Personalized Meal Plans
                 </h3>
-                <Button variant="ghost" className="text-green-600 hover:text-green-700 hover:bg-green-50 dark:hover:bg-green-900/20 transition-all hover:scale-105">
-                  View All →
-                </Button>
+                <Link to={user ? "/dashboard" : "/auth"}>
+                  <Button variant="ghost" className="text-green-600 hover:text-green-700 hover:bg-green-50 dark:hover:bg-green-900/20 transition-all hover:scale-105">
+                    View Recipes →
+                  </Button>
+                </Link>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 justify-items-center">
                 {mealPlans.map((meal, index) => (
@@ -308,6 +325,25 @@ const Index = () => {
                 </Link>
               ))}
             </div>
+
+            {/* Community Section */}
+            <div className="mt-12 text-center">
+              <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-4">
+                Join Our Community
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300 mb-6">
+                Connect with others on similar health journeys and share experiences
+              </p>
+              <a 
+                href="https://www.facebook.com/profile.php?id=61577629151627" 
+                target="_blank" 
+                rel="noopener noreferrer"
+              >
+                <Button className="bg-blue-600 hover:bg-blue-700 transform hover:scale-105 transition-all">
+                  Join Facebook Group
+                </Button>
+              </a>
+            </div>
           </div>
         </div>
       </section>
@@ -322,10 +358,15 @@ const Index = () => {
             <p className="text-base sm:text-lg text-white/90 mb-8 leading-relaxed px-2 text-center">
               Join thousands of people who are successfully managing their chronic conditions with Carevital.
             </p>
-            <div className="flex justify-center">
+            <div className="flex justify-center space-x-4">
               <Link to={user ? "/dashboard" : "/auth"}>
                 <Button size="lg" className="bg-white text-green-600 hover:bg-gray-100 px-6 md:px-8 py-3 md:py-4 text-base md:text-lg transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl">
                   Get Started Free
+                </Button>
+              </Link>
+              <Link to="/premium">
+                <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10 px-6 md:px-8 py-3 md:py-4 text-base md:text-lg transform hover:scale-105 transition-all duration-200">
+                  Start Premium
                 </Button>
               </Link>
             </div>

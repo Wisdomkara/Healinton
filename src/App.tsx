@@ -12,6 +12,10 @@ import Dashboard from "./pages/Dashboard";
 import Premium from "./pages/Premium";
 import Community from "./pages/Community";
 import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
+import Accessibility from "./pages/Accessibility";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -27,8 +31,12 @@ const App = () => (
             <Route path="/" element={<Layout />}>
               <Route index element={<Index />} />
               <Route path="blog" element={<Blog />} />
+              <Route path="blog/:id" element={<BlogPost />} />
               <Route path="premium" element={<Premium />} />
               <Route path="community" element={<Community />} />
+              <Route path="privacy" element={<PrivacyPolicy />} />
+              <Route path="terms" element={<TermsOfService />} />
+              <Route path="accessibility" element={<Accessibility />} />
             </Route>
             <Route path="/auth" element={<Auth />} />
             <Route path="/dashboard/*" element={<Dashboard />} />

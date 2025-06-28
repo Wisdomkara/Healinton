@@ -125,9 +125,11 @@ const Blog = () => {
                     <Clock className="h-3 w-3" />
                     <span>{post.readTime}</span>
                   </div>
-                  <Button size="sm" className="hover:scale-105 transition-transform">
-                    Read More
-                  </Button>
+                  <Link to={`/blog/${post.id}`}>
+                    <Button size="sm" className="hover:scale-105 transition-transform">
+                      Read More
+                    </Button>
+                  </Link>
                 </div>
               </div>
             </Card>
