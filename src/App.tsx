@@ -11,6 +11,7 @@ import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import Premium from "./pages/Premium";
 import Community from "./pages/Community";
+import Blog from "./pages/Blog";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,6 +26,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Layout />}>
               <Route index element={<Index />} />
+              <Route path="blog" element={<Blog />} />
               <Route path="premium" element={<Premium />} />
               <Route path="community" element={<Community />} />
             </Route>

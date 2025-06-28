@@ -3,10 +3,17 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import ThemeToggle from './ThemeToggle';
-import { Heart, User, Menu, X } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
+import { Heart, User, Menu, X, LogOut, Bell } from 'lucide-react';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user, signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut();
+    setIsMenuOpen(false);
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white dark:bg-gray-900 shadow-sm">
@@ -30,6 +37,9 @@ const Header = () => {
             <Link to="/community" className="text-gray-700 dark:text-gray-300 hover:text-green-600 transition-colors font-medium hover:scale-105 transform">
               Community
             </Link>
+            <Link to="/blog" className="text-gray-700 dark:text-gray-300 hover:text-green-600 transition-colors font-medium hover:scale-105 transform">
+              Blog
+            </Link>
             <Link to="/premium" className="text-gray-700 dark:text-gray-300 hover:text-green-600 transition-colors font-medium hover:scale-105 transform">
               Premium
             </Link>
@@ -38,14 +48,41 @@ const Header = () => {
           {/* Actions */}
           <div className="flex items-center space-x-4">
             <ThemeToggle />
-            <Button variant="ghost" size="icon" className="hover:scale-110 transition-transform hover:bg-gray-100 dark:hover:bg-gray-800">
-              <User className="h-5 w-5" />
-            </Button>
-            <Link to="/auth">
-              <Button className="bg-green-600 hover:bg-green-700 transform hover:scale-105 transition-all shadow-md hover:shadow-lg">
-                Get Started
-              </Button>
-            </Link>
+            
+            {user ? (
+              <>
+                {/* Notifications for authenticated users */}
+                <Button variant="ghost" size="icon" className="relative hover:scale-110 transition-transform hover:bg-gray-100 dark:hover:bg-gray-800">
+                  <Bell className="h-5 w-5" />
+                  <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full"></span>
+                </Button>
+                
+                <Button variant="ghost" size="icon" className="hover:scale-110 transition-transform hover:bg-gray-100 dark:hover:bg-gray-800">
+                  <User className="h-5 w-5" />
+                </Button>
+                
+                <Button 
+                  onClick={handleSignOut}
+                  variant="outline" 
+                  size="sm"
+                  className="hidden md:flex hover:scale-105 transition-transform"
+                >
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Sign Out
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="ghost" size="icon" className="hover:scale-110 transition-transform hover:bg-gray-100 dark:hover:bg-gray-800">
+                  <User className="h-5 w-5" />
+                </Button>
+                <Link to="/auth">
+                  <Button className="bg-green-600 hover:bg-green-700 transform hover:scale-105 transition-all shadow-md hover:shadow-lg">
+                    Get Started
+                  </Button>
+                </Link>
+              </>
+            )}
             
             {/* Mobile Menu Button */}
             <Button
@@ -61,7 +98,7 @@ const Header = () => {
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="md:hidden border-t bg-white dark:bg-gray-900 py-4 animate-slide-up">
+          <div className="md:hidden border-t bg-white dark:bg-gray-900 py-4 animate-slide-down">
             <nav className="flex flex-col space-y-2">
               <Link 
                 to="/dashboard" 
@@ -78,12 +115,30 @@ const Header = () => {
                 Community
               </Link>
               <Link 
+                to="/blog" 
+                className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-green-600 hover:bg-green-50 dark:hover:bg-gray-800 transition-colors rounded-lg"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Blog
+              </Link>
+              <Link 
                 to="/premium" 
                 className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-green-600 hover:bg-green-50 dark:hover:bg-gray-800 transition-colors rounded-lg"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Premium
               </Link>
+              
+              {user && (
+                <Button 
+                  onClick={handleSignOut}
+                  variant="ghost"
+                  className="mx-4 mt-2 justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
+                >
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Sign Out
+                </Button>
+              )}
             </nav>
           </div>
         )}

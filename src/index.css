@@ -87,8 +87,16 @@
     animation: fadeIn 0.8s ease-in-out;
   }
   
+  .animate-fade-in-up {
+    animation: fadeInUp 1s ease-out;
+  }
+  
   .animate-slide-up {
     animation: slideUp 1s ease-out;
+  }
+  
+  .animate-slide-down {
+    animation: slideDown 0.3s ease-out;
   }
   
   .animate-stagger {
@@ -101,6 +109,11 @@
   .animate-stagger:nth-child(4) { animation-delay: 0.4s; }
   .animate-stagger:nth-child(5) { animation-delay: 0.5s; }
   .animate-stagger:nth-child(6) { animation-delay: 0.6s; }
+
+  .animate-gradient-shift {
+    background-size: 400% 400%;
+    animation: gradientShift 6s ease infinite;
+  }
 
   /* Modern button hover effects */
   .btn-hover-scale {
@@ -120,12 +133,28 @@
   .input-focus {
     @apply transition-all duration-200 focus:ring-2 focus:ring-green-500/20 focus:border-green-500;
   }
+
+  /* Mobile responsive utilities */
+  .container-responsive {
+    @apply w-full max-w-none px-4 sm:px-6 lg:px-8 xl:max-w-7xl xl:mx-auto;
+  }
 }
 
 @keyframes fadeIn {
   from {
     opacity: 0;
     transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(60px);
   }
   to {
     opacity: 1;
@@ -144,6 +173,17 @@
   }
 }
 
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @keyframes slideInRight {
   from {
     opacity: 0;
@@ -152,6 +192,18 @@
   to {
     opacity: 1;
     transform: translateX(0);
+  }
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
   }
 }
 
@@ -198,6 +250,8 @@
 @media (min-width: 640px) {
   .container {
     max-width: 640px;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
   }
 }
 
@@ -233,4 +287,43 @@
 body, html {
   width: 100%;
   overflow-x: hidden;
+}
+
+/* Mobile-first responsive design */
+@media (max-width: 640px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .text-4xl {
+    font-size: 2rem;
+    line-height: 2.5rem;
+  }
+  
+  .text-6xl {
+    font-size: 2.5rem;
+    line-height: 3rem;
+  }
+}
+
+/* Improved button hover effects */
+.btn {
+  @apply transition-all duration-200 transform hover:scale-105 hover:shadow-lg;
+}
+
+.btn:active {
+  @apply scale-95;
+}
+
+/* Card hover effects with backdrop */
+.card-gradient {
+  backdrop-filter: blur(10px);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.dark .card-gradient {
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.05));
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
