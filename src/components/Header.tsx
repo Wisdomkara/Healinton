@@ -31,9 +31,15 @@ const Header = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-6 lg:space-x-8">
-            <Link to="/dashboard" className="text-gray-700 dark:text-gray-300 hover:text-green-600 transition-colors font-medium hover:scale-105 transform">
-              Dashboard
-            </Link>
+            {user ? (
+              <Link to="/dashboard" className="text-gray-700 dark:text-gray-300 hover:text-green-600 transition-colors font-medium hover:scale-105 transform">
+                Dashboard
+              </Link>
+            ) : (
+              <Link to="/auth" className="text-gray-700 dark:text-gray-300 hover:text-green-600 transition-colors font-medium hover:scale-105 transform">
+                Dashboard
+              </Link>
+            )}
             <Link to="/community" className="text-gray-700 dark:text-gray-300 hover:text-green-600 transition-colors font-medium hover:scale-105 transform">
               Community
             </Link>
@@ -46,7 +52,7 @@ const Header = () => {
           </nav>
 
           {/* Actions */}
-          <div className="flex items-center space-x-2 md:space-x-4">
+          <div className="flex items-center space-x-1 md:space-x-2">
             <ThemeToggle />
             
             {user ? (
@@ -65,9 +71,9 @@ const Header = () => {
                   onClick={handleSignOut}
                   variant="outline" 
                   size="sm"
-                  className="hidden md:flex hover:scale-105 transition-transform"
+                  className="hidden md:flex hover:scale-105 transition-transform text-xs px-2"
                 >
-                  <LogOut className="h-4 w-4 mr-2" />
+                  <LogOut className="h-3 w-3 mr-1" />
                   Sign Out
                 </Button>
               </>
@@ -77,7 +83,7 @@ const Header = () => {
                   <User className="h-4 w-4 md:h-5 md:w-5" />
                 </Button>
                 <Link to="/auth">
-                  <Button className="bg-green-600 hover:bg-green-700 transform hover:scale-105 transition-all shadow-md hover:shadow-lg text-sm md:text-base px-3 md:px-4">
+                  <Button className="bg-green-600 hover:bg-green-700 transform hover:scale-105 transition-all shadow-md hover:shadow-lg text-xs px-2 py-1 h-8">
                     Get Started
                   </Button>
                 </Link>
@@ -100,13 +106,23 @@ const Header = () => {
         {isMenuOpen && (
           <div className="md:hidden border-t bg-white dark:bg-gray-900 py-4 animate-slide-down">
             <nav className="flex flex-col space-y-2">
-              <Link 
-                to="/dashboard" 
-                className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-green-600 hover:bg-green-50 dark:hover:bg-gray-800 transition-colors rounded-lg"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Dashboard
-              </Link>
+              {user ? (
+                <Link 
+                  to="/dashboard" 
+                  className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-green-600 hover:bg-green-50 dark:hover:bg-gray-800 transition-colors rounded-lg"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Dashboard
+                </Link>
+              ) : (
+                <Link 
+                  to="/auth" 
+                  className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-green-600 hover:bg-green-50 dark:hover:bg-gray-800 transition-colors rounded-lg"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Dashboard
+                </Link>
+              )}
               <Link 
                 to="/community" 
                 className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-green-600 hover:bg-green-50 dark:hover:bg-gray-800 transition-colors rounded-lg"

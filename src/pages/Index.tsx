@@ -5,9 +5,12 @@ import { Card } from '@/components/ui/card';
 import HealthMetricCard from '@/components/HealthMetricCard';
 import MealPlanCard from '@/components/MealPlanCard';
 import PremiumBanner from '@/components/PremiumBanner';
+import { useAuth } from '@/hooks/useAuth';
 import { Heart, User, Calendar, Stethoscope, Clock, Settings, Shield, Users, TrendingUp, Smartphone, CheckCircle } from 'lucide-react';
 
 const Index = () => {
+  const { user } = useAuth();
+
   const healthMetrics = [
     {
       title: 'Blood Pressure',
@@ -119,7 +122,7 @@ const Index = () => {
             </p>
             
             <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4 mb-12 px-2">
-              <Link to="/auth" className="w-full sm:w-auto">
+              <Link to={user ? "/dashboard" : "/auth"} className="w-full sm:w-auto">
                 <Button size="lg" className="w-full sm:w-auto bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 px-6 md:px-8 py-3 md:py-4 text-base md:text-lg transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl">
                   Start Your Health Journey
                 </Button>
@@ -294,14 +297,15 @@ const Index = () => {
                 { icon: Calendar, label: "Schedule", color: "hover:bg-purple-50 hover:border-purple-300 dark:hover:bg-purple-900/20" },
                 { icon: Settings, label: "Settings", color: "hover:bg-orange-50 hover:border-orange-300 dark:hover:bg-orange-900/20" }
               ].map((item, index) => (
-                <Button 
-                  key={index} 
-                  variant="outline" 
-                  className={`p-3 sm:p-4 md:p-6 h-auto flex-col space-y-2 ${item.color} transition-all transform hover:scale-105 backdrop-blur-sm w-full max-w-40`}
-                >
-                  <item.icon className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-green-600" />
-                  <span className="text-xs sm:text-sm font-medium text-center">{item.label}</span>
-                </Button>
+                <Link key={index} to={user ? "/dashboard" : "/auth"} className="w-full max-w-40">
+                  <Button 
+                    variant="outline" 
+                    className={`p-3 sm:p-4 md:p-6 h-auto flex-col space-y-2 ${item.color} transition-all transform hover:scale-105 backdrop-blur-sm w-full`}
+                  >
+                    <item.icon className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-green-600" />
+                    <span className="text-xs sm:text-sm font-medium text-center">{item.label}</span>
+                  </Button>
+                </Link>
               ))}
             </div>
           </div>
@@ -319,7 +323,7 @@ const Index = () => {
               Join thousands of people who are successfully managing their chronic conditions with Carevital.
             </p>
             <div className="flex justify-center">
-              <Link to="/auth">
+              <Link to={user ? "/dashboard" : "/auth"}>
                 <Button size="lg" className="bg-white text-green-600 hover:bg-gray-100 px-6 md:px-8 py-3 md:py-4 text-base md:text-lg transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl">
                   Get Started Free
                 </Button>
