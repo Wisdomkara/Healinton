@@ -1,12 +1,11 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Heart } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 
@@ -39,9 +38,10 @@ const illnesses = [
 ];
 
 const Auth = () => {
-  const { signIn, signUp } = useAuth();
+  const { signIn, signUp, user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -54,6 +54,29 @@ const Auth = () => {
     country: '',
     illnessType: ''
   });
+
+  // Handle email verification redirect
+  useEffect(() => {
+    const emailVerified = searchParams.get('type') === 'signup';
+    const accessToken = searchParams.get('access_token');
+    
+    if (emailVerified && accessToken) {
+      toast({
+        title: "Email Verified Successfully!",
+        description: "Your account has been verified. Redirecting to dashboard...",
+      });
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 2000);
+    }
+  }, [searchParams, navigate, toast]);
+
+  // Redirect authenticated users to dashboard
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard');
+    }
+  }, [user, navigate]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -126,9 +149,8 @@ const Auth = () => {
         } else {
           toast({
             title: "Account Created Successfully!",
-            description: "Please check your email to verify your account. You'll be redirected to the dashboard after verification."
+            description: "Please check your email to verify your account. After verification, you'll be redirected to your dashboard."
           });
-          // Don't redirect immediately for signup - wait for email verification
         }
       }
     } catch (error) {
@@ -141,6 +163,9 @@ const Auth = () => {
       setLoading(false);
     }
   };
+
+  // Show verification success message if redirected from email verification
+  const isVerificationSuccess = searchParams.get('type') === 'signup' && searchParams.get('access_token');
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100 dark:from-green-950 dark:via-gray-900 dark:to-green-900 flex items-center justify-center p-4">
@@ -156,171 +181,198 @@ const Auth = () => {
             </span>
           </Link>
           <p className="text-gray-600 dark:text-gray-300 mt-2 text-sm">
-            {isLogin ? 'Welcome back to your health journey' : 'Start your personalized health journey'}
+            {isVerificationSuccess 
+              ? 'Email verified successfully! Redirecting to dashboard...' 
+              : isLogin 
+                ? 'Welcome back to your health journey' 
+                : 'Start your personalized health journey'
+            }
           </p>
         </div>
 
-        <Card className="bg-white/95 dark:bg-gray-800/95 backdrop-blur shadow-xl border-2 border-green-200 dark:border-green-800">
-          <div className="p-6">
-            <div className="text-center mb-6">
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                {isLogin ? 'Sign In' : 'Create Account'}
-              </h1>
-              <p className="text-gray-600 dark:text-gray-300 mt-1 text-sm">
-                {isLogin 
-                  ? 'Access your personalized health dashboard' 
-                  : 'Join thousands managing their health with Healinton'
-                }
+        {isVerificationSuccess ? (
+          <Card className="bg-white/95 dark:bg-gray-800/95 backdrop-blur shadow-xl border-2 border-green-200 dark:border-green-800">
+            <div className="p-6 text-center">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Heart className="h-8 w-8 text-green-600" />
+              </div>
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                Email Verified Successfully!
+              </h2>
+              <p className="text-gray-600 dark:text-gray-300 mb-4">
+                Your account has been verified. You will be redirected to your dashboard shortly.
               </p>
+              <Button 
+                onClick={() => navigate('/dashboard')}
+                className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white"
+              >
+                Go to Dashboard
+              </Button>
             </div>
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {!isLogin && (
-                <>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="firstName" className="text-gray-900 dark:text-white font-medium">First Name *</Label>
-                      <Input
-                        id="firstName"
-                        name="firstName"
-                        type="text"
-                        required
-                        value={formData.firstName}
-                        onChange={handleInputChange}
-                        className="mt-1 border-green-200 focus:border-green-500 focus:ring-green-500"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="lastName" className="text-gray-900 dark:text-white font-medium">Last Name *</Label>
-                      <Input
-                        id="lastName"
-                        name="lastName"
-                        type="text"
-                        required
-                        value={formData.lastName}
-                        onChange={handleInputChange}
-                        className="mt-1 border-green-200 focus:border-green-500 focus:ring-green-500"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="gender" className="text-gray-900 dark:text-white font-medium">Gender *</Label>
-                    <Select value={formData.gender} onValueChange={(value) => handleSelectChange('gender', value)}>
-                      <SelectTrigger className="mt-1 border-green-200 focus:border-green-500 focus:ring-green-500 bg-white dark:bg-gray-800 z-50">
-                        <SelectValue placeholder="Select your gender" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-white dark:bg-gray-800 border-green-200 shadow-xl z-50">
-                        <SelectItem value="male" className="hover:bg-green-50 dark:hover:bg-green-900/20">Male</SelectItem>
-                        <SelectItem value="female" className="hover:bg-green-50 dark:hover:bg-green-900/20">Female</SelectItem>
-                        <SelectItem value="other" className="hover:bg-green-50 dark:hover:bg-green-900/20">Other</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="country" className="text-gray-900 dark:text-white font-medium">Country *</Label>
-                    <Select value={formData.country} onValueChange={(value) => handleSelectChange('country', value)}>
-                      <SelectTrigger className="mt-1 border-green-200 focus:border-green-500 focus:ring-green-500 bg-white dark:bg-gray-800 z-40">
-                        <SelectValue placeholder="Select your country" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-white dark:bg-gray-800 border-green-200 shadow-xl max-h-60 overflow-y-auto z-40">
-                        {countries.map(country => (
-                          <SelectItem key={country} value={country} className="hover:bg-green-50 dark:hover:bg-green-900/20">
-                            {country}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="illness" className="text-gray-900 dark:text-white font-medium">Health Condition to Manage *</Label>
-                    <Select value={formData.illnessType} onValueChange={(value) => handleSelectChange('illnessType', value)}>
-                      <SelectTrigger className="mt-1 border-green-200 focus:border-green-500 focus:ring-green-500 bg-white dark:bg-gray-800 z-30">
-                        <SelectValue placeholder="Select condition to manage" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-white dark:bg-gray-800 border-green-200 shadow-xl max-h-60 overflow-y-auto z-30">
-                        {illnesses.map(illness => (
-                          <SelectItem key={illness.value} value={illness.value} className="hover:bg-green-50 dark:hover:bg-green-900/20">
-                            {illness.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </>
-              )}
-
-              <div>
-                <Label htmlFor="email" className="text-gray-900 dark:text-white font-medium">Email Address</Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  className="mt-1 border-green-200 focus:border-green-500 focus:ring-green-500"
-                  placeholder="your.email@example.com"
-                />
+          </Card>
+        ) : (
+          <Card className="bg-white/95 dark:bg-gray-800/95 backdrop-blur shadow-xl border-2 border-green-200 dark:border-green-800">
+            <div className="p-6">
+              <div className="text-center mb-6">
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {isLogin ? 'Sign In' : 'Create Account'}
+                </h1>
+                <p className="text-gray-600 dark:text-gray-300 mt-1 text-sm">
+                  {isLogin 
+                    ? 'Access your personalized health dashboard' 
+                    : 'Join thousands managing their health with Healinton'
+                  }
+                </p>
               </div>
 
-              <div>
-                <Label htmlFor="password" className="text-gray-900 dark:text-white font-medium">Password</Label>
-                <Input
-                  id="password"
-                  name="password"
-                  type="password"
-                  required
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  className="mt-1 border-green-200 focus:border-green-500 focus:ring-green-500"
-                  placeholder="••••••••"
-                  minLength={6}
-                />
-              </div>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                {!isLogin && (
+                  <>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="firstName" className="text-gray-900 dark:text-white font-medium">First Name *</Label>
+                        <Input
+                          id="firstName"
+                          name="firstName"
+                          type="text"
+                          required
+                          value={formData.firstName}
+                          onChange={handleInputChange}
+                          className="mt-1 border-green-200 focus:border-green-500 focus:ring-green-500"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="lastName" className="text-gray-900 dark:text-white font-medium">Last Name *</Label>
+                        <Input
+                          id="lastName"
+                          name="lastName"
+                          type="text"
+                          required
+                          value={formData.lastName}
+                          onChange={handleInputChange}
+                          className="mt-1 border-green-200 focus:border-green-500 focus:ring-green-500"
+                        />
+                      </div>
+                    </div>
 
-              {!isLogin && (
+                    <div>
+                      <Label htmlFor="gender" className="text-gray-900 dark:text-white font-medium">Gender *</Label>
+                      <Select value={formData.gender} onValueChange={(value) => handleSelectChange('gender', value)}>
+                        <SelectTrigger className="mt-1 border-green-200 focus:border-green-500 focus:ring-green-500 bg-white dark:bg-gray-800 z-50">
+                          <SelectValue placeholder="Select your gender" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-white dark:bg-gray-800 border-green-200 shadow-xl z-50">
+                          <SelectItem value="male" className="hover:bg-green-50 dark:hover:bg-green-900/20">Male</SelectItem>
+                          <SelectItem value="female" className="hover:bg-green-50 dark:hover:bg-green-900/20">Female</SelectItem>
+                          <SelectItem value="other" className="hover:bg-green-50 dark:hover:bg-green-900/20">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="country" className="text-gray-900 dark:text-white font-medium">Country *</Label>
+                      <Select value={formData.country} onValueChange={(value) => handleSelectChange('country', value)}>
+                        <SelectTrigger className="mt-1 border-green-200 focus:border-green-500 focus:ring-green-500 bg-white dark:bg-gray-800 z-40">
+                          <SelectValue placeholder="Select your country" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-white dark:bg-gray-800 border-green-200 shadow-xl max-h-60 overflow-y-auto z-40">
+                          {countries.map(country => (
+                            <SelectItem key={country} value={country} className="hover:bg-green-50 dark:hover:bg-green-900/20">
+                              {country}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="illness" className="text-gray-900 dark:text-white font-medium">Health Condition to Manage *</Label>
+                      <Select value={formData.illnessType} onValueChange={(value) => handleSelectChange('illnessType', value)}>
+                        <SelectTrigger className="mt-1 border-green-200 focus:border-green-500 focus:ring-green-500 bg-white dark:bg-gray-800 z-30">
+                          <SelectValue placeholder="Select condition to manage" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-white dark:bg-gray-800 border-green-200 shadow-xl max-h-60 overflow-y-auto z-30">
+                          {illnesses.map(illness => (
+                            <SelectItem key={illness.value} value={illness.value} className="hover:bg-green-50 dark:hover:bg-green-900/20">
+                              {illness.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </>
+                )}
+
                 <div>
-                  <Label htmlFor="confirmPassword" className="text-gray-900 dark:text-white font-medium">Confirm Password</Label>
+                  <Label htmlFor="email" className="text-gray-900 dark:text-white font-medium">Email Address</Label>
                   <Input
-                    id="confirmPassword"
-                    name="confirmPassword"
+                    id="email"
+                    name="email"
+                    type="email"
+                    required
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    className="mt-1 border-green-200 focus:border-green-500 focus:ring-green-500"
+                    placeholder="your.email@example.com"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="password" className="text-gray-900 dark:text-white font-medium">Password</Label>
+                  <Input
+                    id="password"
+                    name="password"
                     type="password"
                     required
-                    value={formData.confirmPassword}
+                    value={formData.password}
                     onChange={handleInputChange}
                     className="mt-1 border-green-200 focus:border-green-500 focus:ring-green-500"
                     placeholder="••••••••"
                     minLength={6}
                   />
                 </div>
-              )}
 
-              <Button 
-                type="submit" 
-                disabled={loading} 
-                className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold py-3 rounded-lg shadow-lg transition-all duration-200"
-              >
-                {loading ? 'Processing...' : (isLogin ? 'Sign In' : 'Create Account')}
-              </Button>
-            </form>
+                {!isLogin && (
+                  <div>
+                    <Label htmlFor="confirmPassword" className="text-gray-900 dark:text-white font-medium">Confirm Password</Label>
+                    <Input
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      type="password"
+                      required
+                      value={formData.confirmPassword}
+                      onChange={handleInputChange}
+                      className="mt-1 border-green-200 focus:border-green-500 focus:ring-green-500"
+                      placeholder="••••••••"
+                      minLength={6}
+                    />
+                  </div>
+                )}
 
-            <div className="mt-6 text-center">
-              <button
-                type="button"
-                onClick={() => setIsLogin(!isLogin)}
-                className="text-green-600 hover:text-green-700 font-medium transition-colors underline"
-              >
-                {isLogin 
-                  ? "Don't have an account? Sign up" 
-                  : 'Already have an account? Sign in'
-                }
-              </button>
+                <Button 
+                  type="submit" 
+                  disabled={loading} 
+                  className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold py-3 rounded-lg shadow-lg transition-all duration-200"
+                >
+                  {loading ? 'Processing...' : (isLogin ? 'Sign In' : 'Create Account')}
+                </Button>
+              </form>
+
+              <div className="mt-6 text-center">
+                <button
+                  type="button"
+                  onClick={() => setIsLogin(!isLogin)}
+                  className="text-green-600 hover:text-green-700 font-medium transition-colors underline"
+                >
+                  {isLogin 
+                    ? "Don't have an account? Sign up" 
+                    : 'Already have an account? Sign in'
+                  }
+                </button>
+              </div>
             </div>
-          </div>
-        </Card>
+          </Card>
+        )}
       </div>
     </div>
   );

@@ -46,9 +46,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         
         // Store session in localStorage for persistence
         if (session) {
-          localStorage.setItem('carevital_session', JSON.stringify(session));
+          localStorage.setItem('healinton_session', JSON.stringify(session));
         } else {
-          localStorage.removeItem('carevital_session');
+          localStorage.removeItem('healinton_session');
         }
       }
     );
@@ -63,7 +63,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       password,
       options: {
         data: userData,
-        emailRedirectTo: `${window.location.origin}/dashboard`
+        emailRedirectTo: `${window.location.origin}/auth?type=signup`
       }
     });
     setLoading(false);
@@ -83,7 +83,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signOut = async () => {
     setLoading(true);
     await supabase.auth.signOut();
-    localStorage.removeItem('carevital_session');
+    localStorage.removeItem('healinton_session');
     setLoading(false);
   };
 

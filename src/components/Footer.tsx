@@ -15,7 +15,7 @@ const Footer = () => {
                 <Heart className="h-6 w-6 text-green-600" />
               </div>
               <span className="text-2xl font-bold text-white">
-                Carevital
+                Healinton
               </span>
             </div>
             <p className="text-green-100 leading-relaxed">
@@ -50,18 +50,18 @@ const Footer = () => {
             </h3>
             <div className="space-y-3">
               <a 
-                href="tel:+1-800-CAREVITAL" 
+                href="tel:+1-800-HEALINTON" 
                 className="flex items-center space-x-2 text-green-100 hover:text-white transition-colors"
               >
                 <Phone className="h-4 w-4" />
-                <span>+1-800-CAREVITAL</span>
+                <span>+1-800-HEALINTON</span>
               </a>
               <a 
-                href="mailto:medical@carevital.com" 
+                href="mailto:medical@healinton.com" 
                 className="flex items-center space-x-2 text-green-100 hover:text-white transition-colors"
               >
                 <Mail className="h-4 w-4" />
-                <span>medical@carevital.com</span>
+                <span>medical@healinton.com</span>
               </a>
               <div className="flex items-center space-x-2 text-green-100">
                 <Clock className="h-4 w-4" />
@@ -86,11 +86,11 @@ const Footer = () => {
                 <span>+1-555-0123</span>
               </a>
               <a 
-                href="mailto:support@carevital.com" 
+                href="mailto:support@healinton.com" 
                 className="flex items-center space-x-2 text-green-100 hover:text-white transition-colors"
               >
                 <Mail className="h-4 w-4" />
-                <span>support@carevital.com</span>
+                <span>support@healinton.com</span>
               </a>
             </div>
           </div>
@@ -99,7 +99,7 @@ const Footer = () => {
         {/* Bottom Bar */}
         <div className="border-t border-green-600 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-green-100 text-sm">
-            © 2024 Carevital. All rights reserved.
+            © 2024 Healinton. All rights reserved.
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0">
             <Link to="/privacy" className="text-green-100 hover:text-white text-sm transition-colors">
