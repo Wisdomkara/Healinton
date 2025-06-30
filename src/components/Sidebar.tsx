@@ -4,6 +4,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
+import { usePremium } from '@/hooks/usePremium';
 import { 
   Home, 
   Heart, 
@@ -29,9 +30,7 @@ interface SidebarProps {
 const Sidebar = ({ isOpen = true, onClose, onSectionChange, activeSection = 'overview' }: SidebarProps) => {
   const location = useLocation();
   const { user } = useAuth();
-  
-  // Mock premium status - in real app, this would come from user's subscription data
-  const isPremiumUser = false; // This should be fetched from your subscription data
+  const { isPremium } = usePremium();
 
   const navItems = [
     { icon: Home, label: 'Dashboard', section: 'overview', isPremium: false },
@@ -47,8 +46,8 @@ const Sidebar = ({ isOpen = true, onClose, onSectionChange, activeSection = 'ove
     { icon: Settings, label: 'Settings', section: 'settings', isPremium: false }
   ];
 
-  const handleNavClick = (section: string, isPremium: boolean) => {
-    if (isPremium && !isPremiumUser) {
+  const handleNavClick = (section: string, itemIsPremium: boolean) => {
+    if (itemIsPremium && !isPremium) {
       // Redirect to premium page if trying to access premium features
       window.location.href = '/premium';
       return;

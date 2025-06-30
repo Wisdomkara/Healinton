@@ -5,15 +5,14 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Crown } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { usePremium } from '@/hooks/usePremium';
 
 const PremiumBanner = () => {
   const { user } = useAuth();
+  const { isPremium, loading } = usePremium();
   
-  // Mock premium status - in real app, this would come from user's subscription data
-  const isPremiumUser = false; // This should be fetched from your subscription data
-
-  // Don't show banner if user is already premium
-  if (isPremiumUser) {
+  // Don't show banner if user is premium or still loading
+  if (loading || isPremium) {
     return null;
   }
 
@@ -54,7 +53,7 @@ const PremiumBanner = () => {
           <Button 
             className="w-full bg-white text-primary-600 hover:bg-gray-100 font-semibold py-3 transition-all duration-300"
           >
-            Go Premium - Get the best of healthcare
+            Go Premium - Get the best of healthcare from your device
           </Button>
         </Link>
       </div>

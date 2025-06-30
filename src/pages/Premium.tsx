@@ -1,8 +1,8 @@
-
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
 import { Crown, Check, Star, Utensils, Calendar, Users, Truck, Phone, Clock, Shield, TrendingUp, Heart } from 'lucide-react';
 
 const Premium = () => {
@@ -18,17 +18,31 @@ const Premium = () => {
 
     setLoading(true);
     try {
-      // Here you would integrate with Stripe or your payment provider
-      // For now, we'll simulate the process
-      console.log(`Subscribing to ${planType} plan`);
-      
-      // Simulate API call
+      // Add user to premium_users table when they subscribe
+      const { error } = await supabase
+        .from('premium_users')
+        .insert({
+          user_id: user.id,
+          subscription_type: 'paid',
+          added_by: 'subscription',
+          notes: `Subscribed to ${planType} plan`
+        });
+
+      if (error) {
+        console.error('Error adding premium user:', error);
+        alert('There was an error processing your subscription. Please try again.');
+        return;
+      }
+
+      // Simulate API call for payment processing
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       // After successful payment, redirect to dashboard with premium features
+      alert('Subscription successful! You now have access to all premium features.');
       window.location.href = '/dashboard';
     } catch (error) {
       console.error('Subscription error:', error);
+      alert('There was an error processing your subscription. Please try again.');
     } finally {
       setLoading(false);
     }

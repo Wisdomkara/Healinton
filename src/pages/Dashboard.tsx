@@ -17,12 +17,14 @@ import NotificationCenter from '@/components/NotificationCenter';
 import PremiumBanner from '@/components/PremiumBanner';
 import { useScrollAnimation, useStaggerAnimation } from '@/hooks/useScrollAnimation';
 import { useAuth } from '@/hooks/useAuth';
+import { usePremium } from '@/hooks/usePremium';
 import { supabase } from '@/integrations/supabase/client';
 import { getMealPlanForIllness, getHealthTipsForIllness } from '@/utils/mealPlans';
 import { Heart, Calendar, Bell, Clock, TrendingUp, Activity, Utensils } from 'lucide-react';
 
 const Dashboard = () => {
   const { user } = useAuth();
+  const { isPremium } = usePremium();
   const heroRef = useScrollAnimation();
   const metricsRef = useStaggerAnimation();
   const mealsRef = useStaggerAnimation();
@@ -162,7 +164,7 @@ const Dashboard = () => {
               ))}
             </div>
 
-            {/* Premium Banner */}
+            {/* Premium Banner - only show if not premium */}
             <PremiumBanner />
 
             {/* Today's Meal Plan */}
