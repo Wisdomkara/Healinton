@@ -32,13 +32,14 @@ export const usePremium = (): PremiumStatus => {
       }
 
       try {
-        // Check if user is in premium_users table
+        // Use .select() instead of .maybeSingle() to handle multiple rows
         const { data, error } = await supabase
           .from('premium_users')
           .select('subscription_type, expires_at, is_active')
           .eq('user_id', user.id)
           .eq('is_active', true)
-          .maybeSingle();
+          .order('created_at', { ascending: false })
+          .limit(1);
 
         if (error) {
           console.error('Error checking premium status:', error);
@@ -51,13 +52,14 @@ export const usePremium = (): PremiumStatus => {
           return;
         }
 
+        const latestRecord = data && data.length > 0 ? data[0] : null;
         const now = new Date();
-        const isExpired = data?.expires_at && new Date(data.expires_at) < now;
+        const isExpired = latestRecord?.expires_at && new Date(latestRecord.expires_at) < now;
         
         setPremiumStatus({
-          isPremium: !!data && !isExpired,
-          subscriptionType: data?.subscription_type || null,
-          expiresAt: data?.expires_at || null,
+          isPremium: !!latestRecord && !isExpired,
+          subscriptionType: latestRecord?.subscription_type || null,
+          expiresAt: latestRecord?.expires_at || null,
           loading: false,
         });
       } catch (error) {

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -82,6 +83,10 @@ const Auth = () => {
             variant: "destructive"
           });
         } else {
+          toast({
+            title: "Login Successful",
+            description: "Welcome back to Healinton!"
+          });
           navigate('/dashboard');
         }
       } else {
@@ -89,6 +94,15 @@ const Auth = () => {
           toast({
             title: "Error",
             description: "Passwords don't match",
+            variant: "destructive"
+          });
+          return;
+        }
+
+        if (!formData.firstName || !formData.lastName || !formData.gender || !formData.country || !formData.illnessType) {
+          toast({
+            title: "Error",
+            description: "Please fill in all required fields",
             variant: "destructive"
           });
           return;
@@ -111,11 +125,18 @@ const Auth = () => {
           });
         } else {
           toast({
-            title: "Account Created",
-            description: "Please check your email to verify your account, then click the link to return to dashboard"
+            title: "Account Created Successfully!",
+            description: "Please check your email to verify your account. You'll be redirected to the dashboard after verification."
           });
+          // Don't redirect immediately for signup - wait for email verification
         }
       }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive"
+      });
     } finally {
       setLoading(false);
     }
@@ -131,7 +152,7 @@ const Auth = () => {
               <Heart className="h-8 w-8 text-white" />
             </div>
             <span className="text-3xl font-bold bg-gradient-to-r from-green-600 to-green-800 bg-clip-text text-transparent">
-              Carevital
+              Healinton
             </span>
           </Link>
           <p className="text-gray-600 dark:text-gray-300 mt-2 text-sm">
@@ -148,7 +169,7 @@ const Auth = () => {
               <p className="text-gray-600 dark:text-gray-300 mt-1 text-sm">
                 {isLogin 
                   ? 'Access your personalized health dashboard' 
-                  : 'Join thousands managing their health with Carevital'
+                  : 'Join thousands managing their health with Healinton'
                 }
               </p>
             </div>
@@ -158,7 +179,7 @@ const Auth = () => {
                 <>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="firstName" className="text-gray-900 dark:text-white font-medium">First Name</Label>
+                      <Label htmlFor="firstName" className="text-gray-900 dark:text-white font-medium">First Name *</Label>
                       <Input
                         id="firstName"
                         name="firstName"
@@ -170,7 +191,7 @@ const Auth = () => {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="lastName" className="text-gray-900 dark:text-white font-medium">Last Name</Label>
+                      <Label htmlFor="lastName" className="text-gray-900 dark:text-white font-medium">Last Name *</Label>
                       <Input
                         id="lastName"
                         name="lastName"
@@ -184,7 +205,7 @@ const Auth = () => {
                   </div>
 
                   <div>
-                    <Label htmlFor="gender" className="text-gray-900 dark:text-white font-medium">Gender</Label>
+                    <Label htmlFor="gender" className="text-gray-900 dark:text-white font-medium">Gender *</Label>
                     <Select value={formData.gender} onValueChange={(value) => handleSelectChange('gender', value)}>
                       <SelectTrigger className="mt-1 border-green-200 focus:border-green-500 focus:ring-green-500 bg-white dark:bg-gray-800 z-50">
                         <SelectValue placeholder="Select your gender" />
@@ -198,7 +219,7 @@ const Auth = () => {
                   </div>
 
                   <div>
-                    <Label htmlFor="country" className="text-gray-900 dark:text-white font-medium">Country</Label>
+                    <Label htmlFor="country" className="text-gray-900 dark:text-white font-medium">Country *</Label>
                     <Select value={formData.country} onValueChange={(value) => handleSelectChange('country', value)}>
                       <SelectTrigger className="mt-1 border-green-200 focus:border-green-500 focus:ring-green-500 bg-white dark:bg-gray-800 z-40">
                         <SelectValue placeholder="Select your country" />
@@ -214,7 +235,7 @@ const Auth = () => {
                   </div>
 
                   <div>
-                    <Label htmlFor="illness" className="text-gray-900 dark:text-white font-medium">Health Condition to Manage</Label>
+                    <Label htmlFor="illness" className="text-gray-900 dark:text-white font-medium">Health Condition to Manage *</Label>
                     <Select value={formData.illnessType} onValueChange={(value) => handleSelectChange('illnessType', value)}>
                       <SelectTrigger className="mt-1 border-green-200 focus:border-green-500 focus:ring-green-500 bg-white dark:bg-gray-800 z-30">
                         <SelectValue placeholder="Select condition to manage" />
@@ -256,6 +277,7 @@ const Auth = () => {
                   onChange={handleInputChange}
                   className="mt-1 border-green-200 focus:border-green-500 focus:ring-green-500"
                   placeholder="••••••••"
+                  minLength={6}
                 />
               </div>
 
@@ -271,6 +293,7 @@ const Auth = () => {
                     onChange={handleInputChange}
                     className="mt-1 border-green-200 focus:border-green-500 focus:ring-green-500"
                     placeholder="••••••••"
+                    minLength={6}
                   />
                 </div>
               )}

@@ -18,6 +18,10 @@ const Premium = () => {
 
     setLoading(true);
     try {
+      // Calculate expiry date (30 days from now for monthly subscription)
+      const expiryDate = new Date();
+      expiryDate.setMonth(expiryDate.getMonth() + 1);
+
       // Add user to premium_users table when they subscribe
       const { error } = await supabase
         .from('premium_users')
@@ -25,7 +29,8 @@ const Premium = () => {
           user_id: user.id,
           subscription_type: 'paid',
           added_by: 'subscription',
-          notes: `Subscribed to ${planType} plan`
+          expires_at: expiryDate.toISOString(),
+          notes: `Subscribed to ${planType} plan - Monthly billing`
         });
 
       if (error) {
@@ -38,7 +43,7 @@ const Premium = () => {
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       // After successful payment, redirect to dashboard with premium features
-      alert('Subscription successful! You now have access to all premium features.');
+      alert('Subscription successful! You now have access to all premium features for 30 days.');
       window.location.href = '/dashboard';
     } catch (error) {
       console.error('Subscription error:', error);
@@ -275,7 +280,7 @@ const Premium = () => {
         <div className="text-center bg-gradient-to-r from-green-600 to-blue-600 rounded-2xl p-12 text-white">
           <h2 className="text-3xl font-bold mb-4">Ready to Transform Your Health?</h2>
           <p className="text-xl mb-8 opacity-90">
-            Start your premium journey today with a 7-day free trial
+            Start your premium journey today with monthly billing
           </p>
           <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
             <Button
@@ -284,7 +289,7 @@ const Premium = () => {
               size="lg"
               className="bg-white text-green-600 hover:bg-gray-100 font-semibold px-8 py-4"
             >
-              {loading ? 'Processing...' : 'Start 7-Day Free Trial'}
+              {loading ? 'Processing...' : 'Get Premium - $19.99/month'}
             </Button>
             <Button
               variant="outline"
@@ -295,7 +300,7 @@ const Premium = () => {
             </Button>
           </div>
           <p className="text-sm mt-4 opacity-75">
-            No credit card required for trial. Cancel anytime.
+            Monthly billing. Cancel anytime.
           </p>
         </div>
       </div>
