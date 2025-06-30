@@ -25,7 +25,7 @@ const Header = () => {
               <Heart className="h-5 w-5 md:h-6 md:w-6 text-white" />
             </div>
             <span className="text-xl md:text-2xl font-bold bg-gradient-to-r from-green-600 to-green-800 bg-clip-text text-transparent">
-              Carevital
+              Healinton
             </span>
           </Link>
 
@@ -40,6 +40,9 @@ const Header = () => {
                 Dashboard
               </Link>
             )}
+            <Link to="/health-insurance" className="text-gray-700 dark:text-gray-300 hover:text-green-600 transition-colors font-medium hover:scale-105 transform">
+              Health Insurance
+            </Link>
             <Link to="/community" className="text-gray-700 dark:text-gray-300 hover:text-green-600 transition-colors font-medium hover:scale-105 transform">
               Community
             </Link>
@@ -83,7 +86,7 @@ const Header = () => {
                   <User className="h-4 w-4 md:h-5 md:w-5" />
                 </Button>
                 <Link to="/auth">
-                  <Button className="bg-green-600 hover:bg-green-700 transform hover:scale-105 transition-all shadow-md hover:shadow-lg text-xs px-2 py-1 h-8">
+                  <Button className="bg-green-600 hover:bg-green-700 transform hover:scale-105 transition-all shadow-md hover:shadow-lg text-xs px-3 py-1 h-8">
                     Get Started
                   </Button>
                 </Link>
@@ -123,6 +126,13 @@ const Header = () => {
                   Dashboard
                 </Link>
               )}
+              <Link 
+                to="/health-insurance" 
+                className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-green-600 hover:bg-green-50 dark:hover:bg-gray-800 transition-colors rounded-lg"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Health Insurance
+              </Link>
               <Link 
                 to="/community" 
                 className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-green-600 hover:bg-green-50 dark:hover:bg-gray-800 transition-colors rounded-lg"

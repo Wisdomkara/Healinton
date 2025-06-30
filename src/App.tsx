@@ -16,6 +16,7 @@ import BlogPost from "./pages/BlogPost";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import Accessibility from "./pages/Accessibility";
+import HealthInsurance from "./pages/HealthInsurance";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,13 +35,13 @@ const App = () => (
               <Route path="blog/:id" element={<BlogPost />} />
               <Route path="premium" element={<Premium />} />
               <Route path="community" element={<Community />} />
+              <Route path="health-insurance" element={<HealthInsurance />} />
               <Route path="privacy" element={<PrivacyPolicy />} />
               <Route path="terms" element={<TermsOfService />} />
               <Route path="accessibility" element={<Accessibility />} />
             </Route>
             <Route path="/auth" element={<Auth />} />
             <Route path="/dashboard/*" element={<Dashboard />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>

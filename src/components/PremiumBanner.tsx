@@ -1,9 +1,22 @@
+
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Crown } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
 
 const PremiumBanner = () => {
+  const { user } = useAuth();
+  
+  // Mock premium status - in real app, this would come from user's subscription data
+  const isPremiumUser = false; // This should be fetched from your subscription data
+
+  // Don't show banner if user is already premium
+  if (isPremiumUser) {
+    return null;
+  }
+
   return (
     <Card className="bg-gradient-to-r from-primary-500 via-primary-600 to-primary-700 text-white overflow-hidden relative">
       <div className="absolute inset-0 bg-gradient-to-r from-primary-600/80 to-primary-800/80"></div>
@@ -13,8 +26,8 @@ const PremiumBanner = () => {
             <Crown className="h-6 w-6 text-white" />
           </div>
           <div>
-            <h3 className="text-lg font-bold">Upgrade to Premium</h3>
-            <p className="text-primary-100 text-sm">Unlock advanced health tracking features</p>
+            <h3 className="text-lg font-bold">Go Premium</h3>
+            <p className="text-primary-100 text-sm">Get the best of healthcare from your device</p>
           </div>
         </div>
         
@@ -37,11 +50,13 @@ const PremiumBanner = () => {
           </div>
         </div>
 
-        <Button 
-          className="w-full bg-white text-primary-600 hover:bg-gray-100 font-semibold py-3 transition-all duration-300"
-        >
-          Start Premium Trial - $9.99/month
-        </Button>
+        <Link to="/premium">
+          <Button 
+            className="w-full bg-white text-primary-600 hover:bg-gray-100 font-semibold py-3 transition-all duration-300"
+          >
+            Go Premium - Get the best of healthcare
+          </Button>
+        </Link>
       </div>
     </Card>
   );
