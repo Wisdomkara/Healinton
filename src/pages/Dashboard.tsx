@@ -101,50 +101,50 @@ const Dashboard = () => {
     switch (activeSection) {
       case 'health-metrics':
         return (
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Health Metrics</h2>
+          <div className="w-full">
+            <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-4 md:mb-6">Health Metrics</h2>
             <HealthMetricsForm onUpdate={fetchHealthMetrics} />
           </div>
         );
       case 'symptoms':
         return (
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Symptom Logger</h2>
+          <div className="w-full">
+            <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-4 md:mb-6">Symptom Logger</h2>
             <SymptomLogger />
           </div>
         );
       case 'appointments':
         return (
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Hospital Appointments</h2>
+          <div className="w-full">
+            <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-4 md:mb-6">Hospital Appointments</h2>
             <HospitalBooking />
           </div>
         );
       case 'notifications':
         return (
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Notification Center</h2>
+          <div className="w-full">
+            <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-4 md:mb-6">Notification Center</h2>
             <NotificationCenter />
           </div>
         );
       case 'reminders':
         return (
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Set Reminders</h2>
+          <div className="w-full">
+            <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-4 md:mb-6">Set Reminders</h2>
             <ReminderForm />
           </div>
         );
       case 'shopping':
         return (
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Shopping List</h2>
+          <div className="w-full">
+            <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-4 md:mb-6">Shopping List</h2>
             <ShoppingList />
           </div>
         );
       case 'chat':
         return (
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">AI Health Assistant</h2>
+          <div className="w-full">
+            <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-4 md:mb-6">AI Health Assistant</h2>
             <AIChat />
           </div>
         );
@@ -154,9 +154,9 @@ const Dashboard = () => {
         return <Settings />;
       default:
         return (
-          <div className="space-y-8">
+          <div className="space-y-6 md:space-y-8 w-full">
             {/* Quick Stats */}
-            <div ref={metricsRef} className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div ref={metricsRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
               {displayedHealthMetrics.map((metric, index) => (
                 <div key={index} className="transform hover:scale-105 transition-transform">
                   <HealthMetricCard {...metric} />
@@ -168,28 +168,28 @@ const Dashboard = () => {
             <PremiumBanner />
 
             {/* Today's Meal Plan */}
-            <div>
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center">
-                  <Utensils className="h-6 w-6 mr-2 text-green-600" />
-                  Today's Meal Plan ({userProfile?.illness_type?.replace('_', ' ').toUpperCase() || 'HYPERTENSION'})
+            <div className="w-full">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 md:mb-6 space-y-2 sm:space-y-0">
+                <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white flex items-center">
+                  <Utensils className="h-5 w-5 md:h-6 md:w-6 mr-2 text-green-600" />
+                  <span className="break-words">Today's Meal Plan ({userProfile?.illness_type?.replace('_', ' ').toUpperCase() || 'HYPERTENSION'})</span>
                 </h2>
               </div>
-              <div ref={mealsRef} className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div ref={mealsRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                 {['morning', 'afternoon', 'night'].map((time) => (
                   <Card key={time} className="healthcare-card hover:shadow-lg transition-all transform hover:scale-105">
-                    <div className="p-4">
-                      <h3 className="font-semibold text-lg mb-3 capitalize text-green-700 dark:text-green-300">{time}</h3>
+                    <div className="p-3 md:p-4">
+                      <h3 className="font-semibold text-base md:text-lg mb-3 capitalize text-green-700 dark:text-green-300">{time}</h3>
                       <div className="space-y-2">
-                        <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border-l-4 border-green-500">
-                          <p className="text-sm font-medium text-green-800 dark:text-green-300">Low Budget</p>
-                          <p className="text-xs text-gray-600 dark:text-gray-300">
+                        <div className="p-2 md:p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border-l-4 border-green-500">
+                          <p className="text-xs md:text-sm font-medium text-green-800 dark:text-green-300">Low Budget</p>
+                          <p className="text-xs text-gray-600 dark:text-gray-300 break-words">
                             {todaysMealPlan[time as keyof typeof todaysMealPlan].low}
                           </p>
                         </div>
-                        <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border-l-4 border-blue-500">
-                          <p className="text-sm font-medium text-blue-800 dark:text-blue-300">High Budget</p>
-                          <p className="text-xs text-gray-600 dark:text-gray-300">
+                        <div className="p-2 md:p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border-l-4 border-blue-500">
+                          <p className="text-xs md:text-sm font-medium text-blue-800 dark:text-blue-300">High Budget</p>
+                          <p className="text-xs text-gray-600 dark:text-gray-300 break-words">
                             {todaysMealPlan[time as keyof typeof todaysMealPlan].high}
                           </p>
                         </div>
@@ -201,18 +201,18 @@ const Dashboard = () => {
             </div>
 
             {/* Health Tips */}
-            <Card className="healthcare-card hover:shadow-lg transition-shadow">
-              <div className="p-6">
-                <h3 className="text-xl font-semibold mb-4 flex items-center">
-                  <Heart className="h-5 w-5 mr-2 text-green-600" />
-                  Health Tips for {userProfile?.illness_type?.replace('_', ' ').toUpperCase() || 'HYPERTENSION'}
+            <Card className="healthcare-card hover:shadow-lg transition-shadow w-full">
+              <div className="p-4 md:p-6">
+                <h3 className="text-lg md:text-xl font-semibold mb-4 flex items-center">
+                  <Heart className="h-4 w-4 md:h-5 md:w-5 mr-2 text-green-600" />
+                  <span className="break-words">Health Tips for {userProfile?.illness_type?.replace('_', ' ').toUpperCase() || 'HYPERTENSION'}</span>
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
                   {currentHealthTips.map((tip, index) => (
-                    <div key={index} className="p-4 bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-lg hover:shadow-md transition-shadow">
-                      <div className="flex items-start space-x-3">
-                        <div className="w-3 h-3 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
-                        <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">{tip}</p>
+                    <div key={index} className="p-3 md:p-4 bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-lg hover:shadow-md transition-shadow">
+                      <div className="flex items-start space-x-2 md:space-x-3">
+                        <div className="w-2 h-2 md:w-3 md:h-3 bg-green-500 rounded-full mt-1 md:mt-2 flex-shrink-0"></div>
+                        <p className="text-gray-700 dark:text-gray-300 text-xs md:text-sm leading-relaxed break-words">{tip}</p>
                       </div>
                     </div>
                   ))}
@@ -221,42 +221,42 @@ const Dashboard = () => {
             </Card>
 
             {/* Quick Actions and AI Chat */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
               <Card className="healthcare-card hover:shadow-lg transition-shadow">
-                <div className="p-6">
-                  <h3 className="text-xl font-semibold mb-4">Quick Actions</h3>
-                  <div className="grid grid-cols-2 gap-3">
+                <div className="p-4 md:p-6">
+                  <h3 className="text-lg md:text-xl font-semibold mb-4">Quick Actions</h3>
+                  <div className="grid grid-cols-2 gap-2 md:gap-3">
                     <Button 
                       variant="outline" 
-                      className="h-auto p-4 flex-col space-y-2 hover:bg-green-50 hover:border-green-300 transition-all transform hover:scale-105"
+                      className="h-auto p-3 md:p-4 flex-col space-y-1 md:space-y-2 hover:bg-green-50 hover:border-green-300 transition-all transform hover:scale-105"
                       onClick={() => setActiveSection('symptoms')}
                     >
-                      <Clock className="h-5 w-5 text-green-600" />
-                      <span className="text-sm font-medium">Log Symptoms</span>
+                      <Clock className="h-4 w-4 md:h-5 md:w-5 text-green-600" />
+                      <span className="text-xs md:text-sm font-medium text-center">Log Symptoms</span>
                     </Button>
                     <Button 
                       variant="outline" 
-                      className="h-auto p-4 flex-col space-y-2 hover:bg-blue-50 hover:border-blue-300 transition-all transform hover:scale-105"
+                      className="h-auto p-3 md:p-4 flex-col space-y-1 md:space-y-2 hover:bg-blue-50 hover:border-blue-300 transition-all transform hover:scale-105"
                       onClick={() => setActiveSection('health-metrics')}
                     >
-                      <Heart className="h-5 w-5 text-blue-600" />
-                      <span className="text-sm font-medium">Track Vitals</span>
+                      <Heart className="h-4 w-4 md:h-5 md:w-5 text-blue-600" />
+                      <span className="text-xs md:text-sm font-medium text-center">Track Vitals</span>
                     </Button>
                     <Button 
                       variant="outline" 
-                      className="h-auto p-4 flex-col space-y-2 hover:bg-purple-50 hover:border-purple-300 transition-all transform hover:scale-105"
+                      className="h-auto p-3 md:p-4 flex-col space-y-1 md:space-y-2 hover:bg-purple-50 hover:border-purple-300 transition-all transform hover:scale-105"
                       onClick={() => setActiveSection('reminders')}
                     >
-                      <Bell className="h-5 w-5 text-purple-600" />
-                      <span className="text-sm font-medium">Set Reminder</span>
+                      <Bell className="h-4 w-4 md:h-5 md:w-5 text-purple-600" />
+                      <span className="text-xs md:text-sm font-medium text-center">Set Reminder</span>
                     </Button>
                     <Button 
                       variant="outline" 
-                      className="h-auto p-4 flex-col space-y-2 hover:bg-orange-50 hover:border-orange-300 transition-all transform hover:scale-105"
+                      className="h-auto p-3 md:p-4 flex-col space-y-1 md:space-y-2 hover:bg-orange-50 hover:border-orange-300 transition-all transform hover:scale-105"
                       onClick={() => setActiveSection('appointments')}
                     >
-                      <Calendar className="h-5 w-5 text-orange-600" />
-                      <span className="text-sm font-medium">Book Checkup</span>
+                      <Calendar className="h-4 w-4 md:h-5 md:w-5 text-orange-600" />
+                      <span className="text-xs md:text-sm font-medium text-center">Book Checkup</span>
                     </Button>
                   </div>
                 </div>
@@ -271,14 +271,14 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background w-full overflow-x-hidden">
       {/* Mobile Header */}
       <DashboardHeader 
         onMenuClick={() => setSidebarOpen(true)}
         userName={userName}
       />
 
-      <div className="flex">
+      <div className="flex w-full min-h-screen">
         {/* Sidebar */}
         <Sidebar 
           isOpen={sidebarOpen}
@@ -296,18 +296,20 @@ const Dashboard = () => {
         )}
 
         {/* Main Content */}
-        <div className="flex-1 p-4 md:p-6">
+        <div className="flex-1 w-full max-w-full min-w-0 p-3 md:p-4 lg:p-6">
           {/* Desktop Welcome Section */}
-          <div ref={heroRef} className="mb-8 hidden md:block">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+          <div ref={heroRef} className="mb-6 md:mb-8 hidden md:block">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">
               Good day, {userName}! 👋
             </h1>
-            <p className="text-gray-600 dark:text-gray-300">
+            <p className="text-sm md:text-base text-gray-600 dark:text-gray-300">
               Here's your health overview for today
             </p>
           </div>
 
-          {renderActiveSection()}
+          <div className="w-full max-w-full">
+            {renderActiveSection()}
+          </div>
         </div>
       </div>
     </div>
