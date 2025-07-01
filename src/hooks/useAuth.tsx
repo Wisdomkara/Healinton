@@ -58,33 +58,69 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signUp = async (email: string, password: string, userData: any) => {
     setLoading(true);
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: userData,
-        emailRedirectTo: `${window.location.origin}/auth?type=signup`
+    try {
+      console.log('Signing up user with data:', { email, userData });
+      
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: userData,
+          emailRedirectTo: `${window.location.origin}/auth?type=signup`
+        }
+      });
+      
+      if (error) {
+        console.error('Signup error:', error);
+      } else {
+        console.log('Signup successful');
       }
-    });
-    setLoading(false);
-    return { error };
+      
+      return { error };
+    } catch (error) {
+      console.error('Unexpected signup error:', error);
+      return { error };
+    } finally {
+      setLoading(false);
+    }
   };
 
   const signIn = async (email: string, password: string) => {
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    });
-    setLoading(false);
-    return { error };
+    try {
+      console.log('Signing in user:', email);
+      
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+      
+      if (error) {
+        console.error('Signin error:', error);
+      } else {
+        console.log('Signin successful');
+      }
+      
+      return { error };
+    } catch (error) {
+      console.error('Unexpected signin error:', error);
+      return { error };
+    } finally {
+      setLoading(false);
+    }
   };
 
   const signOut = async () => {
     setLoading(true);
-    await supabase.auth.signOut();
-    localStorage.removeItem('healinton_session');
-    setLoading(false);
+    try {
+      await supabase.auth.signOut();
+      localStorage.removeItem('healinton_session');
+      console.log('Signout successful');
+    } catch (error) {
+      console.error('Signout error:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
