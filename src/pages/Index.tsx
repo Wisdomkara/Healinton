@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -5,6 +6,7 @@ import { Card } from '@/components/ui/card';
 import HealthMetricCard from '@/components/HealthMetricCard';
 import MealPlanCard from '@/components/MealPlanCard';
 import PremiumBanner from '@/components/PremiumBanner';
+import TestimonialsSection from '@/components/TestimonialsSection';
 import Loader from '@/components/Loader';
 import { useAuth } from '@/hooks/useAuth';
 import { Heart, User, Calendar, Stethoscope, Clock, Settings, Shield, Users, TrendingUp, Smartphone, CheckCircle } from 'lucide-react';
@@ -50,7 +52,6 @@ const Index = () => {
     {
       title: 'Mediterranean Quinoa Bowl',
       description: 'Heart-healthy bowl with quinoa, fresh vegetables, and olive oil dressing. Perfect for managing cholesterol levels.',
-      calories: 420,
       prepTime: '15 min',
       difficulty: 'Easy' as const,
       healthScore: 9
@@ -58,7 +59,6 @@ const Index = () => {
     {
       title: 'Grilled Salmon with Steamed Broccoli',
       description: 'Omega-3 rich salmon paired with fiber-rich broccoli, ideal for heart health and blood pressure management.',
-      calories: 380,
       prepTime: '20 min',
       difficulty: 'Medium' as const,
       healthScore: 10
@@ -132,7 +132,7 @@ const Index = () => {
             </h1>
             
             <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed px-2 text-center">
-              Carevital helps you manage chronic conditions like diabetes, hypertension, and heart disease 
+              Healinton helps you manage chronic conditions like diabetes, hypertension, and heart disease 
               with personalized meal plans, medication reminders, and health tracking tools.
             </p>
             
@@ -142,9 +142,9 @@ const Index = () => {
                   Start Your Health Journey
                 </Button>
               </Link>
-              <Link to="/blog" className="w-full sm:w-auto">
-                <Button variant="outline" size="lg" className="w-full sm:w-auto px-6 md:px-8 py-3 md:py-4 text-base md:text-lg border-green-600 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 transform hover:scale-105 transition-all duration-200 backdrop-blur-sm">
-                  Learn More
+              <Link to="/about" className="w-full sm:w-auto">
+                <Button size="lg" className="w-full sm:w-auto px-6 md:px-8 py-3 md:py-4 text-base md:text-lg bg-green-600 text-white hover:bg-white hover:text-green-600 border-2 border-green-600 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl">
+                  Contact Sales
                 </Button>
               </Link>
             </div>
@@ -215,6 +215,9 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* Testimonials Section */}
+      <TestimonialsSection />
 
       {/* Benefits Section */}
       <section className="py-12 md:py-16 lg:py-20 w-full overflow-hidden">
@@ -356,7 +359,7 @@ const Index = () => {
               Take Control of Your Health Today
             </h2>
             <p className="text-base sm:text-lg text-white/90 mb-8 leading-relaxed px-2 text-center">
-              Join thousands of people who are successfully managing their chronic conditions with Carevital.
+              Join thousands of people who are successfully managing their chronic conditions with Healinton.
             </p>
             <div className="flex justify-center space-x-4">
               <Link to={user ? "/dashboard" : "/auth"}>
