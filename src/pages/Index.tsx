@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -52,6 +51,7 @@ const Index = () => {
     {
       title: 'Mediterranean Quinoa Bowl',
       description: 'Heart-healthy bowl with quinoa, fresh vegetables, and olive oil dressing. Perfect for managing cholesterol levels.',
+      calories: 450,
       prepTime: '15 min',
       difficulty: 'Easy' as const,
       healthScore: 9
@@ -59,6 +59,7 @@ const Index = () => {
     {
       title: 'Grilled Salmon with Steamed Broccoli',
       description: 'Omega-3 rich salmon paired with fiber-rich broccoli, ideal for heart health and blood pressure management.',
+      calories: 380,
       prepTime: '20 min',
       difficulty: 'Medium' as const,
       healthScore: 10
