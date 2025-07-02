@@ -40,6 +40,9 @@ const Header = () => {
                 Dashboard
               </Link>
             )}
+            <Link to="/about" className="text-gray-700 dark:text-gray-300 hover:text-green-600 transition-colors font-medium hover:scale-105 transform">
+              About
+            </Link>
             <Link to="/health-insurance" className="text-gray-700 dark:text-gray-300 hover:text-green-600 transition-colors font-medium hover:scale-105 transform">
               Health Insurance
             </Link>
@@ -105,14 +108,16 @@ const Header = () => {
           </div>
         </div>
 
-        {/* Mobile Menu */}
-        {isMenuOpen && (
-          <div className="md:hidden border-t bg-white dark:bg-gray-900 py-4 animate-slide-down">
+        {/* Mobile Menu with smooth animations */}
+        <div className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
+          isMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+        }`}>
+          <div className="border-t bg-white dark:bg-gray-900 py-4 animate-fade-in">
             <nav className="flex flex-col space-y-2">
               {user ? (
                 <Link 
                   to="/dashboard" 
-                  className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-green-600 hover:bg-green-50 dark:hover:bg-gray-800 transition-colors rounded-lg"
+                  className="px-4 py-3 text-gray-700 dark:text-gray-300 hover:text-green-600 hover:bg-green-50 dark:hover:bg-gray-800 transition-all duration-200 rounded-lg mx-2 transform hover:scale-[1.02]"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Dashboard
@@ -120,36 +125,43 @@ const Header = () => {
               ) : (
                 <Link 
                   to="/auth" 
-                  className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-green-600 hover:bg-green-50 dark:hover:bg-gray-800 transition-colors rounded-lg"
+                  className="px-4 py-3 text-gray-700 dark:text-gray-300 hover:text-green-600 hover:bg-green-50 dark:hover:bg-gray-800 transition-all duration-200 rounded-lg mx-2 transform hover:scale-[1.02]"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Dashboard
                 </Link>
               )}
               <Link 
+                to="/about" 
+                className="px-4 py-3 text-gray-700 dark:text-gray-300 hover:text-green-600 hover:bg-green-50 dark:hover:bg-gray-800 transition-all duration-200 rounded-lg mx-2 transform hover:scale-[1.02]"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                About
+              </Link>
+              <Link 
                 to="/health-insurance" 
-                className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-green-600 hover:bg-green-50 dark:hover:bg-gray-800 transition-colors rounded-lg"
+                className="px-4 py-3 text-gray-700 dark:text-gray-300 hover:text-green-600 hover:bg-green-50 dark:hover:bg-gray-800 transition-all duration-200 rounded-lg mx-2 transform hover:scale-[1.02]"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Health Insurance
               </Link>
               <Link 
                 to="/community" 
-                className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-green-600 hover:bg-green-50 dark:hover:bg-gray-800 transition-colors rounded-lg"
+                className="px-4 py-3 text-gray-700 dark:text-gray-300 hover:text-green-600 hover:bg-green-50 dark:hover:bg-gray-800 transition-all duration-200 rounded-lg mx-2 transform hover:scale-[1.02]"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Community
               </Link>
               <Link 
                 to="/blog" 
-                className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-green-600 hover:bg-green-50 dark:hover:bg-gray-800 transition-colors rounded-lg"
+                className="px-4 py-3 text-gray-700 dark:text-gray-300 hover:text-green-600 hover:bg-green-50 dark:hover:bg-gray-800 transition-all duration-200 rounded-lg mx-2 transform hover:scale-[1.02]"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Blog
               </Link>
               <Link 
                 to="/premium" 
-                className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-green-600 hover:bg-green-50 dark:hover:bg-gray-800 transition-colors rounded-lg"
+                className="px-4 py-3 text-gray-700 dark:text-gray-300 hover:text-green-600 hover:bg-green-50 dark:hover:bg-gray-800 transition-all duration-200 rounded-lg mx-2 transform hover:scale-[1.02]"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Premium
@@ -159,7 +171,7 @@ const Header = () => {
                 <Button 
                   onClick={handleSignOut}
                   variant="ghost"
-                  className="mx-4 mt-2 justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
+                  className="mx-4 mt-2 justify-start text-red-600 hover:text-red-700 hover:bg-red-50 transition-all duration-200 transform hover:scale-[1.02]"
                 >
                   <LogOut className="h-4 w-4 mr-2" />
                   Sign Out
@@ -167,7 +179,7 @@ const Header = () => {
               )}
             </nav>
           </div>
-        )}
+        </div>
       </div>
     </header>
   );

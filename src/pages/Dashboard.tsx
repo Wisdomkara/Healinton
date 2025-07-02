@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -15,6 +14,7 @@ import HealthBlog from '@/components/HealthBlog';
 import Settings from '@/components/Settings';
 import NotificationCenter from '@/components/NotificationCenter';
 import PremiumBanner from '@/components/PremiumBanner';
+import RateUs from '@/components/RateUs';
 import { useScrollAnimation, useStaggerAnimation } from '@/hooks/useScrollAnimation';
 import { useAuth } from '@/hooks/useAuth';
 import { usePremium } from '@/hooks/usePremium';
@@ -150,6 +150,13 @@ const Dashboard = () => {
         );
       case 'blog':
         return <HealthBlog />;
+      case 'rate-us':
+        return (
+          <div className="w-full">
+            <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-4 md:mb-6">Rate Your Experience</h2>
+            <RateUs />
+          </div>
+        );
       case 'settings':
         return <Settings />;
       default:

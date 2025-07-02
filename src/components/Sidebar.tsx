@@ -17,7 +17,9 @@ import {
   Stethoscope,
   X,
   Crown,
-  Shield
+  Shield,
+  Info,
+  Star
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -43,6 +45,8 @@ const Sidebar = ({ isOpen = true, onClose, onSectionChange, activeSection = 'ove
     { icon: MessageSquare, label: 'AI Chat', section: 'chat', isPremium: false },
     { icon: FileText, label: 'Health Blog', section: 'blog', isPremium: false },
     { icon: Shield, label: 'Health Insurance', section: 'health-insurance', isPremium: false },
+    { icon: Star, label: 'Rate Us', section: 'rate-us', isPremium: false },
+    { icon: Info, label: 'About', section: 'about', isPremium: false },
     { icon: Settings, label: 'Settings', section: 'settings', isPremium: false }
   ];
 
@@ -55,6 +59,11 @@ const Sidebar = ({ isOpen = true, onClose, onSectionChange, activeSection = 'ove
 
     if (section === 'health-insurance') {
       window.location.href = '/health-insurance';
+      return;
+    }
+
+    if (section === 'about') {
+      window.location.href = '/about';
       return;
     }
 
