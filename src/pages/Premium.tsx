@@ -56,9 +56,9 @@ const Premium = () => {
   const plans = [
     {
       name: 'Basic',
-      price: '$9.99',
-      period: '/month',
-      description: 'Perfect for getting started with health management',
+      price: 'FREE',
+      period: 'till October 2025',
+      description: 'Perfect for getting started with health management - Sponsored',
       features: [
         'Basic health tracking',
         'Simple meal plans',
@@ -71,9 +71,9 @@ const Premium = () => {
     },
     {
       name: 'Premium',
-      price: '$19.99',
-      period: '/month',
-      description: 'Complete health management solution',
+      price: 'FREE',
+      period: 'till October 2025',
+      description: 'Complete health management solution - Sponsored',
       features: [
         'Advanced health analytics',
         'Personalized meal plans',
@@ -89,9 +89,9 @@ const Premium = () => {
     },
     {
       name: 'Enterprise',
-      price: '$39.99',
-      period: '/month',
-      description: 'For healthcare providers and organizations',
+      price: 'FREE',
+      period: 'till October 2025',
+      description: 'For healthcare providers and organizations - Sponsored',
       features: [
         'Everything in Premium',
         'Multi-patient management',
@@ -280,7 +280,7 @@ const Premium = () => {
         <div className="text-center bg-gradient-to-r from-green-600 to-blue-600 rounded-2xl p-12 text-white">
           <h2 className="text-3xl font-bold mb-4">Ready to Transform Your Health?</h2>
           <p className="text-xl mb-8 opacity-90">
-            Start your premium journey today with monthly billing
+            Get premium features FREE till October 2025 - Sponsored
           </p>
           <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
             <Button
@@ -289,7 +289,7 @@ const Premium = () => {
               size="lg"
               className="bg-white text-green-600 hover:bg-gray-100 font-semibold px-8 py-4"
             >
-              {loading ? 'Processing...' : 'Get Premium - $19.99/month'}
+              {loading ? 'Processing...' : 'Get Premium - FREE till October 2025'}
             </Button>
             <Button
               variant="outline"
@@ -300,7 +300,7 @@ const Premium = () => {
             </Button>
           </div>
           <p className="text-sm mt-4 opacity-75">
-            Monthly billing. Cancel anytime.
+            Sponsored free access. No billing till October 2025.
           </p>
         </div>
       </div>

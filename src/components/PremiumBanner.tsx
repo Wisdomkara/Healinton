@@ -53,7 +53,7 @@ const PremiumBanner = () => {
           <Button 
             className="w-full bg-white text-primary-600 hover:bg-gray-100 font-semibold py-3 transition-all duration-300"
           >
-            Go Premium - Get the best of healthcare from your device
+            Get Premium FREE till October 2025 - Sponsored
           </Button>
         </Link>
       </div>

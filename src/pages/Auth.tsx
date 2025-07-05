@@ -63,11 +63,9 @@ const Auth = () => {
     if (emailVerified && accessToken) {
       toast({
         title: "Email Verified Successfully!",
-        description: "Your account has been verified. Redirecting to dashboard...",
+        description: "Your account has been verified. You can now sign in to your account.",
       });
-      setTimeout(() => {
-        navigate('/dashboard');
-      }, 2000);
+      // Don't auto-redirect, let user sign in manually
     }
   }, [searchParams, navigate, toast]);
 
@@ -168,8 +166,18 @@ const Auth = () => {
   const isVerificationSuccess = searchParams.get('type') === 'signup' && searchParams.get('access_token');
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100 dark:from-green-950 dark:via-gray-900 dark:to-green-900 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100 dark:from-green-950 dark:via-gray-900 dark:to-green-900 flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Decorative background shapes */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-16 left-16 w-24 h-24 bg-green-300/20 rounded-full blur-sm"></div>
+        <div className="absolute top-32 right-24 w-32 h-32 bg-green-400/15 rounded-full blur-md"></div>
+        <div className="absolute bottom-32 left-24 w-28 h-28 bg-green-500/25 rounded-full blur-sm"></div>
+        <div className="absolute bottom-48 right-20 w-36 h-36 bg-green-300/20 rounded-full blur-md"></div>
+        <div className="absolute top-1/2 left-8 w-20 h-20 bg-green-600/25 rounded-full blur-sm"></div>
+        <div className="absolute top-1/3 right-8 w-44 h-44 bg-green-400/15 rounded-full blur-lg"></div>
+      </div>
+      <div className="absolute inset-0 bg-white/40 dark:bg-gray-900/40"></div>
+      <div className="w-full max-w-md relative z-10">
         {/* Logo */}
         <div className="text-center mb-8">
           <Link to="/" className="inline-flex items-center space-x-2 hover:opacity-80 transition-opacity">
@@ -200,13 +208,13 @@ const Auth = () => {
                 Email Verified Successfully!
               </h2>
               <p className="text-gray-600 dark:text-gray-300 mb-4">
-                Your account has been verified. You will be redirected to your dashboard shortly.
+                Your account has been verified. You can now sign in to your account.
               </p>
               <Button 
-                onClick={() => navigate('/dashboard')}
+                onClick={() => {setIsLogin(true); window.location.reload();}}
                 className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white"
               >
-                Go to Dashboard
+                Sign In Now
               </Button>
             </div>
           </Card>

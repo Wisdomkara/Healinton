@@ -112,7 +112,23 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background w-full overflow-x-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100 dark:from-green-950 dark:via-gray-900 dark:to-green-900 relative overflow-hidden">
+      {/* Decorative background shapes */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-10 left-10 w-32 h-32 bg-green-300/20 rounded-full blur-sm"></div>
+        <div className="absolute top-32 right-20 w-48 h-48 bg-green-400/15 rounded-full blur-md"></div>
+        <div className="absolute top-64 left-1/4 w-24 h-24 bg-green-500/25 rounded-full blur-sm"></div>
+        <div className="absolute top-80 right-1/3 w-36 h-36 bg-green-300/20 rounded-full blur-md"></div>
+        <div className="absolute bottom-32 left-20 w-44 h-44 bg-green-400/15 rounded-full blur-lg"></div>
+        <div className="absolute bottom-48 right-16 w-28 h-28 bg-green-500/20 rounded-full blur-sm"></div>
+        <div className="absolute bottom-80 left-1/2 w-52 h-52 bg-green-300/10 rounded-full blur-xl"></div>
+        <div className="absolute top-1/2 left-8 w-20 h-20 bg-green-600/25 rounded-full blur-sm"></div>
+        <div className="absolute top-1/3 right-8 w-40 h-40 bg-green-400/20 rounded-full blur-md"></div>
+        <div className="absolute top-2/3 left-1/3 w-60 h-60 bg-green-200/15 rounded-full blur-2xl"></div>
+        <div className="absolute top-1/4 left-2/3 w-32 h-32 bg-green-500/15 rounded-full blur-lg"></div>
+      </div>
+      <div className="absolute inset-0 bg-white/40 dark:bg-gray-900/40"></div>
+      <div className="relative z-10 w-full overflow-x-hidden">
       {/* Hero Section */}
       <section className="relative overflow-hidden w-full">
         <div className="absolute inset-0 bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 dark:from-green-950 dark:via-blue-950 dark:to-purple-950 animate-gradient-shift"></div>
@@ -374,9 +390,10 @@ const Index = () => {
                 </Button>
               </Link>
             </div>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
     </div>
   );
 };
