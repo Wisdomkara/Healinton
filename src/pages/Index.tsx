@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -29,21 +30,24 @@ const Index = () => {
       value: '120',
       unit: '/80 mmHg',
       trend: 'stable' as const,
-      icon: <Heart className="h-5 w-5 text-primary-600" />
+      icon: <Heart className="h-5 w-5 text-primary-600" />,
+      calories: 0
     },
     {
       title: 'Weight',
       value: '72.5',
       unit: 'kg',
       trend: 'down' as const,
-      icon: <User className="h-5 w-5 text-primary-600" />
+      icon: <User className="h-5 w-5 text-primary-600" />,
+      calories: 0
     },
     {
       title: 'Blood Sugar',
       value: '95',
       unit: 'mg/dL',
       trend: 'stable' as const,
-      icon: <Calendar className="h-5 w-5 text-primary-600" />
+      icon: <Calendar className="h-5 w-5 text-primary-600" />,
+      calories: 0
     }
   ];
 
@@ -113,19 +117,34 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100 dark:from-green-950 dark:via-gray-900 dark:to-green-900 relative overflow-hidden">
-      {/* Decorative background shapes */}
+      {/* Enhanced Decorative background shapes with more variety */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-10 left-10 w-32 h-32 bg-green-300/20 rounded-full blur-sm"></div>
-        <div className="absolute top-32 right-20 w-48 h-48 bg-green-400/15 rounded-full blur-md"></div>
-        <div className="absolute top-64 left-1/4 w-24 h-24 bg-green-500/25 rounded-full blur-sm"></div>
-        <div className="absolute top-80 right-1/3 w-36 h-36 bg-green-300/20 rounded-full blur-md"></div>
-        <div className="absolute bottom-32 left-20 w-44 h-44 bg-green-400/15 rounded-full blur-lg"></div>
-        <div className="absolute bottom-48 right-16 w-28 h-28 bg-green-500/20 rounded-full blur-sm"></div>
-        <div className="absolute bottom-80 left-1/2 w-52 h-52 bg-green-300/10 rounded-full blur-xl"></div>
-        <div className="absolute top-1/2 left-8 w-20 h-20 bg-green-600/25 rounded-full blur-sm"></div>
-        <div className="absolute top-1/3 right-8 w-40 h-40 bg-green-400/20 rounded-full blur-md"></div>
-        <div className="absolute top-2/3 left-1/3 w-60 h-60 bg-green-200/15 rounded-full blur-2xl"></div>
-        <div className="absolute top-1/4 left-2/3 w-32 h-32 bg-green-500/15 rounded-full blur-lg"></div>
+        {/* Large blobs */}
+        <div className="absolute top-10 left-10 w-40 h-40 bg-green-300/20 rounded-full blur-lg"></div>
+        <div className="absolute top-32 right-20 w-64 h-48 bg-green-400/15 rounded-full blur-xl transform rotate-12"></div>
+        <div className="absolute top-64 left-1/4 w-32 h-24 bg-green-500/25 rounded-full blur-md transform -rotate-45"></div>
+        <div className="absolute top-80 right-1/3 w-48 h-36 bg-green-300/20 rounded-full blur-lg transform rotate-45"></div>
+        
+        {/* Medium blobs */}
+        <div className="absolute bottom-32 left-20 w-56 h-44 bg-green-400/15 rounded-full blur-xl transform -rotate-12"></div>
+        <div className="absolute bottom-48 right-16 w-36 h-28 bg-green-500/20 rounded-full blur-md transform rotate-30"></div>
+        <div className="absolute bottom-80 left-1/2 w-72 h-52 bg-green-300/10 rounded-full blur-2xl transform -rotate-30"></div>
+        <div className="absolute top-1/2 left-8 w-28 h-20 bg-green-600/25 rounded-full blur-sm transform rotate-60"></div>
+        
+        {/* Small accent blobs */}
+        <div className="absolute top-1/3 right-8 w-44 h-40 bg-green-400/20 rounded-full blur-lg transform -rotate-45"></div>
+        <div className="absolute top-2/3 left-1/3 w-80 h-60 bg-green-200/15 rounded-full blur-2xl transform rotate-15"></div>
+        <div className="absolute top-1/4 left-2/3 w-40 h-32 bg-green-500/15 rounded-full blur-xl transform -rotate-60"></div>
+        
+        {/* Extra decorative elements */}
+        <div className="absolute top-96 left-12 w-24 h-18 bg-green-600/30 rounded-full blur-sm transform rotate-90"></div>
+        <div className="absolute bottom-64 right-32 w-20 h-16 bg-green-400/25 rounded-full blur-md transform -rotate-30"></div>
+        <div className="absolute top-48 left-3/4 w-52 h-40 bg-green-300/15 rounded-full blur-lg transform rotate-75"></div>
+        <div className="absolute bottom-96 left-1/4 w-32 h-24 bg-green-500/20 rounded-full blur-md transform -rotate-15"></div>
+        
+        {/* Additional organic shapes */}
+        <div className="absolute top-2/4 right-1/4 w-60 h-45 bg-green-400/10 rounded-full blur-xl transform rotate-45"></div>
+        <div className="absolute bottom-1/3 left-2/3 w-35 h-28 bg-green-600/20 rounded-full blur-lg transform -rotate-75"></div>
       </div>
       <div className="absolute inset-0 bg-white/40 dark:bg-gray-900/40"></div>
       <div className="relative z-10 w-full overflow-x-hidden">
@@ -152,6 +171,23 @@ const Index = () => {
               Healinton helps you manage chronic conditions like diabetes, hypertension, and heart disease 
               with personalized meal plans, medication reminders, and health tracking tools.
             </p>
+            
+            {/* Healthcare Professional Image */}
+            <div className="mb-8 flex justify-center">
+              <div className="relative">
+                <img 
+                  src="/lovable-uploads/28fa4c6a-e383-4c64-905c-130b84bf1e79.png" 
+                  alt="Healthcare Professional with Stethoscope" 
+                  className="w-64 h-40 md:w-80 md:h-48 object-cover rounded-2xl shadow-2xl hover:scale-105 transition-transform duration-300"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-green-600/20 to-transparent rounded-2xl"></div>
+                <div className="absolute bottom-4 left-4 right-4">
+                  <p className="text-white text-sm md:text-base font-semibold bg-black/30 backdrop-blur-sm px-3 py-2 rounded-lg">
+                    Professional Healthcare Management
+                  </p>
+                </div>
+              </div>
+            </div>
             
             <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4 mb-12 px-2">
               <Link to={user ? "/dashboard" : "/auth"} className="w-full sm:w-auto">
