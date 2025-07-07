@@ -66,7 +66,8 @@ export const useShoppingList = () => {
         full_name: formData.fullName,
         phone_number: formData.phoneNumber,
         email_address: formData.emailAddress,
-        country: formData.country
+        country: formData.country,
+        reference_number: referenceNumber
       })
       .select('*')
       .single();
@@ -79,9 +80,9 @@ export const useShoppingList = () => {
       });
     } else {
       toast({
-        title: "Medication Added Successfully!",
-        description: `Your reference number is: ${referenceNumber}. Please save this number for your pharmacy visit.`,
-        duration: 10000
+        title: "✅ Medication Added Successfully!",
+        description: `🎯 REFERENCE NUMBER: ${referenceNumber} 📋 Please save this number for your pharmacy visit!`,
+        duration: 15000
       });
       setFormData({ 
         fullName: '', 

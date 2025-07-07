@@ -85,28 +85,43 @@ export type Database = {
       hospital_bookings: {
         Row: {
           appointment_date: string
+          country: string | null
           created_at: string | null
+          email_address: string | null
+          full_name: string | null
           hospital_name: string
           id: string
+          phone_number: string | null
           reason: string | null
+          reference_number: string | null
           status: string | null
           user_id: string | null
         }
         Insert: {
           appointment_date: string
+          country?: string | null
           created_at?: string | null
+          email_address?: string | null
+          full_name?: string | null
           hospital_name: string
           id?: string
+          phone_number?: string | null
           reason?: string | null
+          reference_number?: string | null
           status?: string | null
           user_id?: string | null
         }
         Update: {
           appointment_date?: string
+          country?: string | null
           created_at?: string | null
+          email_address?: string | null
+          full_name?: string | null
           hospital_name?: string
           id?: string
+          phone_number?: string | null
           reason?: string | null
+          reference_number?: string | null
           status?: string | null
           user_id?: string | null
         }
@@ -119,6 +134,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      meal_completions: {
+        Row: {
+          budget_type: string
+          completed: boolean
+          created_at: string
+          id: string
+          meal_date: string
+          meal_time: string
+          user_id: string
+        }
+        Insert: {
+          budget_type: string
+          completed?: boolean
+          created_at?: string
+          id?: string
+          meal_date: string
+          meal_time: string
+          user_id: string
+        }
+        Update: {
+          budget_type?: string
+          completed?: boolean
+          created_at?: string
+          id?: string
+          meal_date?: string
+          meal_time?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       premium_users: {
         Row: {
@@ -229,27 +274,42 @@ export type Database = {
       }
       shopping_lists: {
         Row: {
+          country: string | null
           created_at: string | null
+          email_address: string | null
+          full_name: string | null
           id: string
           is_purchased: boolean | null
           medication_name: string
           pharmacy_name: string | null
+          phone_number: string | null
+          reference_number: string | null
           user_id: string | null
         }
         Insert: {
+          country?: string | null
           created_at?: string | null
+          email_address?: string | null
+          full_name?: string | null
           id?: string
           is_purchased?: boolean | null
           medication_name: string
           pharmacy_name?: string | null
+          phone_number?: string | null
+          reference_number?: string | null
           user_id?: string | null
         }
         Update: {
+          country?: string | null
           created_at?: string | null
+          email_address?: string | null
+          full_name?: string | null
           id?: string
           is_purchased?: boolean | null
           medication_name?: string
           pharmacy_name?: string | null
+          phone_number?: string | null
+          reference_number?: string | null
           user_id?: string | null
         }
         Relationships: [
