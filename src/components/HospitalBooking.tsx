@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,42 +10,96 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 
-const hospitals = [
-  'General Hospital Lagos',
-  'University College Hospital Ibadan',
-  'Ahmadu Bello University Teaching Hospital',
-  'Federal Medical Centre Abuja',
-  'Lagos State University Teaching Hospital',
-  'National Hospital Abuja',
-  'Obafemi Awolowo University Teaching Hospital',
-  'University of Nigeria Teaching Hospital',
-  'Federal Medical Centre Owerri',
-  'Specialist Hospital Sokoto'
-];
+interface Country {
+  id: string;
+  name: string;
+  code: string;
+}
+
+interface Hospital {
+  id: string;
+  name: string;
+  address: string;
+  city: string;
+  phone: string;
+  email: string;
+  type: string;
+}
 
 const HospitalBooking = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const [countries, setCountries] = useState<Country[]>([]);
+  const [hospitals, setHospitals] = useState<Hospital[]>([]);
   const [formData, setFormData] = useState({
+    fullName: '',
+    phoneNumber: '',
+    emailAddress: '',
+    country: '',
     hospitalName: '',
     appointmentDate: '',
     reason: ''
   });
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    fetchCountries();
+  }, []);
+
+  useEffect(() => {
+    if (formData.country) {
+      fetchHospitals(formData.country);
+    } else {
+      setHospitals([]);
+    }
+  }, [formData.country]);
+
+  const fetchCountries = async () => {
+    const { data, error } = await supabase
+      .from('countries')
+      .select('*')
+      .order('name');
+
+    if (error) {
+      console.error('Error fetching countries:', error);
+    } else {
+      setCountries(data || []);
+    }
+  };
+
+  const fetchHospitals = async (countryId: string) => {
+    const { data, error } = await supabase
+      .from('hospitals')
+      .select('*')
+      .eq('country_id', countryId)
+      .order('name');
+
+    if (error) {
+      console.error('Error fetching hospitals:', error);
+    } else {
+      setHospitals(data || []);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
 
     setLoading(true);
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('hospital_bookings')
       .insert({
         user_id: user.id,
+        full_name: formData.fullName,
+        phone_number: formData.phoneNumber,
+        email_address: formData.emailAddress,
+        country: countries.find(c => c.id === formData.country)?.name || '',
         hospital_name: formData.hospitalName,
         appointment_date: formData.appointmentDate,
         reason: formData.reason
-      });
+      })
+      .select('reference_number')
+      .single();
 
     if (error) {
       toast({
@@ -55,31 +109,95 @@ const HospitalBooking = () => {
       });
     } else {
       toast({
-        title: "Appointment Booked",
-        description: `Your appointment at ${formData.hospitalName} has been scheduled. You will receive a confirmation email shortly.`
+        title: "Appointment Booked Successfully!",
+        description: `Your reference number is: ${data.reference_number}. Please save this number and present it at the hospital.`,
+        duration: 10000
       });
-      setFormData({ hospitalName: '', appointmentDate: '', reason: '' });
+      setFormData({ 
+        fullName: '', 
+        phoneNumber: '', 
+        emailAddress: '', 
+        country: '', 
+        hospitalName: '', 
+        appointmentDate: '', 
+        reason: '' 
+      });
     }
     setLoading(false);
   };
 
   return (
     <Card className="p-6">
-      <h3 className="text-lg font-semibold mb-4">Book Hospital Checkup</h3>
+      <h3 className="text-lg font-semibold mb-4">Book Hospital Appointment</h3>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <Label htmlFor="hospital">Select Hospital</Label>
-          <Select value={formData.hospitalName} onValueChange={(value) => setFormData({ ...formData, hospitalName: value })}>
+          <Label htmlFor="fullName">Full Name</Label>
+          <Input
+            id="fullName"
+            value={formData.fullName}
+            onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+            placeholder="Enter your full name"
+            required
+          />
+        </div>
+        
+        <div>
+          <Label htmlFor="phoneNumber">Phone Number</Label>
+          <Input
+            id="phoneNumber"
+            value={formData.phoneNumber}
+            onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
+            placeholder="Enter your phone number"
+            required
+          />
+        </div>
+        
+        <div>
+          <Label htmlFor="emailAddress">Email Address</Label>
+          <Input
+            id="emailAddress"
+            type="email"
+            value={formData.emailAddress}
+            onChange={(e) => setFormData({ ...formData, emailAddress: e.target.value })}
+            placeholder="Enter your email address"
+            required
+          />
+        </div>
+
+        <div>
+          <Label htmlFor="country">Select Country</Label>
+          <Select value={formData.country} onValueChange={(value) => setFormData({ ...formData, country: value, hospitalName: '' })}>
             <SelectTrigger>
-              <SelectValue placeholder="Choose a hospital" />
+              <SelectValue placeholder="Choose your country" />
             </SelectTrigger>
             <SelectContent>
-              {hospitals.map(hospital => (
-                <SelectItem key={hospital} value={hospital}>{hospital}</SelectItem>
+              {countries.map(country => (
+                <SelectItem key={country.id} value={country.id}>{country.name}</SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
+
+        <div>
+          <Label htmlFor="hospital">Select Hospital</Label>
+          <Select 
+            value={formData.hospitalName} 
+            onValueChange={(value) => setFormData({ ...formData, hospitalName: value })}
+            disabled={!formData.country}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder={formData.country ? "Choose a hospital" : "Select country first"} />
+            </SelectTrigger>
+            <SelectContent>
+              {hospitals.map(hospital => (
+                <SelectItem key={hospital.id} value={hospital.name}>
+                  {hospital.name} - {hospital.city}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
         <div>
           <Label htmlFor="date">Preferred Date & Time</Label>
           <Input
@@ -90,6 +208,7 @@ const HospitalBooking = () => {
             required
           />
         </div>
+        
         <div>
           <Label htmlFor="reason">Reason for Visit</Label>
           <Textarea
@@ -100,6 +219,7 @@ const HospitalBooking = () => {
             required
           />
         </div>
+        
         <Button type="submit" disabled={loading} className="w-full">
           {loading ? 'Booking...' : 'Book Appointment'}
         </Button>

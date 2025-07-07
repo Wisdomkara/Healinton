@@ -1,242 +1,456 @@
 
-export const getMealPlanForIllness = (illnessType: string) => {
-  const mealPlans = {
-    hypertension: {
-      morning: {
-        low: 'Oatmeal with banana and cinnamon (₦250)',
-        high: 'Quinoa bowl with berries, nuts and honey (₦800)'
-      },
-      afternoon: {
-        low: 'Grilled fish with steamed vegetables (₦500)',
-        high: 'Salmon with asparagus and brown rice (₦1200)'
-      },
-      night: {
-        low: 'Vegetable soup with whole grain bread (₦300)',
-        high: 'Herb-crusted chicken with sweet potato (₦900)'
-      }
+// Comprehensive meal plans for all supported illness types
+const mealPlans = {
+  cancer: {
+    morning: {
+      low: "Oatmeal with banana and honey, green tea",
+      high: "Quinoa bowl with berries, nuts, and Greek yogurt"
     },
-    diabetes: {
-      morning: {
-        low: 'Boiled eggs with whole wheat toast (₦250)',
-        high: 'Greek yogurt with mixed nuts and chia seeds (₦700)'
-      },
-      afternoon: {
-        low: 'Grilled chicken salad with leafy greens (₦600)',
-        high: 'Turkey and avocado salad with quinoa (₦1000)'
-      },
-      night: {
-        low: 'Lentil soup with vegetables (₦350)',
-        high: 'Baked cod with cauliflower rice (₦1100)'
-      }
+    afternoon: {
+      low: "Grilled chicken breast with steamed vegetables",
+      high: "Salmon with quinoa and roasted vegetables"
     },
-    heart_disease: {
-      morning: {
-        low: 'Whole grain cereal with low-fat milk (₦200)',
-        high: 'Smoothie bowl with spinach, berries and flaxseed (₦750)'
-      },
-      afternoon: {
-        low: 'Tuna salad with mixed vegetables (₦400)',
-        high: 'Grilled mackerel with Mediterranean vegetables (₦1300)'
-      },
-      night: {
-        low: 'Bean stew with brown rice (₦300)',
-        high: 'Herb-crusted salmon with roasted vegetables (₦950)'
-      }
-    },
-    obesity: {
-      morning: {
-        low: 'Green tea with whole grain toast (₦150)',
-        high: 'Protein smoothie with spinach and berries (₦600)'
-      },
-      afternoon: {
-        low: 'Grilled vegetables with lean chicken (₦450)',
-        high: 'Quinoa salad with grilled chicken and avocado (₦850)'
-      },
-      night: {
-        low: 'Vegetable broth with steamed vegetables (₦200)',
-        high: 'Baked fish with roasted Brussels sprouts (₦700)'
-      }
-    },
-    high_cholesterol: {
-      morning: {
-        low: 'Oats with apple and cinnamon (₦180)',
-        high: 'Chia seed pudding with fresh berries (₦650)'
-      },
-      afternoon: {
-        low: 'Grilled chicken salad with olive oil dressing (₦500)',
-        high: 'Wild rice bowl with salmon and vegetables (₦1100)'
-      },
-      night: {
-        low: 'Steamed vegetables with tofu (₦300)',
-        high: 'Herb-baked white fish with quinoa (₦800)'
-      }
-    },
-    asthma: {
-      morning: {
-        low: 'Banana and honey with whole grain toast (₦200)',
-        high: 'Anti-inflammatory smoothie with ginger and turmeric (₦650)'
-      },
-      afternoon: {
-        low: 'Grilled fish with spinach and carrots (₦450)',
-        high: 'Omega-3 rich salmon with sweet potato (₦1000)'
-      },
-      night: {
-        low: 'Ginger tea with vegetable soup (₦250)',
-        high: 'Turmeric chicken with steamed broccoli (₦850)'
-      }
-    },
-    arthritis: {
-      morning: {
-        low: 'Anti-inflammatory tea with whole grain cereal (₦220)',
-        high: 'Berry smoothie with ginger and turmeric (₦700)'
-      },
-      afternoon: {
-        low: 'Fatty fish with leafy greens (₦500)',
-        high: 'Wild-caught salmon with anti-inflammatory spices (₦1200)'
-      },
-      night: {
-        low: 'Turmeric milk with vegetable stew (₦300)',
-        high: 'Herb-crusted fish with roasted vegetables (₦900)'
-      }
-    },
-    kidney_disease: {
-      morning: {
-        low: 'Low-protein cereal with limited dairy (₦180)',
-        high: 'Carefully portioned protein smoothie (₦600)'
-      },
-      afternoon: {
-        low: 'Small portion lean protein with vegetables (₦400)',
-        high: 'Controlled protein fish with low-potassium vegetables (₦950)'
-      },
-      night: {
-        low: 'Low-sodium vegetable soup (₦250)',
-        high: 'Kidney-friendly protein with controlled portions (₦800)'
-      }
-    },
-    liver_disease: {
-      morning: {
-        low: 'Liver-friendly oatmeal with berries (₦200)',
-        high: 'Antioxidant-rich smoothie with leafy greens (₦650)'
-      },
-      afternoon: {
-        low: 'Lean protein with liver-supporting vegetables (₦450)',
-        high: 'Detox-supporting salmon with cruciferous vegetables (₦1000)'
-      },
-      night: {
-        low: 'Milk thistle tea with light vegetable soup (₦280)',
-        high: 'Liver-supporting herbs with lean protein (₦850)'
-      }
-    },
-    thyroid_disorders: {
-      morning: {
-        low: 'Iodine-rich seaweed soup with whole grains (₦250)',
-        high: 'Thyroid-supporting smoothie with selenium-rich nuts (₦700)'
-      },
-      afternoon: {
-        low: 'Selenium-rich fish with vegetables (₦500)',
-        high: 'Brazil nuts and thyroid-supporting fish meal (₦1100)'
-      },
-      night: {
-        low: 'Thyroid-friendly herbal tea with light meal (₦300)',
-        high: 'Iodine and selenium balanced dinner (₦900)'
-      }
-    },
-    anxiety_depression: {
-      morning: {
-        low: 'Mood-boosting oatmeal with walnuts (₦220)',
-        high: 'Omega-3 rich smoothie with mood-supporting nutrients (₦750)'
-      },
-      afternoon: {
-        low: 'Brain-healthy fish with leafy greens (₦480)',
-        high: 'Mood-supporting salmon with complex carbs (₦1050)'
-      },
-      night: {
-        low: 'Calming herbal tea with tryptophan-rich foods (₦320)',
-        high: 'Serotonin-supporting meal with quality proteins (₦880)'
-      }
-    },
-    chronic_pain: {
-      morning: {
-        low: 'Anti-inflammatory turmeric porridge (₦200)',
-        high: 'Pain-reducing smoothie with cherries and ginger (₦680)'
-      },
-      afternoon: {
-        low: 'Omega-3 fish with anti-inflammatory vegetables (₦470)',
-        high: 'Pain-fighting salmon with turmeric and vegetables (₦1080)'
-      },
-      night: {
-        low: 'Anti-inflammatory tea with light, healing meal (₦290)',
-        high: 'Comprehensive anti-inflammatory dinner (₦870)'
-      }
+    night: {
+      low: "Vegetable soup with whole grain bread",
+      high: "Lean turkey with sweet potato and green salad"
     }
-  };
-
-  return mealPlans[illnessType as keyof typeof mealPlans] || mealPlans.hypertension;
+  },
+  diabetes_type_1: {
+    morning: {
+      low: "Whole grain toast with avocado, unsweetened tea",
+      high: "Protein smoothie with spinach, berries, and almond milk"
+    },
+    afternoon: {
+      low: "Grilled fish with brown rice and vegetables",
+      high: "Lean beef with quinoa and steamed broccoli"
+    },
+    night: {
+      low: "Vegetable stir-fry with tofu",
+      high: "Grilled chicken with cauliflower rice and asparagus"
+    }
+  },
+  diabetes_type_2: {
+    morning: {
+      low: "Steel-cut oats with cinnamon, herbal tea",
+      high: "Egg omelet with vegetables and whole grain toast"
+    },
+    afternoon: {
+      low: "Baked chicken with sweet potato",
+      high: "Grilled salmon with brown rice and green beans"
+    },
+    night: {
+      low: "Lentil soup with mixed greens",
+      high: "Turkey meatballs with zucchini noodles"
+    }
+  },
+  hypertension: {
+    morning: {
+      low: "Banana with peanut butter, low-sodium crackers",
+      high: "Greek yogurt with berries and almonds"
+    },
+    afternoon: {
+      low: "Grilled chicken with steamed vegetables",
+      high: "Baked fish with quinoa and roasted vegetables"
+    },
+    night: {
+      low: "Vegetable soup with herbs",
+      high: "Lean pork with mashed cauliflower and greens"
+    }
+  },
+  chronic_kidney_disease: {
+    morning: {
+      low: "White bread with jam, apple slices",
+      high: "Egg whites with low-potassium vegetables"
+    },
+    afternoon: {
+      low: "Small portion of lean meat with white rice",
+      high: "Fresh fish with pasta and low-potassium vegetables"
+    },
+    night: {
+      low: "Vegetable broth with crackers",
+      high: "Chicken breast with cauliflower and carrots"
+    }
+  },
+  heart_disease: {
+    morning: {
+      low: "Oatmeal with berries, herbal tea",
+      high: "Whole grain cereal with nuts and low-fat milk"
+    },
+    afternoon: {
+      low: "Baked fish with steamed vegetables",
+      high: "Grilled salmon with brown rice and asparagus"
+    },
+    night: {
+      low: "Vegetable soup with whole grain roll",
+      high: "Lean turkey with quinoa and mixed vegetables"
+    }
+  },
+  hiv_aids: {
+    morning: {
+      low: "Fortified cereal with milk, banana",
+      high: "Protein shake with fruits and yogurt"
+    },
+    afternoon: {
+      low: "Chicken soup with vegetables and rice",
+      high: "Grilled meat with potatoes and green vegetables"
+    },
+    night: {
+      low: "Pasta with tomato sauce and vegetables",
+      high: "Fish with rice and steamed broccoli"
+    }
+  },
+  copd: {
+    morning: {
+      low: "Soft scrambled eggs with toast",
+      high: "Protein smoothie with berries and spinach"
+    },
+    afternoon: {
+      low: "Tender chicken with mashed potatoes",
+      high: "Baked fish with quinoa and soft vegetables"
+    },
+    night: {
+      low: "Vegetable puree soup with crackers",
+      high: "Lean meat with sweet potato and steamed carrots"
+    }
+  },
+  asthma: {
+    morning: {
+      low: "Whole grain cereal with milk, apple",
+      high: "Greek yogurt with honey and anti-inflammatory fruits"
+    },
+    afternoon: {
+      low: "Grilled chicken with rice and vegetables",
+      high: "Salmon with quinoa and leafy greens"
+    },
+    night: {
+      low: "Vegetable soup with whole grain bread",
+      high: "Turkey with brown rice and steamed vegetables"
+    }
+  },
+  epilepsy: {
+    morning: {
+      low: "High-fat yogurt with nuts",
+      high: "Ketogenic smoothie with avocado and MCT oil"
+    },
+    afternoon: {
+      low: "Fatty fish with low-carb vegetables",
+      high: "Grass-fed beef with avocado and leafy greens"
+    },
+    night: {
+      low: "Egg salad with olive oil dressing",
+      high: "Coconut oil cooked chicken with cauliflower"
+    }
+  },
+  multiple_sclerosis: {
+    morning: {
+      low: "Anti-inflammatory smoothie with berries",
+      high: "Omega-3 rich breakfast with salmon and eggs"
+    },
+    afternoon: {
+      low: "Grilled fish with steamed vegetables",
+      high: "Lean meat with quinoa and anti-inflammatory spices"
+    },
+    night: {
+      low: "Vegetable soup with turmeric",
+      high: "Turkey with sweet potato and green vegetables"
+    }
+  },
+  liver_cirrhosis: {
+    morning: {
+      low: "Low-sodium oatmeal with fruits",
+      high: "Protein-rich smoothie with plant-based milk"
+    },
+    afternoon: {
+      low: "Small portion lean meat with vegetables",
+      high: "Fish with rice and low-sodium seasonings"
+    },
+    night: {
+      low: "Vegetable broth with soft vegetables",
+      high: "Chicken breast with pasta and herbs"
+    }
+  },
+  parkinsons_disease: {
+    morning: {
+      low: "Soft foods: oatmeal with mashed banana",
+      high: "Protein shake with easy-to-swallow consistency"
+    },
+    afternoon: {
+      low: "Tender chicken with mashed vegetables",
+      high: "Soft fish with pureed sweet potato"
+    },
+    night: {
+      low: "Smooth soup with soft bread",
+      high: "Ground meat with soft pasta and sauce"
+    }
+  },
+  stroke: {
+    morning: {
+      low: "Soft scrambled eggs with mashed banana",
+      high: "Thick smoothie with protein and fruits"
+    },
+    afternoon: {
+      low: "Minced chicken with soft vegetables",
+      high: "Pureed fish with mashed potatoes"
+    },
+    night: {
+      low: "Thick vegetable soup",
+      high: "Soft meat with pureed vegetables"
+    }
+  },
+  sickle_cell_disease: {
+    morning: {
+      low: "Iron-rich cereal with milk and fruits",
+      high: "Fortified smoothie with spinach and berries"
+    },
+    afternoon: {
+      low: "Lean red meat with vegetables",
+      high: "Iron-rich fish with quinoa and leafy greens"
+    },
+    night: {
+      low: "Lentil soup with whole grain bread",
+      high: "Chicken liver with rice and vegetables"
+    }
+  },
+  lupus: {
+    morning: {
+      low: "Anti-inflammatory oatmeal with berries",
+      high: "Calcium-rich smoothie with leafy greens"
+    },
+    afternoon: {
+      low: "Fatty fish with steamed vegetables",
+      high: "Lean meat with anti-inflammatory spices and quinoa"
+    },
+    night: {
+      low: "Vegetable soup with turmeric",
+      high: "Turkey with brown rice and anti-inflammatory herbs"
+    }
+  },
+  rheumatoid_arthritis: {
+    morning: {
+      low: "Omega-3 rich breakfast with walnuts",
+      high: "Anti-inflammatory smoothie with ginger and berries"
+    },
+    afternoon: {
+      low: "Fatty fish with vegetables",
+      high: "Lean meat with anti-inflammatory spices and quinoa"
+    },
+    night: {
+      low: "Turmeric vegetable soup",
+      high: "Salmon with sweet potato and leafy greens"
+    }
+  },
+  crohns_disease: {
+    morning: {
+      low: "White toast with banana, herbal tea",
+      high: "Low-fiber smoothie with protein powder"
+    },
+    afternoon: {
+      low: "Well-cooked chicken with white rice",
+      high: "Tender fish with pasta and mild seasonings"
+    },
+    night: {
+      low: "Clear broth with soft vegetables",
+      high: "Lean meat with mashed potatoes and carrots"
+    }
+  },
+  tuberculosis: {
+    morning: {
+      low: "High-calorie porridge with milk and honey",
+      high: "Protein-rich smoothie with nuts and fruits"
+    },
+    afternoon: {
+      low: "Nutrient-dense soup with meat and vegetables",
+      high: "High-protein fish with rice and vegetables"
+    },
+    night: {
+      low: "Fortified milk with whole grain crackers",
+      high: "Lean meat with potatoes and nutrient-rich vegetables"
+    }
+  },
+  alzheimers_disease: {
+    morning: {
+      low: "Brain-healthy oatmeal with blueberries",
+      high: "Omega-3 rich smoothie with walnuts and berries"
+    },
+    afternoon: {
+      low: "Fatty fish with vegetables",
+      high: "Lean meat with brain-healthy vegetables and olive oil"
+    },
+    night: {
+      low: "Vegetable soup with herbs",
+      high: "Salmon with quinoa and leafy greens"
+    }
+  },
+  cystic_fibrosis: {
+    morning: {
+      low: "High-calorie pancakes with syrup",
+      high: "Calorie-dense smoothie with protein and healthy fats"
+    },
+    afternoon: {
+      low: "Fatty meat with high-calorie sides",
+      high: "Rich fish with butter and high-calorie vegetables"
+    },
+    night: {
+      low: "Creamy soup with high-fat content",
+      high: "High-calorie meat dish with rich sauces"
+    }
+  }
 };
 
-export const getHealthTipsForIllness = (illnessType: string) => {
-  const tips = {
-    hypertension: [
-      'Limit sodium intake to less than 2,300mg per day for better blood pressure control.',
-      'Engage in 30 minutes of moderate exercise daily to help lower blood pressure naturally.',
-      'Practice stress-reduction techniques like deep breathing or meditation regularly.'
-    ],
-    diabetes: [
-      'Monitor your blood glucose levels regularly as recommended by your healthcare provider.',
-      'Choose complex carbohydrates over simple sugars to maintain stable blood sugar.',
-      'Stay hydrated by drinking plenty of water throughout the day.'
-    ],
-    heart_disease: [
-      'Include omega-3 rich foods like fish in your diet at least twice a week.',
-      'Avoid trans fats and limit saturated fats to protect your heart health.',
-      'Take prescribed medications consistently and never skip doses.'
-    ],
-    obesity: [
-      'Focus on portion control and eat slowly to recognize fullness cues.',
-      'Incorporate more fiber-rich foods to help you feel satisfied longer.',
-      'Aim for at least 150 minutes of moderate exercise per week.'
-    ],
-    high_cholesterol: [
-      'Include soluble fiber foods like oats and beans to help lower cholesterol.',
-      'Choose lean proteins and limit red meat consumption.',
-      'Regular check-ups are important to monitor your cholesterol levels.'
-    ],
-    asthma: [
-      'Avoid known triggers like dust, pollen, and strong fragrances.',
-      'Keep your rescue inhaler with you at all times.',
-      'Consider anti-inflammatory foods like fish, leafy greens, and berries.'
-    ],
-    arthritis: [
-      'Stay active with low-impact exercises like swimming or walking.',
-      'Include anti-inflammatory foods like fatty fish, nuts, and colorful vegetables.',
-      'Maintain a healthy weight to reduce stress on joints.'
-    ],
-    kidney_disease: [
-      'Monitor your protein intake as recommended by your healthcare provider.',
-      'Limit sodium and potassium if advised by your doctor.',
-      'Stay hydrated but follow fluid restrictions if prescribed.'
-    ],
-    liver_disease: [
-      'Avoid alcohol completely to prevent further liver damage.',
-      'Include antioxidant-rich foods like berries and leafy greens.',
-      'Follow your medication regimen strictly and avoid unnecessary medications.'
-    ],
-    thyroid_disorders: [
-      'Take thyroid medications on an empty stomach as prescribed.',
-      'Include iodine-rich foods but avoid excessive amounts.',
-      'Regular monitoring of thyroid hormone levels is essential.'
-    ],
-    anxiety_depression: [
-      'Maintain a regular sleep schedule of 7-9 hours per night.',
-      'Include omega-3 rich foods and complex carbohydrates in your diet.',
-      'Practice mindfulness, meditation, or other stress-reduction techniques daily.'
-    ],
-    chronic_pain: [
-      'Stay as active as possible within your pain limits.',
-      'Include anti-inflammatory foods like turmeric, ginger, and fatty fish.',
-      'Practice relaxation techniques to help manage pain and stress.'
-    ]
-  };
+const healthTips = {
+  cancer: [
+    "Stay hydrated with plenty of water throughout the day",
+    "Eat small, frequent meals to maintain energy",
+    "Include antioxidant-rich foods like berries and leafy greens",
+    "Avoid processed and sugary foods",
+    "Get adequate rest and manage stress"
+  ],
+  diabetes_type_1: [
+    "Monitor blood glucose levels regularly",
+    "Count carbohydrates in every meal",
+    "Take insulin as prescribed by your doctor",
+    "Exercise regularly but monitor blood sugar before and after",
+    "Always carry glucose tablets for low blood sugar episodes"
+  ],
+  diabetes_type_2: [
+    "Maintain a consistent meal schedule",
+    "Choose complex carbohydrates over simple sugars",
+    "Exercise for at least 30 minutes daily",
+    "Monitor your blood pressure regularly",
+    "Take medications as prescribed"
+  ],
+  hypertension: [
+    "Limit sodium intake to less than 2,300mg daily",
+    "Exercise regularly to strengthen your heart",
+    "Maintain a healthy weight",
+    "Limit alcohol consumption",
+    "Manage stress through relaxation techniques"
+  ],
+  chronic_kidney_disease: [
+    "Limit protein intake as advised by your doctor",
+    "Monitor potassium and phosphorus intake",
+    "Stay hydrated but follow fluid restrictions if prescribed",
+    "Take medications exactly as prescribed",
+    "Regular monitoring of kidney function is essential"
+  ],
+  heart_disease: [
+    "Follow a heart-healthy diet low in saturated fats",
+    "Exercise regularly as approved by your cardiologist",
+    "Take prescribed medications consistently",
+    "Monitor blood pressure and cholesterol levels",
+    "Avoid smoking and limit alcohol intake"
+  ],
+  hiv_aids: [
+    "Take antiretroviral medications exactly as prescribed",
+    "Maintain good nutrition to support immune system",
+    "Practice safe behaviors to prevent transmission",
+    "Get regular medical check-ups and lab tests",
+    "Stay up-to-date with vaccinations"
+  ],
+  copd: [
+    "Avoid smoking and secondhand smoke completely",
+    "Use prescribed inhalers correctly",
+    "Practice breathing exercises daily",
+    "Stay active with appropriate exercise",
+    "Get annual flu shots and pneumonia vaccines"
+  ],
+  asthma: [
+    "Identify and avoid your asthma triggers",
+    "Use your rescue inhaler as prescribed",
+    "Take controller medications daily if prescribed",
+    "Monitor peak flow readings regularly",
+    "Have an asthma action plan ready"
+  ],
+  epilepsy: [
+    "Take anti-seizure medications consistently",
+    "Get adequate sleep every night",
+    "Avoid known seizure triggers",
+    "Wear medical identification jewelry",
+    "Keep a seizure diary to track patterns"
+  ],
+  multiple_sclerosis: [
+    "Take disease-modifying therapies as prescribed",
+    "Stay active with appropriate exercise",
+    "Manage fatigue with proper rest",
+    "Avoid overheating in hot weather",
+    "Join support groups for emotional support"
+  ],
+  liver_cirrhosis: [
+    "Avoid alcohol completely",
+    "Follow a low-sodium diet",
+    "Take prescribed medications carefully",
+    "Monitor for signs of complications",
+    "Get regular medical monitoring"
+  ],
+  parkinsons_disease: [
+    "Take medications at consistent times",
+    "Stay physically active with appropriate exercises",
+    "Work with speech and physical therapists",
+    "Make home safety modifications",
+    "Join Parkinson's support groups"
+  ],
+  stroke: [
+    "Take blood thinners as prescribed",
+    "Control blood pressure strictly",
+    "Attend rehabilitation therapy sessions",
+    "Make home safety modifications",
+    "Recognize signs of another stroke"
+  ],
+  sickle_cell_disease: [
+    "Stay well-hydrated at all times",
+    "Avoid extreme temperatures",
+    "Take folic acid supplements daily",
+    "Get regular medical check-ups",
+    "Recognize early signs of pain crises"
+  ],
+  lupus: [
+    "Protect skin from sun exposure",
+    "Take medications as prescribed",
+    "Get regular exercise but pace yourself",
+    "Manage stress effectively",
+    "Get adequate sleep every night"
+  ],
+  rheumatoid_arthritis: [
+    "Take disease-modifying drugs as prescribed",
+    "Exercise regularly to maintain joint mobility",
+    "Apply heat or cold for pain relief",
+    "Protect joints during daily activities",
+    "Get regular monitoring for medication side effects"
+  ],
+  crohns_disease: [
+    "Follow prescribed dietary restrictions",
+    "Take medications consistently",
+    "Monitor for signs of flare-ups",
+    "Stay hydrated and maintain nutrition",
+    "Manage stress effectively"
+  ],
+  tuberculosis: [
+    "Complete the full course of antibiotics",
+    "Maintain good nutrition for healing",
+    "Cover mouth when coughing or sneezing",
+    "Get regular medical follow-ups",
+    "Inform close contacts about your diagnosis"
+  ],
+  alzheimers_disease: [
+    "Maintain a consistent daily routine",
+    "Stay socially active and engaged",
+    "Exercise regularly for brain health",
+    "Eat a brain-healthy diet",
+    "Keep the environment safe and familiar"
+  ],
+  cystic_fibrosis: [
+    "Take enzyme supplements with meals",
+    "Do airway clearance techniques daily",
+    "Exercise regularly to maintain lung function",
+    "Take prescribed medications consistently",
+    "Get regular pulmonary function tests"
+  ]
+};
 
-  return tips[illnessType as keyof typeof tips] || tips.hypertension;
+export const getMealPlanForIllness = (illness: string) => {
+  return mealPlans[illness as keyof typeof mealPlans] || mealPlans.hypertension;
+};
+
+export const getHealthTipsForIllness = (illness: string) => {
+  return healthTips[illness as keyof typeof healthTips] || healthTips.hypertension;
 };
