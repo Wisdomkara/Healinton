@@ -52,12 +52,13 @@ const Index = () => {
           }}
         />
         
-        {/* Multiple Green Blobs with Better Visibility */}
-        <div className="absolute top-10 left-10 w-96 h-96 bg-gradient-to-br from-green-400/60 to-emerald-500/60 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute top-1/2 right-20 w-80 h-80 bg-gradient-to-br from-green-300/50 to-teal-400/50 rounded-full blur-2xl animate-pulse delay-1000" />
-        <div className="absolute bottom-20 left-1/4 w-72 h-72 bg-gradient-to-br from-emerald-400/55 to-green-500/55 rounded-full blur-3xl animate-pulse delay-2000" />
-        <div className="absolute top-1/4 left-1/2 w-64 h-64 bg-gradient-to-br from-green-500/45 to-emerald-600/45 rounded-full blur-2xl animate-pulse delay-500" />
-        <div className="absolute bottom-1/3 right-1/3 w-88 h-88 bg-gradient-to-br from-teal-400/50 to-green-400/50 rounded-full blur-3xl animate-pulse delay-1500" />
+        {/* Multiple Green Blobs with Slow Random Movement */}
+        <div className="absolute top-10 left-10 w-96 h-96 bg-gradient-to-br from-green-400/70 to-emerald-500/70 rounded-full blur-3xl animate-float-slow" />
+        <div className="absolute top-1/2 right-20 w-80 h-80 bg-gradient-to-br from-green-300/60 to-teal-400/60 rounded-full blur-2xl animate-float-medium" />
+        <div className="absolute bottom-20 left-1/4 w-72 h-72 bg-gradient-to-br from-emerald-400/65 to-green-500/65 rounded-full blur-3xl animate-float-reverse" />
+        <div className="absolute top-1/4 left-1/2 w-64 h-64 bg-gradient-to-br from-green-500/55 to-emerald-600/55 rounded-full blur-2xl animate-float-gentle" />
+        <div className="absolute bottom-1/3 right-1/3 w-88 h-88 bg-gradient-to-br from-teal-400/60 to-green-400/60 rounded-full blur-3xl animate-float-diagonal" />
+        <div className="absolute top-3/4 left-1/6 w-56 h-56 bg-gradient-to-br from-green-600/50 to-emerald-700/50 rounded-full blur-2xl animate-float-orbit" />
       </div>
 
       {/* Hero Section */}
@@ -73,10 +74,10 @@ const Index = () => {
               Transform Your Health
             </span>
             <br />
-            <span className="text-gray-800">Journey Today</span>
+            <span className="text-gray-800 dark:text-white">Journey Today</span>
           </h1>
           
-          <p className="text-xl md:text-2xl text-gray-600 mb-8 leading-relaxed">
+          <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
             Comprehensive health management platform supporting 20+ medical conditions with personalized care, AI insights, and expert guidance.
           </p>
           
@@ -96,8 +97,8 @@ const Index = () => {
           </div>
 
           {/* Supported Conditions */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 mb-16 shadow-lg">
-            <h3 className="text-lg font-semibold mb-4 text-gray-800">Supporting 20+ Medical Conditions</h3>
+          <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 mb-16 shadow-lg">
+            <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Supporting 20+ Medical Conditions</h3>
             <div className="flex flex-wrap gap-2 justify-center">
               {conditions.slice(0, 8).map((condition, index) => (
                 <Badge key={index} variant="secondary" className="bg-green-100 text-green-800">
@@ -113,25 +114,25 @@ const Index = () => {
       </section>
 
       {/* Features Section */}
-      <section className="py-16 px-4 bg-white/70 backdrop-blur-sm">
+      <section className="py-16 px-4 bg-white/70 dark:bg-gray-900/70 backdrop-blur-sm">
         <div className="container mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-800">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-800 dark:text-white">
               Everything You Need for Better Health
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
               Our comprehensive platform provides all the tools you need to manage your health effectively.
             </p>
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {features.map((feature, index) => (
-              <Card key={index} className="p-6 text-center hover:shadow-lg transition-all duration-300 hover:scale-105 bg-white/90 backdrop-blur-sm">
-                <div className="text-green-600 mb-4 flex justify-center">
+              <Card key={index} className="p-6 text-center hover:shadow-lg transition-all duration-300 hover:scale-105 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm">
+                <div className="text-green-600 dark:text-green-400 mb-4 flex justify-center">
                   {feature.icon}
                 </div>
-                <h3 className="text-xl font-semibold mb-2 text-gray-800">{feature.title}</h3>
-                <p className="text-gray-600">{feature.description}</p>
+                <h3 className="text-xl font-semibold mb-2 text-gray-800 dark:text-white">{feature.title}</h3>
+                <p className="text-gray-600 dark:text-gray-300">{feature.description}</p>
               </Card>
             ))}
           </div>
@@ -170,12 +171,12 @@ const Index = () => {
       <TestimonialsSection />
 
       {/* CTA Section */}
-      <section className="py-16 px-4 bg-gray-50/80 backdrop-blur-sm">
+      <section className="py-16 px-4 bg-gray-50/80 dark:bg-gray-900/80 backdrop-blur-sm">
         <div className="container mx-auto text-center max-w-3xl">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6 text-gray-800">
+          <h2 className="text-3xl md:text-4xl font-bold mb-6 text-gray-800 dark:text-white">
             Ready to Take Control of Your Health?
           </h2>
-          <p className="text-xl text-gray-600 mb-8">
+          <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
             Join thousands of users who have transformed their health journey with Healington.
           </p>
           <Button asChild size="lg" className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 text-lg">
