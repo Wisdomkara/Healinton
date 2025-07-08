@@ -20,7 +20,8 @@ import {
   Crown,
   Shield,
   Info,
-  Star
+  Star,
+  ArrowLeft
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -87,7 +88,7 @@ const Sidebar = ({ isOpen = true, onClose, onSectionChange, activeSection = 'ove
       <div className="p-6">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-            Healinton Hub
+            Healington Hub
           </h2>
           {onClose && (
             <Button
@@ -100,6 +101,21 @@ const Sidebar = ({ isOpen = true, onClose, onSectionChange, activeSection = 'ove
             </Button>
           )}
         </div>
+
+        {/* Back to Home Button */}
+        <div className="mb-4">
+          <Button
+            asChild
+            variant="outline"
+            className="w-full justify-start text-green-600 border-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 transition-all transform hover:scale-105"
+          >
+            <Link to="/">
+              <ArrowLeft className="h-4 w-4 mr-3" />
+              Back to Home
+            </Link>
+          </Button>
+        </div>
+
         <nav className="space-y-2">
           {navItems.map((item) => {
             const Icon = item.icon;

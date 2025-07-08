@@ -46,23 +46,29 @@ const Index = () => {
       <div className="absolute inset-0 -z-10">
         {/* Background Hero Image with Transparency */}
         <div 
-          className="absolute inset-0 bg-cover bg-center opacity-20 dark:opacity-10"
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20 dark:opacity-15"
           style={{
-            backgroundImage: 'url(/lovable-uploads/28fa4c6a-e383-4c64-905c-130b84bf1e79.png)'
+            backgroundImage: 'url(/lovable-uploads/28fa4c6a-e383-4c64-905c-130b84bf1e79.png)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center center'
           }}
         />
         
         {/* Multiple Green Blobs with Slow Random Movement */}
-        <div className="absolute top-10 left-10 w-96 h-96 bg-gradient-to-br from-green-400/70 to-emerald-500/70 rounded-full blur-3xl animate-float-slow" />
-        <div className="absolute top-1/2 right-20 w-80 h-80 bg-gradient-to-br from-green-300/60 to-teal-400/60 rounded-full blur-2xl animate-float-medium" />
-        <div className="absolute bottom-20 left-1/4 w-72 h-72 bg-gradient-to-br from-emerald-400/65 to-green-500/65 rounded-full blur-3xl animate-float-reverse" />
-        <div className="absolute top-1/4 left-1/2 w-64 h-64 bg-gradient-to-br from-green-500/55 to-emerald-600/55 rounded-full blur-2xl animate-float-gentle" />
-        <div className="absolute bottom-1/3 right-1/3 w-88 h-88 bg-gradient-to-br from-teal-400/60 to-green-400/60 rounded-full blur-3xl animate-float-diagonal" />
-        <div className="absolute top-3/4 left-1/6 w-56 h-56 bg-gradient-to-br from-green-600/50 to-emerald-700/50 rounded-full blur-2xl animate-float-orbit" />
+        <div className="absolute top-10 left-10 w-96 h-96 bg-gradient-to-br from-green-400/80 to-emerald-500/80 rounded-full blur-3xl animate-float-slow opacity-90" />
+        <div className="absolute top-1/2 right-20 w-80 h-80 bg-gradient-to-br from-green-300/70 to-teal-400/70 rounded-full blur-2xl animate-float-medium opacity-85" />
+        <div className="absolute bottom-20 left-1/4 w-72 h-72 bg-gradient-to-br from-emerald-400/75 to-green-500/75 rounded-full blur-3xl animate-float-reverse opacity-80" />
+        <div className="absolute top-1/4 left-1/2 w-64 h-64 bg-gradient-to-br from-green-500/65 to-emerald-600/65 rounded-full blur-2xl animate-float-gentle opacity-85" />
+        <div className="absolute bottom-1/3 right-1/3 w-88 h-88 bg-gradient-to-br from-teal-400/70 to-green-400/70 rounded-full blur-3xl animate-float-diagonal opacity-80" />
+        <div className="absolute top-3/4 left-1/6 w-56 h-56 bg-gradient-to-br from-green-600/60 to-emerald-700/60 rounded-full blur-2xl animate-float-orbit opacity-75" />
+        
+        {/* Additional atmospheric blobs */}
+        <div className="absolute top-1/3 right-1/6 w-48 h-48 bg-gradient-to-br from-green-200/50 to-emerald-300/50 rounded-full blur-xl animate-float-slow opacity-70" />
+        <div className="absolute bottom-1/4 left-3/4 w-40 h-40 bg-gradient-to-br from-teal-300/60 to-green-300/60 rounded-full blur-lg animate-float-medium opacity-65" />
       </div>
 
       {/* Hero Section with Entrance Animations */}
-      <section className="pt-20 pb-16 px-4 relative">
+      <section className="pt-20 pb-16 px-4 relative z-10">
         <div className="container mx-auto text-center max-w-4xl">
           <Badge className="mb-6 bg-green-100 text-green-800 hover:bg-green-200 transition-all duration-300 hover:scale-105 animate-fade-in">
             <Heart className="h-4 w-4 mr-2" />
@@ -114,7 +120,7 @@ const Index = () => {
       </section>
 
       {/* Features Section with Hover Effects */}
-      <section className="py-16 px-4 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm">
+      <section className="py-16 px-4 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm relative z-10">
         <div className="container mx-auto">
           <div className="text-center mb-12 animate-fade-in">
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-800 dark:text-white">
@@ -171,7 +177,7 @@ const Index = () => {
       <TestimonialsSection />
 
       {/* CTA Section */}
-      <section className="py-16 px-4 bg-gray-50/90 dark:bg-gray-900/90 backdrop-blur-sm">
+      <section className="py-16 px-4 bg-gray-50/90 dark:bg-gray-900/90 backdrop-blur-sm relative z-10">
         <div className="container mx-auto text-center max-w-3xl animate-fade-in">
           <h2 className="text-3xl md:text-4xl font-bold mb-6 text-gray-800 dark:text-white">
             Ready to Take Control of Your Health?
