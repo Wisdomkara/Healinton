@@ -1,154 +1,307 @@
-
-import React from 'react';
-import { Button } from '@/components/ui/button';
+import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Check, Star, Crown, Zap } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
-import { usePremium } from '@/hooks/usePremium';
-import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+import { Crown, Check, Star, Utensils, Calendar, Users, Truck, Phone, Clock, Shield, TrendingUp, Heart } from 'lucide-react';
 
 const Premium = () => {
   const { user } = useAuth();
-  const { isPremium } = usePremium();
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
-  const handleGetStarted = () => {
+  const handleSubscribe = async (planType: string) => {
     if (!user) {
-      navigate('/auth');
+      // Redirect to auth if not logged in
+      window.location.href = '/auth';
+      return;
+    }
+
+    setLoading(true);
+    try {
+      // Calculate expiry date (30 days from now for monthly subscription)
+      const expiryDate = new Date();
+      expiryDate.setMonth(expiryDate.getMonth() + 1);
+
+      // Add user to premium_users table when they subscribe
+      const { error } = await supabase
+        .from('premium_users')
+        .insert({
+          user_id: user.id,
+          subscription_type: 'paid',
+          added_by: 'subscription',
+          expires_at: expiryDate.toISOString(),
+          notes: `Subscribed to ${planType} plan - Monthly billing`
+        });
+
+      if (error) {
+        console.error('Error adding premium user:', error);
+        alert('There was an error processing your subscription. Please try again.');
+        return;
+      }
+
+      // Simulate API call for payment processing
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // After successful payment, redirect to dashboard with premium features
+      alert('Subscription successful! You now have access to all premium features for 30 days.');
+      window.location.href = '/dashboard';
+    } catch (error) {
+      console.error('Subscription error:', error);
+      alert('There was an error processing your subscription. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
   const plans = [
     {
       name: 'Basic',
-      price: '$3.00',
-      period: '/month',
-      description: 'Essential health tracking for individuals',
+      price: 'FREE',
+      period: 'till October 2025',
+      description: 'Perfect for getting started with health management - Sponsored',
       features: [
-        'Basic health metrics tracking',
-        'Simple meal planning',
-        'Basic symptom logging',
-        'Email support',
-        'Mobile app access'
+        'Basic health tracking',
+        'Simple meal plans',
+        'Medication reminders',
+        'Community access',
+        'Email support'
       ],
-      icon: <Star className="h-6 w-6" />,
-      popular: false,
-      color: 'from-blue-500 to-blue-600'
+      color: 'from-green-500 to-green-600',
+      popular: false
     },
     {
       name: 'Premium',
-      price: '$9.99',
-      period: '/month',
-      description: 'Advanced health management with AI insights',
+      price: 'FREE',
+      period: 'till October 2025',
+      description: 'Complete health management solution - Sponsored',
       features: [
         'Advanced health analytics',
-        'AI-powered health recommendations',
-        'Personalized meal plans for 21+ conditions',
-        'Priority hospital booking',
-        'Advanced symptom tracking with AI insights',
-        '24/7 chat support',
-        'Medication reminders',
-        'Health reports and trends',
-        'Family health sharing',
-        'Premium drug store discounts'
+        'Personalized meal plans',
+        'Hospital integration',
+        'Telehealth consultations',
+        'Medicine delivery',
+        'Priority support',
+        'Family sharing',
+        'Custom reports'
       ],
-      icon: <Crown className="h-6 w-6" />,
-      popular: true,
-      color: 'from-purple-500 to-purple-600'
+      color: 'from-blue-500 to-purple-600',
+      popular: true
+    },
+    {
+      name: 'Enterprise',
+      price: 'FREE',
+      period: 'till October 2025',
+      description: 'For healthcare providers and organizations - Sponsored',
+      features: [
+        'Everything in Premium',
+        'Multi-patient management',
+        'Advanced integrations',
+        'Custom branding',
+        'Dedicated support',
+        'SLA guarantees',
+        'Advanced security',
+        'Custom training'
+      ],
+      color: 'from-purple-500 to-pink-600',
+      popular: false
     }
   ];
 
+  const premiumFeatures = [
+    {
+      icon: <TrendingUp className="h-8 w-8 text-green-600" />,
+      title: 'Advanced Health Analytics',
+      description: 'AI-powered insights and predictive health analysis to identify trends and potential issues before they become serious.'
+    },
+    {
+      icon: <Heart className="h-8 w-8 text-red-500" />,
+      title: 'Telehealth Integration',
+      description: 'Direct video consultations with certified healthcare professionals, available 24/7 for premium subscribers.'
+    },
+    {
+      icon: <Truck className="h-8 w-8 text-blue-600" />,
+      title: 'Medicine Delivery',
+      description: 'Free doorstep delivery of medications and health supplies within 24 hours of ordering.'
+    },
+    {
+      icon: <Shield className="h-8 w-8 text-purple-600" />,
+      title: 'Hospital Integration',
+      description: 'Seamless integration with major hospitals for automatic appointment booking and health record synchronization.'
+    },
+    {
+      icon: <Phone className="h-8 w-8 text-orange-600" />,
+      title: 'Priority Support',
+      description: '24/7 priority customer support with dedicated health advisors and emergency response team access.'
+    },
+    {
+      icon: <Users className="h-8 w-8 text-indigo-600" />,
+      title: 'Family Health Management',
+      description: 'Manage health records for up to 6 family members with shared calendars and coordinated care plans.'
+    }
+  ];
+
+  const mealPlans = {
+    morning: {
+      low: { name: 'Oatmeal with Banana', price: '$3', description: 'Wholesome oats with fresh banana slices' },
+      medium: { name: 'Greek Yogurt Bowl', price: '$8', description: 'Greek yogurt with berries and granola' },
+      high: { name: 'Avocado Toast Deluxe', price: '$15', description: 'Sourdough with avocado, poached egg, and smoked salmon' }
+    },
+    afternoon: {
+      low: { name: 'Rice & Beans', price: '$5', description: 'Nutritious rice and beans with vegetables' },
+      medium: { name: 'Chicken Salad Wrap', price: '$12', description: 'Grilled chicken with fresh vegetables in a wrap' },
+      high: { name: 'Quinoa Power Bowl', price: '$18', description: 'Quinoa with grilled salmon, vegetables, and tahini dressing' }
+    },
+    night: {
+      low: { name: 'Pasta Marinara', price: '$6', description: 'Wholesome pasta with homemade marinara sauce' },
+      medium: { name: 'Grilled Chicken Dinner', price: '$14', description: 'Grilled chicken breast with roasted vegetables' },
+      high: { name: 'Steak & Vegetables', price: '$25', description: 'Premium grass-fed steak with seasonal vegetables' }
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      <div className="container mx-auto px-4 py-16">
-        {/* Header */}
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-4 py-12">
+        {/* Hero Section */}
         <div className="text-center mb-16">
-          <Badge className="mb-4 bg-purple-100 text-purple-800">
-            <Zap className="h-4 w-4 mr-2" />
-            Upgrade Your Health Journey
-          </Badge>
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            Choose Your Health Plan
+          <div className="inline-flex items-center justify-center p-3 bg-primary-100 rounded-full mb-6">
+            <Crown className="h-8 w-8 text-primary-600" />
+          </div>
+          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6">
+            Premium Health Plans
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Unlock advanced health management features and get personalized care for your specific condition
+          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+            Upgrade to premium and unlock advanced health tracking, personalized meal plans, expert consultations, and medicine delivery
           </p>
         </div>
 
-        {/* Pricing Cards */}
-        <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto mb-16">
+        {/* Pricing Plans */}
+        <div className="grid md:grid-cols-3 gap-8 mb-16">
           {plans.map((plan, index) => (
             <Card 
               key={index} 
-              className={`relative p-8 ${plan.popular ? 'ring-2 ring-purple-500 scale-105' : ''} hover:shadow-xl transition-all duration-300`}
+              className={`relative p-8 ${plan.popular ? 'ring-2 ring-blue-500 scale-105' : ''} hover:shadow-2xl transition-all duration-300`}
             >
               {plan.popular && (
-                <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-purple-500">
-                  Most Popular
-                </Badge>
+                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                  <span className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold">
+                    Most Popular
+                  </span>
+                </div>
               )}
               
               <div className="text-center mb-8">
-                <div className={`inline-flex p-3 rounded-full bg-gradient-to-r ${plan.color} text-white mb-4`}>
-                  {plan.icon}
-                </div>
                 <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
-                <p className="text-gray-600 mb-4">{plan.description}</p>
-                <div className="flex items-baseline justify-center">
+                <div className="flex items-baseline justify-center mb-4">
                   <span className="text-4xl font-bold">{plan.price}</span>
-                  <span className="text-gray-500">{plan.period}</span>
+                  <span className="text-gray-500 dark:text-gray-400">{plan.period}</span>
                 </div>
+                <p className="text-gray-600 dark:text-gray-300">{plan.description}</p>
               </div>
 
-              <ul className="space-y-3 mb-8">
-                {plan.features.map((feature, featureIndex) => (
-                  <li key={featureIndex} className="flex items-center">
-                    <Check className="h-5 w-5 text-green-500 mr-3 flex-shrink-0" />
-                    <span className="text-gray-700">{feature}</span>
-                  </li>
+              <div className="space-y-4 mb-8">
+                {plan.features.map((feature, idx) => (
+                  <div key={idx} className="flex items-center space-x-3">
+                    <Check className="h-5 w-5 text-green-600 flex-shrink-0" />
+                    <span className="text-gray-700 dark:text-gray-300">{feature}</span>
+                  </div>
                 ))}
-              </ul>
+              </div>
 
-              <Button 
-                className={`w-full ${plan.popular ? 'bg-purple-600 hover:bg-purple-700' : 'bg-blue-600 hover:bg-blue-700'}`}
-                onClick={handleGetStarted}
-                disabled={isPremium && plan.name === 'Premium'}
+              <Button
+                onClick={() => handleSubscribe(plan.name.toLowerCase())}
+                disabled={loading}
+                className={`w-full bg-gradient-to-r ${plan.color} hover:opacity-90 transform hover:scale-105 transition-all duration-200 py-3`}
               >
-                {isPremium && plan.name === 'Premium' ? 'Current Plan' : 
-                 !user ? 'Sign Up to Get Started' : 
-                 plan.name === 'Premium' ? 'Upgrade to Premium' : 'Get Basic Plan'}
+                {loading ? 'Processing...' : `Choose ${plan.name}`}
               </Button>
             </Card>
           ))}
         </div>
 
-        {/* Features Comparison */}
-        <div className="bg-white rounded-2xl p-8 shadow-lg">
-          <h2 className="text-3xl font-bold text-center mb-8">Why Choose Premium?</h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-                <Star className="h-8 w-8" />
-              </div>
-              <h3 className="font-semibold mb-2">AI-Powered Insights</h3>
-              <p className="text-gray-600">Get personalized health recommendations based on your specific condition and health data.</p>
-            </div>
-            <div className="text-center">
-              <div className="bg-gradient-to-r from-green-500 to-teal-600 text-white p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-                <Crown className="h-8 w-8" />
-              </div>
-              <h3 className="font-semibold mb-2">Comprehensive Care</h3>
-              <p className="text-gray-600">Access specialized meal plans and health tips for 21+ medical conditions.</p>
-            </div>
-            <div className="text-center">
-              <div className="bg-gradient-to-r from-purple-500 to-pink-600 text-white p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-                <Zap className="h-8 w-8" />
-              </div>
-              <h3 className="font-semibold mb-2">Priority Support</h3>
-              <p className="text-gray-600">Get 24/7 support and priority access to hospital bookings and consultations.</p>
-            </div>
+        {/* Premium Features */}
+        <div className="mb-16">
+          <h2 className="text-3xl font-bold text-center mb-12 flex items-center justify-center">
+            <Star className="h-8 w-8 mr-3 text-primary-600" />
+            Premium Features
+          </h2>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {premiumFeatures.map((feature, index) => (
+              <Card key={index} className="p-6 hover:shadow-lg transition-all transform hover:scale-105">
+                <div className="flex items-start space-x-4">
+                  <div className="p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">
+                    {feature.icon}
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm">{feature.description}</p>
+                  </div>
+                </div>
+              </Card>
+            ))}
           </div>
+        </div>
+
+        {/* Meal Plans Section */}
+        <div className="mb-16">
+          <h2 className="text-3xl font-bold text-center mb-12 flex items-center justify-center">
+            <Utensils className="h-8 w-8 mr-3 text-primary-600" />
+            Daily Meal Plans for Every Budget
+          </h2>
+          
+          {Object.entries(mealPlans).map(([timeOfDay, meals]) => (
+            <div key={timeOfDay} className="mb-12">
+              <h3 className="text-2xl font-semibold capitalize mb-6 text-gray-900 dark:text-white">
+                {timeOfDay} Meals
+              </h3>
+              <div className="grid md:grid-cols-3 gap-6">
+                {Object.entries(meals).map(([budget, meal]) => (
+                  <Card key={budget} className="p-6 hover:shadow-lg transition-shadow">
+                    <div className="flex justify-between items-start mb-4">
+                      <div className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                        budget === 'low' ? 'bg-green-100 text-green-800' :
+                        budget === 'medium' ? 'bg-blue-100 text-blue-800' :
+                        'bg-purple-100 text-purple-800'
+                      }`}>
+                        {budget === 'low' ? 'Budget' : budget === 'medium' ? 'Standard' : 'Premium'}
+                      </div>
+                      <span className="text-2xl font-bold text-primary-600">{meal.price}</span>
+                    </div>
+                    <h4 className="text-lg font-semibold mb-2">{meal.name}</h4>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm">{meal.description}</p>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* CTA Section */}
+        <div className="text-center bg-gradient-to-r from-green-600 to-blue-600 rounded-2xl p-12 text-white">
+          <h2 className="text-3xl font-bold mb-4">Ready to Transform Your Health?</h2>
+          <p className="text-xl mb-8 opacity-90">
+            Get premium features FREE till October 2025 - Sponsored
+          </p>
+          <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+            <Button
+              onClick={() => handleSubscribe('premium')}
+              disabled={loading}
+              size="lg"
+              className="bg-white text-green-600 hover:bg-gray-100 font-semibold px-8 py-4"
+            >
+              {loading ? 'Processing...' : 'Get Premium - FREE till October 2025'}
+            </Button>
+            <Button
+              variant="outline"
+              size="lg"
+              className="border-white text-white hover:bg-white/10 px-8 py-4"
+            >
+              Contact Sales
+            </Button>
+          </div>
+          <p className="text-sm mt-4 opacity-75">
+            Sponsored free access. No billing till October 2025.
+          </p>
         </div>
       </div>
     </div>

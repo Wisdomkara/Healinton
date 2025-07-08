@@ -1,13 +1,69 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Bell, X, Check, Info, AlertTriangle, Heart, Calendar } from 'lucide-react';
-import { useNotifications } from '@/hooks/useNotifications';
 
 const NotificationCenter = () => {
-  const { notifications, unreadCount, markAsRead, markAllAsRead, removeNotification } = useNotifications();
+  const [notifications, setNotifications] = useState([
+    {
+      id: 1,
+      type: 'reminder',
+      title: 'Medication Reminder',
+      message: "It's time to take your morning medication (Lisinopril)",
+      time: '5 minutes ago',
+      read: false,
+      icon: <Heart className="h-4 w-4 text-red-500" />
+    },
+    {
+      id: 2,
+      type: 'appointment',
+      title: 'Upcoming Appointment',
+      message: 'Your cardiology appointment is scheduled for tomorrow at 2:00 PM',
+      time: '2 hours ago',
+      read: false,
+      icon: <Calendar className="h-4 w-4 text-blue-500" />
+    },
+    {
+      id: 3,
+      type: 'info',
+      title: 'Health Tip',
+      message: 'Remember to stay hydrated! Aim for 8 glasses of water daily.',
+      time: '1 day ago',
+      read: true,
+      icon: <Info className="h-4 w-4 text-green-500" />
+    },
+    {
+      id: 4,
+      type: 'warning',
+      title: 'Blood Pressure Alert',
+      message: 'Your last reading was slightly elevated. Consider consulting your doctor.',
+      time: '2 days ago',
+      read: false,
+      icon: <AlertTriangle className="h-4 w-4 text-orange-500" />
+    }
+  ]);
+
+  const unreadCount = notifications.filter(n => !n.read).length;
+
+  const markAsRead = (id: number) => {
+    setNotifications(prev => 
+      prev.map(notif => 
+        notif.id === id ? { ...notif, read: true } : notif
+      )
+    );
+  };
+
+  const markAllAsRead = () => {
+    setNotifications(prev => 
+      prev.map(notif => ({ ...notif, read: true }))
+    );
+  };
+
+  const removeNotification = (id: number) => {
+    setNotifications(prev => prev.filter(notif => notif.id !== id));
+  };
 
   return (
     <div className="space-y-4">

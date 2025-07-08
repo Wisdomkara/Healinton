@@ -33,9 +33,8 @@ const RateUs = () => {
     const subject = `Healinton App Review - ${rating} Star${rating > 1 ? 's' : ''}`;
     const body = `Rating: ${rating}/5 stars\n\nFeedback:\n${feedback || 'No additional feedback provided.'}`;
     
-    // Create mailto link - use karawisdom38@gmail.com for 5-star reviews
-    const emailAddress = rating === 5 ? 'karawisdom38@gmail.com' : 'support@healinton.com';
-    const mailtoLink = `mailto:${emailAddress}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    // Create mailto link
+    const mailtoLink = `mailto:support@healinton.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     
     // Open email client
     window.open(mailtoLink);
@@ -154,10 +153,8 @@ const RateUs = () => {
         {/* Additional Info */}
         <div className="mt-8 p-4 bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 rounded-lg">
           <p className="text-sm text-gray-600 dark:text-gray-300 text-center">
-            Your feedback will be sent directly to our team at{' '}
-            <span className="font-medium text-green-600">
-              {rating === 5 ? 'karawisdom38@gmail.com' : 'support@healinton.com'}
-            </span>
+            Your feedback will be sent directly to our support team at{' '}
+            <span className="font-medium text-green-600">support@healinton.com</span>
           </p>
         </div>
       </Card>

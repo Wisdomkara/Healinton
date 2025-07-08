@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
 import { usePremium } from '@/hooks/usePremium';
-import { useNotifications } from '@/hooks/useNotifications';
 import { 
   Home, 
   Heart, 
@@ -20,8 +19,7 @@ import {
   Crown,
   Shield,
   Info,
-  Star,
-  ArrowLeft
+  Star
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -35,19 +33,17 @@ const Sidebar = ({ isOpen = true, onClose, onSectionChange, activeSection = 'ove
   const location = useLocation();
   const { user } = useAuth();
   const { isPremium } = usePremium();
-  const { unreadCount } = useNotifications();
 
   const navItems = [
     { icon: Home, label: 'Dashboard', section: 'overview', isPremium: false },
     { icon: Heart, label: 'Health Metrics', section: 'health-metrics', isPremium: true },
     { icon: Stethoscope, label: 'Symptoms', section: 'symptoms', isPremium: true },
     { icon: Calendar, label: 'Appointments', section: 'appointments', isPremium: true },
-    { icon: Bell, label: 'Notifications', section: 'notifications', isPremium: false },
+    { icon: Bell, label: 'Notifications', section: 'notifications', badge: 3, isPremium: false },
     { icon: Bell, label: 'Reminders', section: 'reminders', isPremium: true },
     { icon: ShoppingCart, label: 'Shopping List', section: 'shopping', isPremium: true },
     { icon: MessageSquare, label: 'AI Chat', section: 'chat', isPremium: false },
     { icon: FileText, label: 'Health Blog', section: 'blog', isPremium: false },
-    { icon: FileText, label: 'Meal Tracker', section: 'meal-tracker', isPremium: false },
     { icon: Shield, label: 'Health Insurance', section: 'health-insurance', isPremium: false },
     { icon: Star, label: 'Rate Us', section: 'rate-us', isPremium: false },
     { icon: Info, label: 'About', section: 'about', isPremium: false },
@@ -88,7 +84,7 @@ const Sidebar = ({ isOpen = true, onClose, onSectionChange, activeSection = 'ove
       <div className="p-6">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-            Healington Hub
+            Healinton Hub
           </h2>
           {onClose && (
             <Button
@@ -101,21 +97,6 @@ const Sidebar = ({ isOpen = true, onClose, onSectionChange, activeSection = 'ove
             </Button>
           )}
         </div>
-
-        {/* Back to Home Button */}
-        <div className="mb-4">
-          <Button
-            asChild
-            variant="outline"
-            className="w-full justify-start text-green-600 border-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 transition-all transform hover:scale-105"
-          >
-            <Link to="/">
-              <ArrowLeft className="h-4 w-4 mr-3" />
-              Back to Home
-            </Link>
-          </Button>
-        </div>
-
         <nav className="space-y-2">
           {navItems.map((item) => {
             const Icon = item.icon;
@@ -136,9 +117,9 @@ const Sidebar = ({ isOpen = true, onClose, onSectionChange, activeSection = 'ove
                 {item.isPremium && (
                   <Crown className="h-3 w-3 text-yellow-500 ml-1" />
                 )}
-                {item.section === 'notifications' && unreadCount > 0 && (
+                {item.badge && (
                   <Badge variant="destructive" className="text-xs ml-auto">
-                    {unreadCount}
+                    {item.badge}
                   </Badge>
                 )}
               </Button>

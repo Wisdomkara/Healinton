@@ -1,13 +1,11 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ArrowLeft, Calendar, User, Clock } from 'lucide-react';
 
 const Blog = () => {
-  const [selectedCategory, setSelectedCategory] = useState('All');
-
   const blogPosts = [
     {
       id: 1,
@@ -48,34 +46,10 @@ const Blog = () => {
       readTime: "6 min read",
       image: "/placeholder.svg",
       category: "Nutrition"
-    },
-    {
-      id: 5,
-      title: "Understanding Heart Disease Risk Factors",
-      excerpt: "Comprehensive guide to identifying and managing risk factors for cardiovascular disease.",
-      author: "Dr. Emily Rodriguez",
-      date: "December 10, 2024",
-      readTime: "8 min read",
-      image: "/placeholder.svg",
-      category: "Heart Health"
-    },
-    {
-      id: 6,
-      title: "Living Well with Type 2 Diabetes",
-      excerpt: "Essential lifestyle changes and management strategies for people with Type 2 diabetes.",
-      author: "Dr. James Wilson",
-      date: "December 8, 2024",
-      readTime: "6 min read",
-      image: "/placeholder.svg",
-      category: "Diabetes"
     }
   ];
 
   const categories = ["All", "Diabetes", "Heart Health", "General Health", "Nutrition"];
-
-  const filteredPosts = selectedCategory === "All" 
-    ? blogPosts 
-    : blogPosts.filter(post => post.category === selectedCategory);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
@@ -99,10 +73,9 @@ const Blog = () => {
           {categories.map((category) => (
             <Button
               key={category}
-              variant={category === selectedCategory ? "default" : "outline"}
+              variant={category === "All" ? "default" : "outline"}
               size="sm"
               className="hover:scale-105 transition-transform"
-              onClick={() => setSelectedCategory(category)}
             >
               {category}
             </Button>
@@ -111,7 +84,7 @@ const Blog = () => {
 
         {/* Blog Posts Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredPosts.map((post, index) => (
+          {blogPosts.map((post, index) => (
             <Card 
               key={post.id} 
               className="overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:scale-105 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-lg"

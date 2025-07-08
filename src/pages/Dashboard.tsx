@@ -15,13 +15,11 @@ import Settings from '@/components/Settings';
 import NotificationCenter from '@/components/NotificationCenter';
 import PremiumBanner from '@/components/PremiumBanner';
 import RateUs from '@/components/RateUs';
-import MealTracker from '@/components/MealTracker';
 import { useScrollAnimation, useStaggerAnimation } from '@/hooks/useScrollAnimation';
 import { useAuth } from '@/hooks/useAuth';
 import { usePremium } from '@/hooks/usePremium';
 import { supabase } from '@/integrations/supabase/client';
 import { getMealPlanForIllness, getHealthTipsForIllness } from '@/utils/mealPlans';
-import { getDailyMealPlan } from '@/utils/monthlyMealPlans';
 import { Heart, Calendar, Bell, Clock, TrendingUp, Activity, Utensils } from 'lucide-react';
 
 const Dashboard = () => {
@@ -68,8 +66,8 @@ const Dashboard = () => {
   const userName = userProfile ? `${userProfile.first_name}` : "User";
 
   const todaysMealPlan = userProfile?.illness_type 
-    ? getDailyMealPlan(userProfile.illness_type, new Date().getDate())
-    : getDailyMealPlan('hypertension', new Date().getDate());
+    ? getMealPlanForIllness(userProfile.illness_type)
+    : getMealPlanForIllness('hypertension');
 
   const currentHealthTips = userProfile?.illness_type 
     ? getHealthTipsForIllness(userProfile.illness_type)
@@ -159,13 +157,6 @@ const Dashboard = () => {
             <RateUs />
           </div>
         );
-      case 'meal-tracker':
-        return (
-          <div className="w-full">
-            <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-4 md:mb-6">Meal Tracker & Analytics</h2>
-            <MealTracker illnessType={userProfile?.illness_type || 'hypertension'} day={new Date().getDate()} />
-          </div>
-        );
       case 'settings':
         return <Settings />;
       default:
@@ -183,21 +174,13 @@ const Dashboard = () => {
             {/* Premium Banner - only show if not premium */}
             <PremiumBanner />
 
-            {/* Today's Meal Plan with Tracking */}
+            {/* Today's Meal Plan */}
             <div className="w-full">
               <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 md:mb-6 space-y-2 sm:space-y-0">
                 <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white flex items-center">
                   <Utensils className="h-5 w-5 md:h-6 md:w-6 mr-2 text-green-600" />
                   <span className="break-words">Today's Meal Plan ({userProfile?.illness_type?.replace('_', ' ').toUpperCase() || 'HYPERTENSION'})</span>
                 </h2>
-                <Button 
-                  variant="outline" 
-                  onClick={() => setActiveSection('meal-tracker')}
-                  className="flex items-center space-x-2"
-                >
-                  <TrendingUp className="h-4 w-4" />
-                  <span>View Full Tracker</span>
-                </Button>
               </div>
               <div ref={mealsRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                 {['morning', 'afternoon', 'night'].map((time) => (
