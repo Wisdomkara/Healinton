@@ -42,11 +42,11 @@ const Index = () => {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      {/* Enhanced Background with Multiple Blobs */}
+      {/* Enhanced Background with Multiple Blobs and Hero Image */}
       <div className="absolute inset-0 -z-10">
-        {/* Background Image with Transparency */}
+        {/* Background Hero Image with Transparency */}
         <div 
-          className="absolute inset-0 bg-cover bg-center opacity-10"
+          className="absolute inset-0 bg-cover bg-center opacity-20 dark:opacity-10"
           style={{
             backgroundImage: 'url(/lovable-uploads/28fa4c6a-e383-4c64-905c-130b84bf1e79.png)'
           }}
@@ -61,34 +61,34 @@ const Index = () => {
         <div className="absolute top-3/4 left-1/6 w-56 h-56 bg-gradient-to-br from-green-600/50 to-emerald-700/50 rounded-full blur-2xl animate-float-orbit" />
       </div>
 
-      {/* Hero Section */}
+      {/* Hero Section with Entrance Animations */}
       <section className="pt-20 pb-16 px-4 relative">
         <div className="container mx-auto text-center max-w-4xl">
-          <Badge className="mb-6 bg-green-100 text-green-800 hover:bg-green-200 transition-colors">
+          <Badge className="mb-6 bg-green-100 text-green-800 hover:bg-green-200 transition-all duration-300 hover:scale-105 animate-fade-in">
             <Heart className="h-4 w-4 mr-2" />
             Your Health, Our Priority
           </Badge>
           
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
-            <span className="bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 bg-clip-text text-transparent">
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight animate-fade-in-up">
+            <span className="bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 bg-clip-text text-transparent animate-gradient-shift">
               Transform Your Health
             </span>
             <br />
             <span className="text-gray-800 dark:text-white">Journey Today</span>
           </h1>
           
-          <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
+          <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-8 leading-relaxed animate-slide-up">
             Comprehensive health management platform supporting 20+ medical conditions with personalized care, AI insights, and expert guidance.
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-            <Button asChild size="lg" className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 text-lg">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12 animate-slide-up">
+            <Button asChild size="lg" className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 text-lg hover:scale-105 transition-all duration-300 hover:shadow-lg">
               <Link to="/auth">
                 Get Started Free
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
-            <Button asChild variant="outline" size="lg" className="border-green-600 text-green-600 hover:bg-green-50 px-8 py-4 text-lg">
+            <Button asChild variant="outline" size="lg" className="border-green-600 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 px-8 py-4 text-lg hover:scale-105 transition-all duration-300">
               <Link to="/premium">
                 View Plans
                 <Star className="ml-2 h-5 w-5" />
@@ -96,16 +96,16 @@ const Index = () => {
             </Button>
           </div>
 
-          {/* Supported Conditions */}
-          <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 mb-16 shadow-lg">
+          {/* Supported Conditions with Stagger Animation */}
+          <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-2xl p-6 mb-16 shadow-lg hover:shadow-xl transition-all duration-300 animate-stagger">
             <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Supporting 20+ Medical Conditions</h3>
             <div className="flex flex-wrap gap-2 justify-center">
               {conditions.slice(0, 8).map((condition, index) => (
-                <Badge key={index} variant="secondary" className="bg-green-100 text-green-800">
+                <Badge key={index} variant="secondary" className="bg-green-100 text-green-800 hover:bg-green-200 transition-colors duration-200 animate-stagger">
                   {condition}
                 </Badge>
               ))}
-              <Badge variant="secondary" className="bg-gray-100 text-gray-600">
+              <Badge variant="secondary" className="bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors duration-200 animate-stagger">
                 +12 more...
               </Badge>
             </div>
@@ -113,10 +113,10 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-16 px-4 bg-white/70 dark:bg-gray-900/70 backdrop-blur-sm">
+      {/* Features Section with Hover Effects */}
+      <section className="py-16 px-4 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm">
         <div className="container mx-auto">
-          <div className="text-center mb-12">
+          <div className="text-center mb-12 animate-fade-in">
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-800 dark:text-white">
               Everything You Need for Better Health
             </h2>
@@ -127,11 +127,11 @@ const Index = () => {
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {features.map((feature, index) => (
-              <Card key={index} className="p-6 text-center hover:shadow-lg transition-all duration-300 hover:scale-105 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm">
-                <div className="text-green-600 dark:text-green-400 mb-4 flex justify-center">
+              <Card key={index} className="p-6 text-center hover:shadow-xl transition-all duration-500 hover:scale-105 hover:-translate-y-2 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm border-0 shadow-lg group animate-stagger">
+                <div className="text-green-600 dark:text-green-400 mb-4 flex justify-center group-hover:scale-110 transition-transform duration-300">
                   {feature.icon}
                 </div>
-                <h3 className="text-xl font-semibold mb-2 text-gray-800 dark:text-white">{feature.title}</h3>
+                <h3 className="text-xl font-semibold mb-2 text-gray-800 dark:text-white group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors duration-300">{feature.title}</h3>
                 <p className="text-gray-600 dark:text-gray-300">{feature.description}</p>
               </Card>
             ))}
@@ -142,25 +142,25 @@ const Index = () => {
       {/* Drug Store Section */}
       <DrugStore />
 
-      {/* Stats Section */}
-      <section className="py-16 px-4 bg-green-600 text-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-green-600 to-emerald-600" />
+      {/* Stats Section with Gradient Background */}
+      <section className="py-16 px-4 bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 text-white relative overflow-hidden animate-gradient-shift">
+        <div className="absolute inset-0 bg-black/10" />
         <div className="container mx-auto relative z-10">
           <div className="grid md:grid-cols-4 gap-8 text-center">
-            <div>
-              <div className="text-4xl font-bold mb-2">10K+</div>
+            <div className="hover:scale-110 transition-transform duration-300 animate-stagger">
+              <div className="text-4xl font-bold mb-2 animate-bounce-gentle">10K+</div>
               <div className="text-green-100">Active Users</div>
             </div>
-            <div>
-              <div className="text-4xl font-bold mb-2">20+</div>
+            <div className="hover:scale-110 transition-transform duration-300 animate-stagger">
+              <div className="text-4xl font-bold mb-2 animate-bounce-gentle">20+</div>
               <div className="text-green-100">Conditions Supported</div>
             </div>
-            <div>
-              <div className="text-4xl font-bold mb-2">50K+</div>
+            <div className="hover:scale-110 transition-transform duration-300 animate-stagger">
+              <div className="text-4xl font-bold mb-2 animate-bounce-gentle">50K+</div>
               <div className="text-green-100">Health Records</div>
             </div>
-            <div>
-              <div className="text-4xl font-bold mb-2">99.9%</div>
+            <div className="hover:scale-110 transition-transform duration-300 animate-stagger">
+              <div className="text-4xl font-bold mb-2 animate-bounce-gentle">99.9%</div>
               <div className="text-green-100">Uptime</div>
             </div>
           </div>
@@ -171,15 +171,15 @@ const Index = () => {
       <TestimonialsSection />
 
       {/* CTA Section */}
-      <section className="py-16 px-4 bg-gray-50/80 dark:bg-gray-900/80 backdrop-blur-sm">
-        <div className="container mx-auto text-center max-w-3xl">
+      <section className="py-16 px-4 bg-gray-50/90 dark:bg-gray-900/90 backdrop-blur-sm">
+        <div className="container mx-auto text-center max-w-3xl animate-fade-in">
           <h2 className="text-3xl md:text-4xl font-bold mb-6 text-gray-800 dark:text-white">
             Ready to Take Control of Your Health?
           </h2>
           <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
             Join thousands of users who have transformed their health journey with Healington.
           </p>
-          <Button asChild size="lg" className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 text-lg">
+          <Button asChild size="lg" className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 text-lg hover:scale-105 transition-all duration-300 hover:shadow-lg animate-pulse-gentle">
             <Link to="/auth">
               Start Your Journey Today
               <ArrowRight className="ml-2 h-5 w-5" />
