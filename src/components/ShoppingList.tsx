@@ -21,7 +21,8 @@ const ShoppingList = () => {
     full_name: '',
     phone_number: '',
     email_address: '',
-    country: ''
+    country: '',
+    address: ''
   });
 
   useEffect(() => {
@@ -68,7 +69,7 @@ const ShoppingList = () => {
 
       toast({
         title: 'Medication Added Successfully!',
-        description: `Reference number: ${referenceNumber}`,
+        description: `Reference number: ${referenceNumber}. Your order will be processed for doorstep delivery.`,
       });
 
       setNewMedication({
@@ -77,7 +78,8 @@ const ShoppingList = () => {
         full_name: '',
         phone_number: '',
         email_address: '',
-        country: ''
+        country: '',
+        address: ''
       });
       setIsAdding(false);
       fetchMedications();
@@ -145,7 +147,7 @@ const ShoppingList = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white flex items-center">
           <ShoppingCart className="h-5 w-5 md:h-6 md:w-6 mr-2 text-green-600" />
@@ -167,8 +169,8 @@ const ShoppingList = () => {
         <Card className="p-4 md:p-6">
           <h3 className="text-lg font-semibold mb-4">Add New Medication</h3>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="sm:col-span-2">
                 <Label htmlFor="medication_name">Medication Name *</Label>
                 <Input
                   id="medication_name"
@@ -183,7 +185,7 @@ const ShoppingList = () => {
               </div>
               
               <div>
-                <Label htmlFor="pharmacy_name">Pharmacy Name</Label>
+                <Label htmlFor="pharmacy_name">Preferred Pharmacy</Label>
                 <Input
                   id="pharmacy_name"
                   value={newMedication.pharmacy_name}
@@ -194,11 +196,9 @@ const ShoppingList = () => {
                   className="w-full"
                 />
               </div>
-            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="full_name">Your Full Name</Label>
+                <Label htmlFor="full_name">Your Full Name *</Label>
                 <Input
                   id="full_name"
                   value={newMedication.full_name}
@@ -206,12 +206,15 @@ const ShoppingList = () => {
                     ...prev,
                     full_name: e.target.value
                   }))}
+                  required
                   className="w-full"
                 />
               </div>
-              
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="phone_number">Phone Number</Label>
+                <Label htmlFor="phone_number">Phone Number *</Label>
                 <Input
                   id="phone_number"
                   type="tel"
@@ -220,14 +223,13 @@ const ShoppingList = () => {
                     ...prev,
                     phone_number: e.target.value
                   }))}
+                  required
                   className="w-full"
                 />
               </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              
               <div>
-                <Label htmlFor="email_address">Email Address</Label>
+                <Label htmlFor="email_address">Email Address *</Label>
                 <Input
                   id="email_address"
                   type="email"
@@ -236,12 +238,15 @@ const ShoppingList = () => {
                     ...prev,
                     email_address: e.target.value
                   }))}
+                  required
                   className="w-full"
                 />
               </div>
-              
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="country">Country</Label>
+                <Label htmlFor="country">Country *</Label>
                 <Input
                   id="country"
                   value={newMedication.country}
@@ -249,14 +254,30 @@ const ShoppingList = () => {
                     ...prev,
                     country: e.target.value
                   }))}
+                  required
+                  className="w-full"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="address">Delivery Address *</Label>
+                <Input
+                  id="address"
+                  value={newMedication.address}
+                  onChange={(e) => setNewMedication(prev => ({
+                    ...prev,
+                    address: e.target.value
+                  }))}
+                  placeholder="Full address for doorstep delivery"
+                  required
                   className="w-full"
                 />
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
+            <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3 pt-4">
               <Button type="submit" className="bg-green-600 hover:bg-green-700 flex-1 sm:flex-none">
-                Add to List
+                Add to Shopping List
               </Button>
               <Button 
                 type="button" 
@@ -272,17 +293,17 @@ const ShoppingList = () => {
       )}
 
       {/* Medications List */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4">
         {medications.map((medication) => (
           <Card key={medication.id} className="p-4 hover:shadow-lg transition-shadow">
             <div className="flex flex-col space-y-3">
-              <div className="flex justify-between items-start">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start space-y-2 sm:space-y-0">
                 <h3 className="font-semibold text-lg text-gray-900 dark:text-white break-words">
                   {medication.medication_name}
                 </h3>
                 <Badge
                   variant={medication.is_purchased ? "default" : "secondary"}
-                  className={medication.is_purchased ? "bg-green-600" : ""}
+                  className={`self-start sm:self-center ${medication.is_purchased ? "bg-green-600" : ""}`}
                 >
                   {medication.is_purchased ? 'Purchased' : 'Pending'}
                 </Badge>
@@ -293,37 +314,54 @@ const ShoppingList = () => {
                   <p className="text-sm font-medium text-blue-800 dark:text-blue-200">
                     Reference Number
                   </p>
-                  <p className="text-xl font-bold text-blue-900 dark:text-blue-100 font-mono">
+                  <p className="text-lg sm:text-xl font-bold text-blue-900 dark:text-blue-100 font-mono break-all">
                     {medication.reference_number}
                   </p>
                 </div>
               )}
               
-              <div className="space-y-2 text-sm">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
                 {medication.pharmacy_name && (
-                  <p className="text-gray-600 dark:text-gray-300">
-                    <strong>Pharmacy:</strong> {medication.pharmacy_name}
-                  </p>
+                  <div className="bg-gray-50 dark:bg-gray-800 p-2 rounded">
+                    <p className="text-gray-600 dark:text-gray-300">
+                      <strong>Pharmacy:</strong> {medication.pharmacy_name}
+                    </p>
+                  </div>
                 )}
                 {medication.full_name && (
-                  <p className="text-gray-600 dark:text-gray-300">
-                    <strong>Name:</strong> {medication.full_name}
-                  </p>
+                  <div className="bg-gray-50 dark:bg-gray-800 p-2 rounded">
+                    <p className="text-gray-600 dark:text-gray-300">
+                      <strong>Name:</strong> {medication.full_name}
+                    </p>
+                  </div>
                 )}
                 {medication.phone_number && (
-                  <p className="text-gray-600 dark:text-gray-300">
-                    <strong>Phone:</strong> {medication.phone_number}
-                  </p>
+                  <div className="bg-gray-50 dark:bg-gray-800 p-2 rounded">
+                    <p className="text-gray-600 dark:text-gray-300">
+                      <strong>Phone:</strong> {medication.phone_number}
+                    </p>
+                  </div>
                 )}
                 {medication.email_address && (
-                  <p className="text-gray-600 dark:text-gray-300 break-all">
-                    <strong>Email:</strong> {medication.email_address}
-                  </p>
+                  <div className="bg-gray-50 dark:bg-gray-800 p-2 rounded">
+                    <p className="text-gray-600 dark:text-gray-300 break-all">
+                      <strong>Email:</strong> {medication.email_address}
+                    </p>
+                  </div>
                 )}
                 {medication.country && (
-                  <p className="text-gray-600 dark:text-gray-300">
-                    <strong>Country:</strong> {medication.country}
-                  </p>
+                  <div className="bg-gray-50 dark:bg-gray-800 p-2 rounded">
+                    <p className="text-gray-600 dark:text-gray-300">
+                      <strong>Country:</strong> {medication.country}
+                    </p>
+                  </div>
+                )}
+                {medication.address && (
+                  <div className="bg-gray-50 dark:bg-gray-800 p-2 rounded">
+                    <p className="text-gray-600 dark:text-gray-300">
+                      <strong>Address:</strong> {medication.address}
+                    </p>
+                  </div>
                 )}
               </div>
               
@@ -354,7 +392,7 @@ const ShoppingList = () => {
       </div>
 
       {medications.length === 0 && !isAdding && (
-        <div className="text-center py-12">
+        <div className="text-center py-8 sm:py-12">
           <ShoppingCart className="h-12 w-12 text-gray-400 mx-auto mb-4" />
           <p className="text-gray-500 text-lg mb-4">No medications in your shopping list</p>
           <Button

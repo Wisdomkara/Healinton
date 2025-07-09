@@ -7,9 +7,10 @@ import HealthMetricCard from '@/components/HealthMetricCard';
 import MealPlanCard from '@/components/MealPlanCard';
 import PremiumBanner from '@/components/PremiumBanner';
 import TestimonialsSection from '@/components/TestimonialsSection';
+import DrugStore from '@/components/DrugStore';
 import Loader from '@/components/Loader';
 import { useAuth } from '@/hooks/useAuth';
-import { Heart, Calendar, Stethoscope, Clock, Shield, Users, TrendingUp, Smartphone, CheckCircle, Activity, Brain, Phone, Mail, MapPin } from 'lucide-react';
+import { Heart, Calendar, Stethoscope, Clock, Shield, Users, TrendingUp, Smartphone, CheckCircle, Activity, Brain, Phone, Mail, MapPin, Pill } from 'lucide-react';
 
 const Index = () => {
   const { user } = useAuth();
@@ -227,6 +228,23 @@ const Index = () => {
                 </Card>
               ))}
             </div>
+          </div>
+        </section>
+
+        {/* Drug Store Section */}
+        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white/50 dark:bg-gray-800/50">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4 flex items-center justify-center">
+                <Pill className="h-10 w-10 mr-4 text-blue-600" />
+                Order Your Medications
+              </h2>
+              <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+                Access basic, unique, and hard-to-find medications with doorstep delivery
+              </p>
+            </div>
+            
+            <DrugStore />
           </div>
         </section>
 

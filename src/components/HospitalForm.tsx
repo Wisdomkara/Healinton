@@ -4,24 +4,22 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Hospital, Plus, Edit, Trash2 } from 'lucide-react';
+import { Building2, Plus, Check, X, Star } from 'lucide-react';
 
 const HospitalForm = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [hospitals, setHospitals] = useState<any[]>([]);
   const [isAdding, setIsAdding] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [formData, setFormData] = useState({
+  const [newHospital, setNewHospital] = useState({
     hospital_name: '',
     email: '',
     phone: '',
-    address: '',
-    is_default: false
+    address: ''
   });
 
   useEffect(() => {
@@ -52,60 +50,74 @@ const HospitalForm = () => {
     if (!user) return;
 
     try {
-      if (editingId) {
-        const { error } = await supabase
-          .from('user_hospitals')
-          .update(formData)
-          .eq('id', editingId);
-
-        if (error) throw error;
-
-        toast({
-          title: 'Hospital Updated',
-          description: 'Hospital information has been updated successfully.',
+      const { error } = await supabase
+        .from('user_hospitals')
+        .insert({
+          ...newHospital,
+          user_id: user.id,
+          is_default: hospitals.length === 0 // Make first hospital default
         });
-      } else {
-        const { error } = await supabase
-          .from('user_hospitals')
-          .insert({
-            ...formData,
-            user_id: user.id
-          });
 
-        if (error) throw error;
+      if (error) throw error;
 
-        toast({
-          title: 'Hospital Added',
-          description: 'Hospital information has been saved successfully.',
-        });
-      }
+      toast({
+        title: 'Hospital Added Successfully!',
+        description: 'Hospital information saved for future appointments.',
+      });
 
-      resetForm();
+      setNewHospital({
+        hospital_name: '',
+        email: '',
+        phone: '',
+        address: ''
+      });
+      setIsAdding(false);
       fetchHospitals();
+
     } catch (error) {
-      console.error('Error saving hospital:', error);
+      console.error('Error adding hospital:', error);
       toast({
         title: 'Error',
-        description: 'Failed to save hospital information.',
+        description: 'Failed to add hospital information.',
         variant: 'destructive'
       });
     }
   };
 
-  const handleEdit = (hospital: any) => {
-    setFormData({
-      hospital_name: hospital.hospital_name || '',
-      email: hospital.email || '',
-      phone: hospital.phone || '',
-      address: hospital.address || '',
-      is_default: hospital.is_default || false
-    });
-    setEditingId(hospital.id);
-    setIsAdding(true);
+  const setAsDefault = async (id: string) => {
+    try {
+      // First, remove default from all hospitals
+      await supabase
+        .from('user_hospitals')
+        .update({ is_default: false })
+        .eq('user_id', user!.id);
+
+      // Then set the selected hospital as default
+      const { error } = await supabase
+        .from('user_hospitals')
+        .update({ is_default: true })
+        .eq('id', id);
+
+      if (error) throw error;
+
+      toast({
+        title: 'Default Hospital Updated',
+        description: 'This hospital is now your default choice.',
+      });
+
+      fetchHospitals();
+    } catch (error) {
+      console.error('Error updating default hospital:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to update default hospital.',
+        variant: 'destructive'
+      });
+    }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this hospital?')) return;
+  const deleteHospital = async (id: string) => {
+    if (!confirm('Are you sure you want to remove this hospital?')) return;
 
     try {
       const { error } = await supabase
@@ -116,8 +128,8 @@ const HospitalForm = () => {
       if (error) throw error;
 
       toast({
-        title: 'Hospital Deleted',
-        description: 'Hospital information has been deleted.',
+        title: 'Hospital Removed',
+        description: 'Hospital information removed successfully.',
       });
 
       fetchHospitals();
@@ -125,36 +137,24 @@ const HospitalForm = () => {
       console.error('Error deleting hospital:', error);
       toast({
         title: 'Error',
-        description: 'Failed to delete hospital.',
+        description: 'Failed to remove hospital.',
         variant: 'destructive'
       });
     }
   };
 
-  const resetForm = () => {
-    setFormData({
-      hospital_name: '',
-      email: '',
-      phone: '',
-      address: '',
-      is_default: false
-    });
-    setIsAdding(false);
-    setEditingId(null);
-  };
-
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center">
-          <Hospital className="h-6 w-6 mr-2 text-blue-600" />
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white flex items-center">
+          <Building2 className="h-5 w-5 md:h-6 md:w-6 mr-2 text-blue-600" />
           My Hospitals
         </h2>
         
         {!isAdding && (
           <Button
             onClick={() => setIsAdding(true)}
-            className="bg-blue-600 hover:bg-blue-700"
+            className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto"
           >
             <Plus className="h-4 w-4 mr-2" />
             Add Hospital
@@ -162,87 +162,77 @@ const HospitalForm = () => {
         )}
       </div>
 
-      {/* Add/Edit Form */}
       {isAdding && (
-        <Card className="p-6">
-          <h3 className="text-lg font-semibold mb-4">
-            {editingId ? 'Edit Hospital' : 'Add New Hospital'}
-          </h3>
-          
+        <Card className="p-4 md:p-6">
+          <h3 className="text-lg font-semibold mb-4">Add Hospital Information</h3>
           <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <Label htmlFor="hospital_name">Hospital Name *</Label>
+              <Input
+                id="hospital_name"
+                value={newHospital.hospital_name}
+                onChange={(e) => setNewHospital(prev => ({
+                  ...prev,
+                  hospital_name: e.target.value
+                }))}
+                required
+                className="w-full"
+              />
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="hospital_name">Hospital Name *</Label>
+                <Label htmlFor="email">Hospital Email</Label>
                 <Input
-                  id="hospital_name"
-                  value={formData.hospital_name}
-                  onChange={(e) => setFormData(prev => ({
+                  id="email"
+                  type="email"
+                  value={newHospital.email}
+                  onChange={(e) => setNewHospital(prev => ({
                     ...prev,
-                    hospital_name: e.target.value
+                    email: e.target.value
                   }))}
-                  required
+                  className="w-full"
                 />
               </div>
               
               <div>
-                <Label htmlFor="phone">Phone Number</Label>
+                <Label htmlFor="phone">Hospital Phone</Label>
                 <Input
                   id="phone"
                   type="tel"
-                  value={formData.phone}
-                  onChange={(e) => setFormData(prev => ({
+                  value={newHospital.phone}
+                  onChange={(e) => setNewHospital(prev => ({
                     ...prev,
                     phone: e.target.value
                   }))}
+                  className="w-full"
                 />
               </div>
             </div>
 
             <div>
-              <Label htmlFor="email">Email Address</Label>
+              <Label htmlFor="address">Hospital Address</Label>
               <Input
-                id="email"
-                type="email"
-                value={formData.email}
-                onChange={(e) => setFormData(prev => ({
-                  ...prev,
-                  email: e.target.value
-                }))}
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="address">Address</Label>
-              <Textarea
                 id="address"
-                value={formData.address}
-                onChange={(e) => setFormData(prev => ({
+                value={newHospital.address}
+                onChange={(e) => setNewHospital(prev => ({
                   ...prev,
                   address: e.target.value
                 }))}
-                rows={3}
+                className="w-full"
               />
             </div>
 
-            <div className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                id="is_default"
-                checked={formData.is_default}
-                onChange={(e) => setFormData(prev => ({
-                  ...prev,
-                  is_default: e.target.checked
-                }))}
-                className="rounded"
-              />
-              <Label htmlFor="is_default">Make this my default hospital</Label>
-            </div>
-
-            <div className="flex space-x-3">
-              <Button type="submit" className="bg-green-600 hover:bg-green-700">
-                {editingId ? 'Update Hospital' : 'Save Hospital'}
+            <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
+              <Button type="submit" className="bg-blue-600 hover:bg-blue-700 flex-1 sm:flex-none">
+                Add Hospital
               </Button>
-              <Button type="button" variant="outline" onClick={resetForm}>
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={() => setIsAdding(false)}
+                className="flex-1 sm:flex-none"
+              >
                 Cancel
               </Button>
             </div>
@@ -251,52 +241,62 @@ const HospitalForm = () => {
       )}
 
       {/* Hospitals List */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {hospitals.map((hospital) => (
-          <Card key={hospital.id} className="p-4">
-            <div className="flex justify-between items-start mb-3">
-              <h3 className="font-semibold text-lg">{hospital.hospital_name}</h3>
-              <div className="flex space-x-2">
+          <Card key={hospital.id} className="p-4 hover:shadow-lg transition-shadow">
+            <div className="flex flex-col space-y-3">
+              <div className="flex justify-between items-start">
+                <h3 className="font-semibold text-lg text-gray-900 dark:text-white break-words">
+                  {hospital.hospital_name}
+                </h3>
+                {hospital.is_default && (
+                  <Badge className="bg-green-600 flex items-center space-x-1">
+                    <Star className="h-3 w-3" />
+                    <span>Default</span>
+                  </Badge>
+                )}
+              </div>
+              
+              <div className="space-y-2 text-sm">
+                {hospital.email && (
+                  <p className="text-gray-600 dark:text-gray-300 break-all">
+                    <strong>Email:</strong> {hospital.email}
+                  </p>
+                )}
+                {hospital.phone && (
+                  <p className="text-gray-600 dark:text-gray-300">
+                    <strong>Phone:</strong> {hospital.phone}
+                  </p>
+                )}
+                {hospital.address && (
+                  <p className="text-gray-600 dark:text-gray-300">
+                    <strong>Address:</strong> {hospital.address}
+                  </p>
+                )}
+              </div>
+              
+              <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 pt-3">
+                {!hospital.is_default && (
+                  <Button
+                    onClick={() => setAsDefault(hospital.id)}
+                    variant="outline"
+                    className="bg-green-50 text-green-600 hover:bg-green-100 flex-1"
+                    size="sm"
+                  >
+                    <Star className="h-4 w-4 mr-2" />
+                    Set as Default
+                  </Button>
+                )}
                 <Button
-                  variant="ghost"
+                  onClick={() => deleteHospital(hospital.id)}
+                  variant="outline"
+                  className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 flex-1"
                   size="sm"
-                  onClick={() => handleEdit(hospital)}
                 >
-                  <Edit className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleDelete(hospital.id)}
-                  className="text-red-600 hover:text-red-700"
-                >
-                  <Trash2 className="h-4 w-4" />
+                  <X className="h-4 w-4 mr-2" />
+                  Remove
                 </Button>
               </div>
-            </div>
-            
-            {hospital.is_default && (
-              <div className="inline-flex items-center px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full mb-2">
-                Default Hospital
-              </div>
-            )}
-            
-            <div className="space-y-2 text-sm">
-              {hospital.phone && (
-                <p className="text-gray-600 dark:text-gray-300">
-                  📞 {hospital.phone}
-                </p>
-              )}
-              {hospital.email && (
-                <p className="text-gray-600 dark:text-gray-300">
-                  ✉️ {hospital.email}
-                </p>
-              )}
-              {hospital.address && (
-                <p className="text-gray-600 dark:text-gray-300">
-                  📍 {hospital.address}
-                </p>
-              )}
             </div>
           </Card>
         ))}
@@ -304,11 +304,11 @@ const HospitalForm = () => {
 
       {hospitals.length === 0 && !isAdding && (
         <div className="text-center py-12">
-          <Hospital className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-          <p className="text-gray-500 text-lg mb-4">No hospitals added yet</p>
+          <Building2 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+          <p className="text-gray-500 text-lg mb-4">No hospitals saved yet</p>
           <Button
             onClick={() => setIsAdding(true)}
-            className="bg-blue-600 hover:bg-blue-700"
+            className="bg-blue-600 hover:blue-green-700"
           >
             <Plus className="h-4 w-4 mr-2" />
             Add Your First Hospital
