@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -15,6 +16,9 @@ import Settings from '@/components/Settings';
 import NotificationCenter from '@/components/NotificationCenter';
 import PremiumBanner from '@/components/PremiumBanner';
 import RateUs from '@/components/RateUs';
+import MealTracker from '@/components/MealTracker';
+import DrugStore from '@/components/DrugStore';
+import HospitalForm from '@/components/HospitalForm';
 import { useScrollAnimation, useStaggerAnimation } from '@/hooks/useScrollAnimation';
 import { useAuth } from '@/hooks/useAuth';
 import { usePremium } from '@/hooks/usePremium';
@@ -141,6 +145,25 @@ const Dashboard = () => {
             <ShoppingList />
           </div>
         );
+      case 'drugs':
+        return (
+          <div className="w-full">
+            <DrugStore />
+          </div>
+        );
+      case 'meal-tracker':
+        return (
+          <div className="w-full">
+            <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-4 md:mb-6">Meal Tracker</h2>
+            <MealTracker userProfile={userProfile} />
+          </div>
+        );
+      case 'hospital-info':
+        return (
+          <div className="w-full">
+            <HospitalForm />
+          </div>
+        );
       case 'chat':
         return (
           <div className="w-full">
@@ -174,6 +197,24 @@ const Dashboard = () => {
             {/* Premium Banner - only show if not premium */}
             <PremiumBanner />
 
+            {/* Meal Tracker */}
+            <Card className="p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-semibold flex items-center">
+                  <Utensils className="h-5 w-5 mr-2 text-green-600" />
+                  Today's Meal Progress
+                </h3>
+                <Button
+                  variant="outline"
+                  onClick={() => setActiveSection('meal-tracker')}
+                  size="sm"
+                >
+                  View Full Tracker
+                </Button>
+              </div>
+              <MealTracker userProfile={userProfile} />
+            </Card>
+
             {/* Today's Meal Plan */}
             <div className="w-full">
               <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 md:mb-6 space-y-2 sm:space-y-0">
@@ -189,15 +230,9 @@ const Dashboard = () => {
                       <h3 className="font-semibold text-base md:text-lg mb-3 capitalize text-green-700 dark:text-green-300">{time}</h3>
                       <div className="space-y-2">
                         <div className="p-2 md:p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border-l-4 border-green-500">
-                          <p className="text-xs md:text-sm font-medium text-green-800 dark:text-green-300">Low Budget</p>
+                          <p className="text-xs md:text-sm font-medium text-green-800 dark:text-green-300">Recommended</p>
                           <p className="text-xs text-gray-600 dark:text-gray-300 break-words">
                             {todaysMealPlan[time as keyof typeof todaysMealPlan].low}
-                          </p>
-                        </div>
-                        <div className="p-2 md:p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border-l-4 border-blue-500">
-                          <p className="text-xs md:text-sm font-medium text-blue-800 dark:text-blue-300">High Budget</p>
-                          <p className="text-xs text-gray-600 dark:text-gray-300 break-words">
-                            {todaysMealPlan[time as keyof typeof todaysMealPlan].high}
                           </p>
                         </div>
                       </div>
@@ -215,7 +250,7 @@ const Dashboard = () => {
                   <span className="break-words">Health Tips for {userProfile?.illness_type?.replace('_', ' ').toUpperCase() || 'HYPERTENSION'}</span>
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
-                  {currentHealthTips.map((tip, index) => (
+                  {currentHealthTips.slice(0, 6).map((tip, index) => (
                     <div key={index} className="p-3 md:p-4 bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-lg hover:shadow-md transition-shadow">
                       <div className="flex items-start space-x-2 md:space-x-3">
                         <div className="w-2 h-2 md:w-3 md:h-3 bg-green-500 rounded-full mt-1 md:mt-2 flex-shrink-0"></div>

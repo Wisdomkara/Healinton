@@ -20,7 +20,11 @@ import {
   Shield,
   Info,
   Star,
-  ArrowLeft
+  ArrowLeft,
+  Utensils,
+  Pill,
+  Building2,
+  Activity
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -42,7 +46,10 @@ const Sidebar = ({ isOpen = true, onClose, onSectionChange, activeSection = 'ove
     { icon: Calendar, label: 'Appointments', section: 'appointments', isPremium: true },
     { icon: Bell, label: 'Notifications', section: 'notifications', badge: 3, isPremium: false },
     { icon: Bell, label: 'Reminders', section: 'reminders', isPremium: true },
+    { icon: Utensils, label: 'Meal Tracker', section: 'meal-tracker', isPremium: true },
     { icon: ShoppingCart, label: 'Shopping List', section: 'shopping', isPremium: true },
+    { icon: Pill, label: 'Drug Store', section: 'drugs', isPremium: false },
+    { icon: Building2, label: 'My Hospitals', section: 'hospital-info', isPremium: false },
     { icon: MessageSquare, label: 'AI Chat', section: 'chat', isPremium: false },
     { icon: FileText, label: 'Health Blog', section: 'blog', isPremium: false },
     { icon: Shield, label: 'Health Insurance', section: 'health-insurance', isPremium: false },
@@ -112,7 +119,7 @@ const Sidebar = ({ isOpen = true, onClose, onSectionChange, activeSection = 'ove
           </Link>
         </div>
 
-        <nav className="space-y-2">
+        <nav className="space-y-2 max-h-[calc(100vh-200px)] overflow-y-auto">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeSection === item.section;

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -56,9 +57,9 @@ const Premium = () => {
   const plans = [
     {
       name: 'Basic',
-      price: 'FREE',
-      period: 'till October 2025',
-      description: 'Perfect for getting started with health management - Sponsored',
+      price: '$3.99',
+      period: '/month',
+      description: 'Perfect for getting started with health management',
       features: [
         'Basic health tracking',
         'Simple meal plans',
@@ -71,9 +72,9 @@ const Premium = () => {
     },
     {
       name: 'Premium',
-      price: 'FREE',
-      period: 'till October 2025',
-      description: 'Complete health management solution - Sponsored',
+      price: '$10.99',
+      period: '/month',
+      description: 'Complete health management solution with AI insights',
       features: [
         'Advanced health analytics',
         'Personalized meal plans',
@@ -89,9 +90,9 @@ const Premium = () => {
     },
     {
       name: 'Enterprise',
-      price: 'FREE',
-      period: 'till October 2025',
-      description: 'For healthcare providers and organizations - Sponsored',
+      price: 'Custom',
+      period: '',
+      description: 'For healthcare providers and organizations',
       features: [
         'Everything in Premium',
         'Multi-patient management',
@@ -139,24 +140,6 @@ const Premium = () => {
       description: 'Manage health records for up to 6 family members with shared calendars and coordinated care plans.'
     }
   ];
-
-  const mealPlans = {
-    morning: {
-      low: { name: 'Oatmeal with Banana', price: '$3', description: 'Wholesome oats with fresh banana slices' },
-      medium: { name: 'Greek Yogurt Bowl', price: '$8', description: 'Greek yogurt with berries and granola' },
-      high: { name: 'Avocado Toast Deluxe', price: '$15', description: 'Sourdough with avocado, poached egg, and smoked salmon' }
-    },
-    afternoon: {
-      low: { name: 'Rice & Beans', price: '$5', description: 'Nutritious rice and beans with vegetables' },
-      medium: { name: 'Chicken Salad Wrap', price: '$12', description: 'Grilled chicken with fresh vegetables in a wrap' },
-      high: { name: 'Quinoa Power Bowl', price: '$18', description: 'Quinoa with grilled salmon, vegetables, and tahini dressing' }
-    },
-    night: {
-      low: { name: 'Pasta Marinara', price: '$6', description: 'Wholesome pasta with homemade marinara sauce' },
-      medium: { name: 'Grilled Chicken Dinner', price: '$14', description: 'Grilled chicken breast with roasted vegetables' },
-      high: { name: 'Steak & Vegetables', price: '$25', description: 'Premium grass-fed steak with seasonal vegetables' }
-    }
-  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -242,45 +225,11 @@ const Premium = () => {
           </div>
         </div>
 
-        {/* Meal Plans Section */}
-        <div className="mb-16">
-          <h2 className="text-3xl font-bold text-center mb-12 flex items-center justify-center">
-            <Utensils className="h-8 w-8 mr-3 text-primary-600" />
-            Daily Meal Plans for Every Budget
-          </h2>
-          
-          {Object.entries(mealPlans).map(([timeOfDay, meals]) => (
-            <div key={timeOfDay} className="mb-12">
-              <h3 className="text-2xl font-semibold capitalize mb-6 text-gray-900 dark:text-white">
-                {timeOfDay} Meals
-              </h3>
-              <div className="grid md:grid-cols-3 gap-6">
-                {Object.entries(meals).map(([budget, meal]) => (
-                  <Card key={budget} className="p-6 hover:shadow-lg transition-shadow">
-                    <div className="flex justify-between items-start mb-4">
-                      <div className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                        budget === 'low' ? 'bg-green-100 text-green-800' :
-                        budget === 'medium' ? 'bg-blue-100 text-blue-800' :
-                        'bg-purple-100 text-purple-800'
-                      }`}>
-                        {budget === 'low' ? 'Budget' : budget === 'medium' ? 'Standard' : 'Premium'}
-                      </div>
-                      <span className="text-2xl font-bold text-primary-600">{meal.price}</span>
-                    </div>
-                    <h4 className="text-lg font-semibold mb-2">{meal.name}</h4>
-                    <p className="text-gray-600 dark:text-gray-300 text-sm">{meal.description}</p>
-                  </Card>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-
         {/* CTA Section */}
         <div className="text-center bg-gradient-to-r from-green-600 to-blue-600 rounded-2xl p-12 text-white">
           <h2 className="text-3xl font-bold mb-4">Ready to Transform Your Health?</h2>
           <p className="text-xl mb-8 opacity-90">
-            Get premium features FREE till October 2025 - Sponsored
+            All plans are FREE until the end of August 2025!
           </p>
           <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
             <Button
@@ -289,7 +238,7 @@ const Premium = () => {
               size="lg"
               className="bg-white text-green-600 hover:bg-gray-100 font-semibold px-8 py-4"
             >
-              {loading ? 'Processing...' : 'Get Premium - FREE till October 2025'}
+              {loading ? 'Processing...' : 'Get Premium - FREE till August 2025'}
             </Button>
             <Button
               variant="outline"
@@ -300,7 +249,7 @@ const Premium = () => {
             </Button>
           </div>
           <p className="text-sm mt-4 opacity-75">
-            Sponsored free access. No billing till October 2025.
+            No billing until August 2025. Cancel anytime.
           </p>
         </div>
       </div>

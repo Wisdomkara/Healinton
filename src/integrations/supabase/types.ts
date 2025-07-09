@@ -44,6 +44,81 @@ export type Database = {
         }
         Relationships: []
       }
+      drug_categories: {
+        Row: {
+          availability: boolean | null
+          created_at: string | null
+          description: string | null
+          id: string
+          name: string
+          price: number | null
+          type: string
+        }
+        Insert: {
+          availability?: boolean | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          price?: number | null
+          type: string
+        }
+        Update: {
+          availability?: boolean | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          price?: number | null
+          type?: string
+        }
+        Relationships: []
+      }
+      drug_orders: {
+        Row: {
+          drug_id: string
+          id: string
+          order_date: string | null
+          quantity: number | null
+          status: string | null
+          total_amount: number | null
+          user_id: string
+        }
+        Insert: {
+          drug_id: string
+          id?: string
+          order_date?: string | null
+          quantity?: number | null
+          status?: string | null
+          total_amount?: number | null
+          user_id: string
+        }
+        Update: {
+          drug_id?: string
+          id?: string
+          order_date?: string | null
+          quantity?: number | null
+          status?: string | null
+          total_amount?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "drug_orders_drug_id_fkey"
+            columns: ["drug_id"]
+            isOneToOne: false
+            referencedRelation: "drug_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "drug_orders_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       health_metrics: {
         Row: {
           blood_pressure_diastolic: number | null
@@ -164,6 +239,44 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      meal_tracking: {
+        Row: {
+          completed: boolean | null
+          created_at: string | null
+          id: string
+          illness_type: string
+          meal_date: string
+          meal_time: string
+          user_id: string
+        }
+        Insert: {
+          completed?: boolean | null
+          created_at?: string | null
+          id?: string
+          illness_type: string
+          meal_date: string
+          meal_time: string
+          user_id: string
+        }
+        Update: {
+          completed?: boolean | null
+          created_at?: string | null
+          id?: string
+          illness_type?: string
+          meal_date?: string
+          meal_time?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meal_tracking_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       premium_users: {
         Row: {
@@ -353,6 +466,82 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "symptoms_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_analytics: {
+        Row: {
+          created_at: string | null
+          date: string
+          id: string
+          metric_type: string
+          user_id: string
+          value: number
+        }
+        Insert: {
+          created_at?: string | null
+          date: string
+          id?: string
+          metric_type: string
+          user_id: string
+          value: number
+        }
+        Update: {
+          created_at?: string | null
+          date?: string
+          id?: string
+          metric_type?: string
+          user_id?: string
+          value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_analytics_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_hospitals: {
+        Row: {
+          address: string | null
+          created_at: string | null
+          email: string | null
+          hospital_name: string
+          id: string
+          is_default: boolean | null
+          phone: string | null
+          user_id: string
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string | null
+          email?: string | null
+          hospital_name: string
+          id?: string
+          is_default?: boolean | null
+          phone?: string | null
+          user_id: string
+        }
+        Update: {
+          address?: string | null
+          created_at?: string | null
+          email?: string | null
+          hospital_name?: string
+          id?: string
+          is_default?: boolean | null
+          phone?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_hospitals_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
