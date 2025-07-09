@@ -31,20 +31,22 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Layout><Index /></Layout>} />
-            <Route path="/auth" element={<Layout><Auth /></Layout>} />
+            <Route path="/" element={<Layout />}>
+              <Route index element={<Index />} />
+              <Route path="auth" element={<Auth />} />
+              <Route path="blog" element={<Blog />} />
+              <Route path="blog/:id" element={<BlogPost />} />
+              <Route path="premium" element={<Premium />} />
+              <Route path="about" element={<AboutUs />} />
+              <Route path="faq" element={<FAQ />} />
+              <Route path="terms" element={<TermsOfService />} />
+              <Route path="privacy" element={<PrivacyPolicy />} />
+              <Route path="health-insurance" element={<HealthInsurance />} />
+              <Route path="community" element={<Community />} />
+              <Route path="accessibility" element={<Accessibility />} />
+              <Route path="*" element={<NotFound />} />
+            </Route>
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/blog" element={<Layout><Blog /></Layout>} />
-            <Route path="/blog/:id" element={<Layout><BlogPost /></Layout>} />
-            <Route path="/premium" element={<Layout><Premium /></Layout>} />
-            <Route path="/about" element={<Layout><AboutUs /></Layout>} />
-            <Route path="/faq" element={<Layout><FAQ /></Layout>} />
-            <Route path="/terms" element={<Layout><TermsOfService /></Layout>} />
-            <Route path="/privacy" element={<Layout><PrivacyPolicy /></Layout>} />
-            <Route path="/health-insurance" element={<Layout><HealthInsurance /></Layout>} />
-            <Route path="/community" element={<Layout><Community /></Layout>} />
-            <Route path="/accessibility" element={<Layout><Accessibility /></Layout>} />
-            <Route path="*" element={<Layout><NotFound /></Layout>} />
           </Routes>
         </BrowserRouter>
       </TooltipProvider>
