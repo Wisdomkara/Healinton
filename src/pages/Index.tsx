@@ -116,64 +116,50 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100 dark:from-green-950 dark:via-gray-900 dark:to-green-900 relative overflow-hidden">
-      {/* Enhanced Decorative background blobs - removed overlay for better visibility */}
-      <div className="absolute inset-0 pointer-events-none">
-        {/* Large primary blobs */}
-        <div className="absolute top-10 left-10 w-72 h-64 bg-green-500/40 rounded-full blur-2xl animate-pulse"></div>
-        <div className="absolute top-32 right-20 w-96 h-80 bg-green-400/45 rounded-full blur-3xl transform rotate-12 animate-bounce-gentle"></div>
-        <div className="absolute top-64 left-1/4 w-48 h-56 bg-green-600/50 rounded-full blur-xl transform -rotate-45"></div>
-        <div className="absolute top-80 right-1/3 w-80 h-72 bg-green-300/40 rounded-full blur-2xl transform rotate-45"></div>
+      {/* Enhanced Decorative background blobs - fully visible */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {/* Large primary animated blobs */}
+        <div className="absolute top-10 left-10 w-72 h-64 bg-green-500/60 rounded-full blur-2xl animate-pulse" style={{animationDuration: '4s'}}></div>
+        <div className="absolute top-32 right-20 w-96 h-80 bg-green-400/65 rounded-full blur-3xl transform rotate-12 animate-bounce-gentle" style={{animationDuration: '6s'}}></div>
+        <div className="absolute top-64 left-1/4 w-48 h-56 bg-green-600/70 rounded-full blur-xl transform -rotate-45 animate-pulse" style={{animationDuration: '5s'}}></div>
+        <div className="absolute top-80 right-1/3 w-80 h-72 bg-green-300/60 rounded-full blur-2xl transform rotate-45 animate-bounce-gentle" style={{animationDuration: '7s'}}></div>
         
-        {/* Medium accent blobs */}
-        <div className="absolute bottom-32 left-20 w-64 h-88 bg-green-500/45 rounded-full blur-xl transform -rotate-12"></div>
-        <div className="absolute bottom-48 right-16 w-56 h-64 bg-green-400/50 rounded-full blur-lg transform rotate-30"></div>
-        <div className="absolute bottom-80 left-1/2 w-88 h-96 bg-green-600/35 rounded-full blur-3xl transform -rotate-30"></div>
-        <div className="absolute top-1/2 left-8 w-40 h-48 bg-green-500/55 rounded-full blur-md transform rotate-60"></div>
+        {/* Medium accent blobs with movement */}
+        <div className="absolute bottom-32 left-20 w-64 h-88 bg-green-500/65 rounded-full blur-xl transform -rotate-12 animate-pulse" style={{animationDuration: '3s'}}></div>
+        <div className="absolute bottom-48 right-16 w-56 h-64 bg-green-400/70 rounded-full blur-lg transform rotate-30 animate-bounce-gentle" style={{animationDuration: '8s'}}></div>
+        <div className="absolute bottom-80 left-1/2 w-88 h-96 bg-green-600/55 rounded-full blur-3xl transform -rotate-30 animate-pulse" style={{animationDuration: '4.5s'}}></div>
+        <div className="absolute top-1/2 left-8 w-40 h-48 bg-green-500/75 rounded-full blur-md transform rotate-60 animate-bounce-gentle" style={{animationDuration: '6.5s'}}></div>
         
-        {/* Small decorative blobs */}
-        <div className="absolute top-1/3 right-8 w-60 h-72 bg-green-400/40 rounded-full blur-xl transform -rotate-45"></div>
-        <div className="absolute top-2/3 left-1/3 w-96 h-80 bg-green-300/30 rounded-full blur-3xl transform rotate-15"></div>
-        <div className="absolute top-1/4 left-2/3 w-52 h-64 bg-green-600/45 rounded-full blur-2xl transform -rotate-60"></div>
+        {/* Small decorative moving blobs */}
+        <div className="absolute top-1/3 right-8 w-60 h-72 bg-green-400/60 rounded-full blur-xl transform -rotate-45 animate-pulse" style={{animationDuration: '3.5s'}}></div>
+        <div className="absolute top-2/3 left-1/3 w-96 h-80 bg-green-300/50 rounded-full blur-3xl transform rotate-15 animate-bounce-gentle" style={{animationDuration: '9s'}}></div>
+        <div className="absolute top-1/4 left-2/3 w-52 h-64 bg-green-600/65 rounded-full blur-2xl transform -rotate-60 animate-pulse" style={{animationDuration: '4.2s'}}></div>
         
-        {/* Extra organic shapes */}
-        <div className="absolute top-96 left-12 w-32 h-40 bg-green-500/50 rounded-full blur-lg transform rotate-90"></div>
-        <div className="absolute bottom-64 right-32 w-44 h-56 bg-green-400/45 rounded-full blur-xl transform -rotate-30"></div>
-        <div className="absolute top-48 left-3/4 w-68 h-80 bg-green-600/35 rounded-full blur-2xl transform rotate-75"></div>
-        <div className="absolute bottom-96 left-1/4 w-48 h-56 bg-green-300/50 rounded-full blur-xl transform -rotate-15"></div>
-        
-        {/* Additional floating blobs */}
-        <div className="absolute top-2/4 right-1/4 w-76 h-88 bg-green-500/30 rounded-full blur-3xl transform rotate-45"></div>
-        <div className="absolute bottom-1/3 left-2/3 w-56 h-68 bg-green-400/40 rounded-full blur-2xl transform -rotate-75"></div>
-        
-        {/* More varied shapes */}
-        <div className="absolute top-20 left-1/2 w-84 h-72 bg-green-600/25 rounded-full blur-3xl transform rotate-30"></div>
-        <div className="absolute bottom-20 right-1/2 w-72 h-64 bg-green-500/35 rounded-full blur-2xl transform -rotate-45"></div>
-        
-        {/* Additional random blobs for more decoration */}
-        <div className="absolute top-1/5 left-1/5 w-36 h-44 bg-green-400/50 rounded-full blur-lg transform rotate-25"></div>
-        <div className="absolute bottom-1/5 right-1/5 w-28 h-36 bg-green-600/40 rounded-full blur-md transform -rotate-35"></div>
-        <div className="absolute top-3/5 right-3/5 w-52 h-60 bg-green-300/45 rounded-full blur-xl transform rotate-80"></div>
-        <div className="absolute bottom-2/5 left-4/5 w-40 h-48 bg-green-500/40 rounded-full blur-lg transform -rotate-50"></div>
+        {/* Additional floating animated blobs */}
+        <div className="absolute top-96 left-12 w-32 h-40 bg-green-500/70 rounded-full blur-lg transform rotate-90 animate-bounce-gentle" style={{animationDuration: '5.5s'}}></div>
+        <div className="absolute bottom-64 right-32 w-44 h-56 bg-green-400/65 rounded-full blur-xl transform -rotate-30 animate-pulse" style={{animationDuration: '3.8s'}}></div>
+        <div className="absolute top-48 left-3/4 w-68 h-80 bg-green-600/55 rounded-full blur-2xl transform rotate-75 animate-bounce-gentle" style={{animationDuration: '7.2s'}}></div>
+        <div className="absolute bottom-96 left-1/4 w-48 h-56 bg-green-300/70 rounded-full blur-xl transform -rotate-15 animate-pulse" style={{animationDuration: '4.8s'}}></div>
       </div>
       
-      {/* Light white overlay for readability - reduced opacity */}
-      <div className="absolute inset-0 bg-white/20 dark:bg-gray-900/20"></div>
+      {/* Very light overlay for text readability - minimal opacity */}
+      <div className="absolute inset-0 bg-white/10 dark:bg-gray-900/10"></div>
       
       <div className="relative z-10 w-full overflow-x-hidden">
         {/* Hero Section */}
         <section className="relative overflow-hidden w-full">
-          {/* Hero background image with high transparency */}
+          {/* Hero background image - more visible */}
           <div 
-            className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-5"
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20"
             style={{
               backgroundImage: `url(/lovable-uploads/28fa4c6a-e383-4c64-905c-130b84bf1e79.png)`
             }}
           ></div>
           
-          <div className="absolute inset-0 bg-gradient-to-br from-green-50/30 via-blue-50/20 to-purple-50/30 dark:from-green-950/50 dark:via-blue-950/40 dark:to-purple-950/50 animate-gradient-shift"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-green-50/40 via-blue-50/30 to-purple-50/40 dark:from-green-950/60 dark:via-blue-950/50 dark:to-purple-950/60 animate-gradient-shift"></div>
           <div className="relative w-full max-w-none px-4 sm:px-6 lg:px-8 mx-auto py-12 md:py-24">
             <div className="text-center animate-fade-in-up max-w-7xl mx-auto">
-              <div className="inline-flex items-center justify-center space-x-2 bg-gradient-to-r from-green-100/80 to-blue-100/80 dark:from-green-900/70 dark:to-blue-900/70 px-3 py-2 rounded-full mb-6 hover:scale-105 transition-transform backdrop-blur-sm">
+              <div className="inline-flex items-center justify-center space-x-2 bg-gradient-to-r from-green-100/90 to-blue-100/90 dark:from-green-900/80 dark:to-blue-900/80 px-3 py-2 rounded-full mb-6 hover:scale-105 transition-transform backdrop-blur-sm">
                 <Heart className="h-4 w-4 text-green-600 animate-pulse" />
                 <span className="text-xs sm:text-sm font-medium text-green-700 dark:text-green-300">
                   Trusted by 10,000+ people managing chronic conditions
@@ -207,17 +193,17 @@ const Index = () => {
 
               {/* App Preview Mockup */}
               <div className="relative max-w-4xl mx-auto animate-slide-up px-2">
-                <div className="bg-gradient-to-br from-white/90 to-gray-50/90 dark:from-gray-800/90 dark:to-gray-900/90 backdrop-blur-sm rounded-2xl shadow-2xl p-4 md:p-8 border overflow-hidden">
+                <div className="bg-gradient-to-br from-white/95 to-gray-50/95 dark:from-gray-800/95 dark:to-gray-900/95 backdrop-blur-sm rounded-2xl shadow-2xl p-4 md:p-8 border overflow-hidden">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 justify-items-center">
                     {healthMetrics.map((metric, index) => (
                       <div 
                         key={index} 
-                        className="animate-stagger overflow-hidden w-full max-w-sm"
+                        className="animate-stagger overflow-hidden w-full max-w-sm transform hover:scale-105 transition-all duration-300"
                         style={{
                           background: `linear-gradient(135deg, ${
-                            index % 3 === 0 ? 'rgba(34, 197, 94, 0.1), rgba(59, 130, 246, 0.1)' :
-                            index % 3 === 1 ? 'rgba(59, 130, 246, 0.1), rgba(147, 51, 234, 0.1)' :
-                            'rgba(147, 51, 234, 0.1), rgba(34, 197, 94, 0.1)'
+                            index % 3 === 0 ? 'rgba(34, 197, 94, 0.15), rgba(59, 130, 246, 0.15)' :
+                            index % 3 === 1 ? 'rgba(59, 130, 246, 0.15), rgba(147, 51, 234, 0.15)' :
+                            'rgba(147, 51, 234, 0.15), rgba(34, 197, 94, 0.15)'
                           })`
                         }}
                       >
@@ -232,7 +218,7 @@ const Index = () => {
         </section>
 
         {/* Features Section */}
-        <section className="py-12 md:py-16 lg:py-20 bg-gradient-to-br from-gray-50/60 to-white/60 dark:from-gray-900/40 dark:to-gray-800/40 backdrop-blur-sm w-full overflow-hidden">
+        <section className="py-12 md:py-16 lg:py-20 bg-gradient-to-br from-gray-50/70 to-white/70 dark:from-gray-900/50 dark:to-gray-800/50 backdrop-blur-sm w-full overflow-hidden">
           <div className="w-full max-w-none px-4 sm:px-6 lg:px-8 mx-auto">
             <div className="text-center mb-12 md:mb-16 max-w-7xl mx-auto">
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4 text-center">
@@ -321,7 +307,7 @@ const Index = () => {
         </section>
 
         {/* Dashboard Preview */}
-        <section className="py-12 md:py-16 lg:py-20 bg-gradient-to-br from-gray-50/60 to-white/60 dark:from-gray-900/40 dark:to-gray-800/40 backdrop-blur-sm w-full overflow-hidden">
+        <section className="py-12 md:py-16 lg:py-20 bg-gradient-to-br from-gray-50/70 to-white/70 dark:from-gray-900/50 dark:to-gray-800/50 backdrop-blur-sm w-full overflow-hidden">
           <div className="w-full max-w-none px-4 sm:px-6 lg:px-8 mx-auto">
             <div className="text-center mb-12 max-w-7xl mx-auto">
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4 text-center">

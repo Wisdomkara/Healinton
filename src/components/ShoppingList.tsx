@@ -4,258 +4,337 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Textarea } from '@/components/ui/textarea';
-import { supabase } from '@/integrations/supabase/client';
+import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Mail, Plus, Send } from 'lucide-react';
-
-const pharmacyEmails = {
-  'MedPlus Pharmacy': 'medplus@pharmacy.com',
-  'HealthCare Pharmacy': 'healthcare@pharmacy.com',
-  'Wellness Drugstore': 'wellness@drugstore.com',
-  'City Pharmacy': 'city@pharmacy.com',
-  'Express Pharmacy': 'express@pharmacy.com'
-};
+import { ShoppingCart, Plus, Trash2, Phone, Mail, MapPin, User, Package } from 'lucide-react';
 
 const ShoppingList = () => {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [shoppingList, setShoppingList] = useState<any[]>([]);
-  const [newItem, setNewItem] = useState({
-    medicationName: '',
-    pharmacyName: ''
+  
+  const [medications, setMedications] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    medication_name: '',
+    full_name: '',
+    phone_number: '',
+    email_address: '',
+    pharmacy_name: '',
+    country: ''
   });
-  const [emailData, setEmailData] = useState({
-    recipientEmail: '',
-    subject: 'Medication Shopping List',
-    message: ''
-  });
-  const [loading, setLoading] = useState(false);
-  const [emailLoading, setEmailLoading] = useState(false);
 
   useEffect(() => {
-    fetchShoppingList();
+    if (user) {
+      fetchMedications();
+    }
   }, [user]);
 
-  const fetchShoppingList = async () => {
+  const fetchMedications = async () => {
     if (!user) return;
-    const { data } = await supabase
-      .from('shopping_lists')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false });
-    setShoppingList(data || []);
+    
+    try {
+      const { data, error } = await supabase
+        .from('shopping_lists')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setMedications(data || []);
+    } catch (error) {
+      console.error('Error fetching medications:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to fetch medications',
+        variant: 'destructive'
+      });
+    }
   };
 
-  const addToShoppingList = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!user || !newItem.medicationName.trim()) return;
-
-    setLoading(true);
-    const { error } = await supabase
-      .from('shopping_lists')
-      .insert({
-        user_id: user.id,
-        medication_name: newItem.medicationName.trim(),
-        pharmacy_name: newItem.pharmacyName || 'Any Pharmacy'
-      });
-
-    if (error) {
+    if (!user) {
       toast({
-        title: "Error",
-        description: "Failed to add medication",
-        variant: "destructive"
-      });
-    } else {
-      toast({
-        title: "Added to Shopping List",
-        description: "Medication added successfully"
-      });
-      setNewItem({ medicationName: '', pharmacyName: '' });
-      fetchShoppingList();
-    }
-    setLoading(false);
-  };
-
-  const togglePurchased = async (id: string, isPurchased: boolean) => {
-    const { error } = await supabase
-      .from('shopping_lists')
-      .update({ is_purchased: !isPurchased })
-      .eq('id', id);
-
-    if (!error) {
-      fetchShoppingList();
-    }
-  };
-
-  const sendShoppingListEmail = async () => {
-    if (!emailData.recipientEmail || shoppingList.length === 0) {
-      toast({
-        title: "Error",
-        description: "Please provide recipient email and ensure you have items in your shopping list",
-        variant: "destructive"
+        title: 'Error',
+        description: 'Please log in to add medications',
+        variant: 'destructive'
       });
       return;
     }
 
-    setEmailLoading(true);
-    
-    const listItems = shoppingList
-      .filter(item => !item.is_purchased)
-      .map(item => `• ${item.medication_name} - ${item.pharmacy_name}`)
-      .join('\n');
-
-    const emailContent = `
-Subject: ${emailData.subject}
-
-${emailData.message || 'Please find my medication shopping list below:'}
-
-Shopping List:
-${listItems}
-
-Best regards
-    `;
-
-    // Here you would integrate with your email service
-    // For now, we'll just show a success message
-    setTimeout(() => {
+    if (!formData.medication_name.trim()) {
       toast({
-        title: "Email Sent",
-        description: "Your shopping list has been sent successfully"
+        title: 'Error',
+        description: 'Please enter a medication name',
+        variant: 'destructive'
       });
-      setEmailData({ recipientEmail: '', subject: 'Medication Shopping List', message: '' });
-      setEmailLoading(false);
-    }, 1000);
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const referenceNumber = `MED-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+      
+      const { data, error } = await supabase
+        .from('shopping_lists')
+        .insert([{
+          ...formData,
+          user_id: user.id,
+          reference_number: referenceNumber,
+          is_purchased: false
+        }])
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      toast({
+        title: 'Success',
+        description: `Medication added successfully! Reference: ${referenceNumber}`,
+      });
+
+      // Reset form
+      setFormData({
+        medication_name: '',
+        full_name: '',
+        phone_number: '',
+        email_address: '',
+        pharmacy_name: '',
+        country: ''
+      });
+
+      // Refresh list
+      await fetchMedications();
+    } catch (error) {
+      console.error('Error adding medication:', error);
+      toast({
+        title: 'Error',
+        description: error.message || 'Failed to add medication to shopping list',
+        variant: 'destructive'
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const togglePurchased = async (id, currentStatus) => {
+    try {
+      const { error } = await supabase
+        .from('shopping_lists')
+        .update({ is_purchased: !currentStatus })
+        .eq('id', id);
+
+      if (error) throw error;
+
+      await fetchMedications();
+      toast({
+        title: 'Success',
+        description: 'Medication status updated',
+      });
+    } catch (error) {
+      console.error('Error updating medication:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to update medication status',
+        variant: 'destructive'
+      });
+    }
+  };
+
+  const deleteMedication = async (id) => {
+    try {
+      const { error } = await supabase
+        .from('shopping_lists')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      await fetchMedications();
+      toast({
+        title: 'Success',
+        description: 'Medication removed from list',
+      });
+    } catch (error) {
+      console.error('Error deleting medication:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to remove medication',
+        variant: 'destructive'
+      });
+    }
   };
 
   return (
     <div className="space-y-6">
       {/* Add Medication Form */}
-      <Card className="p-6 bg-gradient-to-br from-white to-green-50 dark:from-gray-800 dark:to-gray-900 border-green-200 dark:border-green-800">
-        <h3 className="text-lg font-semibold mb-4 text-green-800 dark:text-green-300 flex items-center">
-          <Plus className="h-5 w-5 mr-2" />
-          Add Medication to Shopping List
-        </h3>
-        <form onSubmit={addToShoppingList} className="space-y-4">
-          <div>
-            <Label htmlFor="medication" className="text-green-700 dark:text-green-300">Medication Name</Label>
-            <Input
-              id="medication"
-              value={newItem.medicationName}
-              onChange={(e) => setNewItem({ ...newItem, medicationName: e.target.value })}
-              placeholder="Enter medication name..."
-              className="border-green-300 focus:border-green-500 hover:border-green-400 transition-colors"
-              required
-            />
+      <Card className="p-6">
+        <div className="flex items-center gap-2 mb-4">
+          <Plus className="h-5 w-5 text-green-600" />
+          <h3 className="text-lg font-semibold">Add New Medication</h3>
+        </div>
+        
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="medication_name">Medication Name *</Label>
+              <Input
+                id="medication_name"
+                value={formData.medication_name}
+                onChange={(e) => setFormData({...formData, medication_name: e.target.value})}
+                placeholder="Enter medication name"
+                required
+              />
+            </div>
+            
+            <div>
+              <Label htmlFor="full_name">Full Name</Label>
+              <Input
+                id="full_name"
+                value={formData.full_name}
+                onChange={(e) => setFormData({...formData, full_name: e.target.value})}
+                placeholder="Your full name"
+              />
+            </div>
+            
+            <div>
+              <Label htmlFor="phone_number">Phone Number</Label>
+              <Input
+                id="phone_number"
+                value={formData.phone_number}
+                onChange={(e) => setFormData({...formData, phone_number: e.target.value})}
+                placeholder="Your phone number"
+              />
+            </div>
+            
+            <div>
+              <Label htmlFor="email_address">Email Address</Label>
+              <Input
+                id="email_address"
+                type="email"
+                value={formData.email_address}
+                onChange={(e) => setFormData({...formData, email_address: e.target.value})}
+                placeholder="Your email address"
+              />
+            </div>
+            
+            <div>
+              <Label htmlFor="pharmacy_name">Pharmacy Name</Label>
+              <Input
+                id="pharmacy_name"
+                value={formData.pharmacy_name}
+                onChange={(e) => setFormData({...formData, pharmacy_name: e.target.value})}
+                placeholder="Preferred pharmacy"
+              />
+            </div>
+            
+            <div>
+              <Label htmlFor="country">Country</Label>
+              <Input
+                id="country"
+                value={formData.country}
+                onChange={(e) => setFormData({...formData, country: e.target.value})}
+                placeholder="Your country"
+              />
+            </div>
           </div>
-          <div>
-            <Label htmlFor="pharmacy" className="text-green-700 dark:text-green-300">Preferred Pharmacy (Optional)</Label>
-            <Select value={newItem.pharmacyName} onValueChange={(value) => setNewItem({ ...newItem, pharmacyName: value })}>
-              <SelectTrigger className="border-green-300 focus:border-green-500 hover:border-green-400 transition-colors">
-                <SelectValue placeholder="Choose pharmacy (optional)" />
-              </SelectTrigger>
-              <SelectContent>
-                {Object.keys(pharmacyEmails).map(pharmacy => (
-                  <SelectItem key={pharmacy} value={pharmacy}>{pharmacy}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <Button 
-            type="submit" 
-            disabled={loading} 
-            className="w-full bg-green-600 hover:bg-green-700 transition-all transform hover:scale-105"
-          >
-            {loading ? 'Adding...' : 'Add to Shopping List'}
+          
+          <Button type="submit" disabled={isLoading} className="w-full">
+            {isLoading ? 'Adding...' : 'Add to Shopping List'}
           </Button>
         </form>
       </Card>
 
-      {/* Shopping List */}
+      {/* Medications List */}
       <Card className="p-6">
-        <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Your Shopping List</h3>
-        <div className="space-y-3">
-          {shoppingList.map(item => (
-            <div key={item.id} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
-              <div className="flex items-center space-x-3">
-                <Checkbox
-                  checked={item.is_purchased}
-                  onCheckedChange={() => togglePurchased(item.id, item.is_purchased)}
-                />
-                <div>
-                  <p className={`font-medium ${item.is_purchased ? 'line-through text-gray-500' : 'text-gray-800 dark:text-white'}`}>
-                    {item.medication_name}
-                  </p>
-                  <p className="text-sm text-gray-600 dark:text-gray-300">
-                    {item.pharmacy_name}
-                  </p>
+        <div className="flex items-center gap-2 mb-4">
+          <ShoppingCart className="h-5 w-5 text-blue-600" />
+          <h3 className="text-lg font-semibold">Your Medications</h3>
+        </div>
+        
+        {medications.length === 0 ? (
+          <p className="text-center text-gray-500 py-8">No medications in your shopping list</p>
+        ) : (
+          <div className="space-y-4">
+            {medications.map((medication) => (
+              <div key={medication.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Package className="h-4 w-4 text-gray-600" />
+                      <h4 className="font-medium text-lg">{medication.medication_name}</h4>
+                      <Badge variant={medication.is_purchased ? "default" : "secondary"}>
+                        {medication.is_purchased ? 'Purchased' : 'Pending'}
+                      </Badge>
+                    </div>
+                    
+                    {/* Enhanced Reference Number Display */}
+                    {medication.reference_number && (
+                      <div className="bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 p-3 rounded-lg mb-3 border-l-4 border-green-500">
+                        <p className="text-sm font-medium text-green-700 dark:text-green-300 mb-1">Reference Number:</p>
+                        <p className="text-lg font-bold text-green-800 dark:text-green-200 tracking-wider">{medication.reference_number}</p>
+                      </div>
+                    )}
+                    
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-sm text-gray-600 dark:text-gray-300">
+                      {medication.full_name && (
+                        <div className="flex items-center gap-1">
+                          <User className="h-3 w-3" />
+                          {medication.full_name}
+                        </div>
+                      )}
+                      {medication.phone_number && (
+                        <div className="flex items-center gap-1">
+                          <Phone className="h-3 w-3" />
+                          {medication.phone_number}
+                        </div>
+                      )}
+                      {medication.email_address && (
+                        <div className="flex items-center gap-1">
+                          <Mail className="h-3 w-3" />
+                          {medication.email_address}
+                        </div>
+                      )}
+                      {medication.pharmacy_name && (
+                        <div className="flex items-center gap-1">
+                          <ShoppingCart className="h-3 w-3" />
+                          {medication.pharmacy_name}
+                        </div>
+                      )}
+                      {medication.country && (
+                        <div className="flex items-center gap-1">
+                          <MapPin className="h-3 w-3" />
+                          {medication.country}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <div className="flex gap-2 ml-4">
+                    <Button
+                      size="sm"
+                      variant={medication.is_purchased ? "outline" : "default"}
+                      onClick={() => togglePurchased(medication.id, medication.is_purchased)}
+                    >
+                      {medication.is_purchased ? 'Mark Pending' : 'Mark Purchased'}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      onClick={() => deleteMedication(medication.id)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-          {shoppingList.length === 0 && (
-            <div className="text-center py-8">
-              <p className="text-gray-500 dark:text-gray-400">
-                No medications in your shopping list yet.
-              </p>
-            </div>
-          )}
-        </div>
-      </Card>
-
-      {/* Email Shopping List */}
-      {shoppingList.length > 0 && (
-        <Card className="p-6 bg-gradient-to-br from-blue-50 to-white dark:from-blue-900/20 dark:to-gray-800 border-blue-200 dark:border-blue-800">
-          <h3 className="text-lg font-semibold mb-4 text-blue-800 dark:text-blue-300 flex items-center">
-            <Mail className="h-5 w-5 mr-2" />
-            Email Shopping List
-          </h3>
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="recipientEmail" className="text-blue-700 dark:text-blue-300">Recipient Email</Label>
-              <Input
-                id="recipientEmail"
-                type="email"
-                value={emailData.recipientEmail}
-                onChange={(e) => setEmailData({ ...emailData, recipientEmail: e.target.value })}
-                placeholder="pharmacist@pharmacy.com"
-                className="border-blue-300 focus:border-blue-500 hover:border-blue-400 transition-colors"
-              />
-            </div>
-            <div>
-              <Label htmlFor="subject" className="text-blue-700 dark:text-blue-300">Subject</Label>
-              <Input
-                id="subject"
-                value={emailData.subject}
-                onChange={(e) => setEmailData({ ...emailData, subject: e.target.value })}
-                className="border-blue-300 focus:border-blue-500 hover:border-blue-400 transition-colors"
-              />
-            </div>
-            <div>
-              <Label htmlFor="message" className="text-blue-700 dark:text-blue-300">Additional Message (Optional)</Label>
-              <Textarea
-                id="message"
-                value={emailData.message}
-                onChange={(e) => setEmailData({ ...emailData, message: e.target.value })}
-                placeholder="Add any additional notes for the pharmacist..."
-                className="border-blue-300 focus:border-blue-500 hover:border-blue-400 transition-colors"
-                rows={3}
-              />
-            </div>
-            <Button 
-              onClick={sendShoppingListEmail}
-              disabled={emailLoading}
-              className="w-full bg-blue-600 hover:bg-blue-700 transition-all transform hover:scale-105 flex items-center justify-center"
-            >
-              <Send className="h-4 w-4 mr-2" />
-              {emailLoading ? 'Sending...' : 'Send Shopping List'}
-            </Button>
+            ))}
           </div>
-        </Card>
-      )}
+        )}
+      </Card>
     </div>
   );
 };
