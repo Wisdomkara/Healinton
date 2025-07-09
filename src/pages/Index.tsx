@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -7,17 +6,16 @@ import HealthMetricCard from '@/components/HealthMetricCard';
 import MealPlanCard from '@/components/MealPlanCard';
 import PremiumBanner from '@/components/PremiumBanner';
 import TestimonialsSection from '@/components/TestimonialsSection';
-import DrugStore from '@/components/DrugStore';
+import DrugStorePreview from '@/components/DrugStorePreview';
 import Loader from '@/components/Loader';
 import { useAuth } from '@/hooks/useAuth';
-import { Heart, Calendar, Stethoscope, Clock, Shield, Users, TrendingUp, Smartphone, CheckCircle, Activity, Brain, Phone, Mail, MapPin, Pill } from 'lucide-react';
+import { Heart, Calendar, Stethoscope, Clock, Shield, Users, TrendingUp, Smartphone, CheckCircle, Activity, Brain, Phone, Mail, MapPin, Pill, Plus } from 'lucide-react';
 
 const Index = () => {
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate app loading
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 2000);
@@ -244,7 +242,7 @@ const Index = () => {
               </p>
             </div>
             
-            <DrugStore />
+            <DrugStorePreview />
           </div>
         </section>
 
@@ -275,7 +273,7 @@ const Index = () => {
         </section>
 
         {/* Dashboard Preview */}
-        <section className="py-20 px-4 sm:px-6 lg:px-8">
+        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-green-50/50 dark:bg-green-900/10">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
@@ -320,7 +318,7 @@ const Index = () => {
               </Link>
             </div>
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-4">
-              No credit card required • Free till end of August 2025
+              No credit card required • Free till July 31st, 2025
             </p>
           </div>
         </section>

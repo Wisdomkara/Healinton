@@ -1,12 +1,15 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
-import { Heart, User, Menu } from 'lucide-react';
+import { Plus, User, Menu } from 'lucide-react';
 
 const Header = () => {
   const { user } = useAuth();
+  const location = useLocation();
+
+  const isActive = (path: string) => location.pathname === path;
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm border-b border-gray-200 dark:border-gray-800">
@@ -14,7 +17,9 @@ const Header = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
-            <Heart className="h-8 w-8 text-green-600" />
+            <div className="relative">
+              <Plus className="h-8 w-8 text-green-600" />
+            </div>
             <span className="text-xl font-bold text-gray-900 dark:text-white">
               Healinton
             </span>
@@ -24,25 +29,41 @@ const Header = () => {
           <nav className="hidden md:flex items-center space-x-8">
             <Link 
               to="/blog" 
-              className="text-gray-600 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition-colors"
+              className={`transition-colors ${
+                isActive('/blog')
+                  ? 'text-green-600 dark:text-green-400 font-medium'
+                  : 'text-gray-600 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400'
+              }`}
             >
               Health Blog
             </Link>
             <Link 
               to="/premium" 
-              className="text-gray-600 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition-colors"
+              className={`transition-colors ${
+                isActive('/premium')
+                  ? 'text-green-600 dark:text-green-400 font-medium'
+                  : 'text-gray-600 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400'
+              }`}
             >
               Premium
             </Link>
             <Link 
               to="/faq" 
-              className="text-gray-600 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition-colors"
+              className={`transition-colors ${
+                isActive('/faq')
+                  ? 'text-green-600 dark:text-green-400 font-medium'
+                  : 'text-gray-600 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400'
+              }`}
             >
               FAQ
             </Link>
             <Link 
               to="/about" 
-              className="text-gray-600 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition-colors"
+              className={`transition-colors ${
+                isActive('/about')
+                  ? 'text-green-600 dark:text-green-400 font-medium'
+                  : 'text-gray-600 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400'
+              }`}
             >
               About
             </Link>

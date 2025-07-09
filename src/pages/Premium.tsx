@@ -4,7 +4,8 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
-import { Crown, Check, Star, Utensils, Calendar, Users, Truck, Phone, Clock, Shield, TrendingUp, Heart } from 'lucide-react';
+import { Crown, Check, Star, TrendingUp, Heart, Shield, Users, Phone } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Premium = () => {
   const { user } = useAuth();
@@ -12,26 +13,36 @@ const Premium = () => {
 
   const handleSubscribe = async (planType: string) => {
     if (!user) {
-      // Redirect to auth if not logged in
       window.location.href = '/auth';
       return;
     }
 
     setLoading(true);
     try {
-      // Calculate expiry date (30 days from now for monthly subscription)
-      const expiryDate = new Date();
-      expiryDate.setMonth(expiryDate.getMonth() + 1);
+      // Check if free period has expired (July 31st, 2025)
+      const freeExpiryDate = new Date('2025-07-31');
+      const currentDate = new Date();
+      
+      if (currentDate > freeExpiryDate) {
+        // Redirect to payment integration
+        alert('Free period has expired. Please complete payment to access premium features.');
+        // Here you would integrate with PayPal, Stripe, or Flutter payment
+        // For now, we'll just show an alert
+        setLoading(false);
+        return;
+      }
 
-      // Add user to premium_users table when they subscribe
+      // Calculate expiry date for free period
+      const expiryDate = new Date('2025-07-31');
+
       const { error } = await supabase
         .from('premium_users')
         .insert({
           user_id: user.id,
-          subscription_type: 'paid',
+          subscription_type: 'free_trial',
           added_by: 'subscription',
           expires_at: expiryDate.toISOString(),
-          notes: `Subscribed to ${planType} plan - Monthly billing`
+          notes: `Free access till July 31st, 2025 - ${planType} plan`
         });
 
       if (error) {
@@ -40,11 +51,7 @@ const Premium = () => {
         return;
       }
 
-      // Simulate API call for payment processing
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // After successful payment, redirect to dashboard with premium features
-      alert('Subscription successful! You now have access to all premium features for 30 days.');
+      alert('Congratulations! You now have free access to all premium features until July 31st, 2025.');
       window.location.href = '/dashboard';
     } catch (error) {
       console.error('Subscription error:', error);
@@ -68,6 +75,7 @@ const Premium = () => {
         'Email support'
       ],
       color: 'from-green-500 to-green-600',
+      shadow: 'shadow-green-500/20',
       popular: false
     },
     {
@@ -86,6 +94,7 @@ const Premium = () => {
         'Custom reports'
       ],
       color: 'from-blue-500 to-purple-600',
+      shadow: 'shadow-blue-500/20',
       popular: true
     },
     {
@@ -104,6 +113,7 @@ const Premium = () => {
         'Custom training'
       ],
       color: 'from-purple-500 to-pink-600',
+      shadow: 'shadow-purple-500/20',
       popular: false
     }
   ];
@@ -118,11 +128,6 @@ const Premium = () => {
       icon: <Heart className="h-8 w-8 text-red-500" />,
       title: 'Telehealth Integration',
       description: 'Direct video consultations with certified healthcare professionals, available 24/7 for premium subscribers.'
-    },
-    {
-      icon: <Truck className="h-8 w-8 text-blue-600" />,
-      title: 'Medicine Delivery',
-      description: 'Free doorstep delivery of medications and health supplies within 24 hours of ordering.'
     },
     {
       icon: <Shield className="h-8 w-8 text-purple-600" />,
@@ -162,7 +167,14 @@ const Premium = () => {
           {plans.map((plan, index) => (
             <Card 
               key={index} 
-              className={`relative p-8 ${plan.popular ? 'ring-2 ring-blue-500 scale-105' : ''} hover:shadow-2xl transition-all duration-300`}
+              className={`relative p-8 hover:shadow-2xl transition-all duration-300 transform hover:scale-105 ${plan.shadow} ${
+                plan.popular ? 'ring-2 ring-blue-500 scale-105' : ''
+              }`}
+              style={{
+                background: plan.popular 
+                  ? 'linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(147, 51, 234, 0.1) 100%)'
+                  : undefined
+              }}
             >
               {plan.popular && (
                 <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
@@ -210,7 +222,7 @@ const Premium = () => {
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {premiumFeatures.map((feature, index) => (
-              <Card key={index} className="p-6 hover:shadow-lg transition-all transform hover:scale-105">
+              <Card key={index} className="p-6 hover:shadow-lg transition-all transform hover:scale-105 hover:bg-green-50 dark:hover:bg-green-900/10">
                 <div className="flex items-start space-x-4">
                   <div className="p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">
                     {feature.icon}
@@ -226,31 +238,36 @@ const Premium = () => {
         </div>
 
         {/* CTA Section */}
-        <div className="text-center bg-gradient-to-r from-green-600 to-blue-600 rounded-2xl p-12 text-white">
-          <h2 className="text-3xl font-bold mb-4">Ready to Transform Your Health?</h2>
-          <p className="text-xl mb-8 opacity-90">
-            All plans are FREE until the end of August 2025!
-          </p>
-          <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-            <Button
-              onClick={() => handleSubscribe('premium')}
-              disabled={loading}
-              size="lg"
-              className="bg-white text-green-600 hover:bg-gray-100 font-semibold px-8 py-4"
-            >
-              {loading ? 'Processing...' : 'Get Premium - FREE till August 2025'}
-            </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              className="border-white text-white hover:bg-white/10 px-8 py-4"
-            >
-              Contact Sales
-            </Button>
+        <div className="text-center bg-gradient-to-r from-green-600 to-blue-600 rounded-2xl p-12 text-white relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-green-400/20 via-blue-400/20 to-purple-400/20 animate-pulse"></div>
+          <div className="relative z-10">
+            <h2 className="text-3xl font-bold mb-4">Ready to Transform Your Health?</h2>
+            <p className="text-xl mb-8 opacity-90">
+              All plans are FREE until July 31st, 2025!
+            </p>
+            <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+              <Button
+                onClick={() => handleSubscribe('premium')}
+                disabled={loading}
+                size="lg"
+                className="bg-white text-green-600 hover:bg-gray-100 font-semibold px-8 py-4"
+              >
+                {loading ? 'Processing...' : 'Get Premium - FREE till July 31st, 2025'}
+              </Button>
+              <Link to="/about">
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="border-white text-white hover:bg-green-600 hover:text-white px-8 py-4"
+                >
+                  Learn More
+                </Button>
+              </Link>
+            </div>
+            <p className="text-sm mt-4 opacity-75">
+              No billing until July 31st, 2025. Cancel anytime.
+            </p>
           </div>
-          <p className="text-sm mt-4 opacity-75">
-            No billing until August 2025. Cancel anytime.
-          </p>
         </div>
       </div>
     </div>

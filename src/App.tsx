@@ -19,6 +19,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import HealthInsurance from "./pages/HealthInsurance";
 import Community from "./pages/Community";
 import Accessibility from "./pages/Accessibility";
+import DrugsPage from "./pages/DrugsPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -44,6 +45,7 @@ const App = () => (
               <Route path="health-insurance" element={<HealthInsurance />} />
               <Route path="community" element={<Community />} />
               <Route path="accessibility" element={<Accessibility />} />
+              <Route path="drugs" element={<DrugsPage />} />
               <Route path="*" element={<NotFound />} />
             </Route>
             <Route path="/dashboard" element={<Dashboard />} />
