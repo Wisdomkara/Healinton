@@ -76,28 +76,46 @@ export type Database = {
       }
       drug_orders: {
         Row: {
+          country: string | null
+          delivery_address: string | null
           drug_id: string
+          email_address: string | null
+          full_name: string | null
           id: string
           order_date: string | null
+          phone_number: string | null
           quantity: number | null
+          reference_number: string | null
           status: string | null
           total_amount: number | null
           user_id: string
         }
         Insert: {
+          country?: string | null
+          delivery_address?: string | null
           drug_id: string
+          email_address?: string | null
+          full_name?: string | null
           id?: string
           order_date?: string | null
+          phone_number?: string | null
           quantity?: number | null
+          reference_number?: string | null
           status?: string | null
           total_amount?: number | null
           user_id: string
         }
         Update: {
+          country?: string | null
+          delivery_address?: string | null
           drug_id?: string
+          email_address?: string | null
+          full_name?: string | null
           id?: string
           order_date?: string | null
+          phone_number?: string | null
           quantity?: number | null
+          reference_number?: string | null
           status?: string | null
           total_amount?: number | null
           user_id?: string
@@ -159,11 +177,13 @@ export type Database = {
       }
       hospital_bookings: {
         Row: {
+          address: string | null
           appointment_date: string
           country: string | null
           created_at: string | null
           email_address: string | null
           full_name: string | null
+          hospital_email: string | null
           hospital_name: string
           id: string
           phone_number: string | null
@@ -173,11 +193,13 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          address?: string | null
           appointment_date: string
           country?: string | null
           created_at?: string | null
           email_address?: string | null
           full_name?: string | null
+          hospital_email?: string | null
           hospital_name: string
           id?: string
           phone_number?: string | null
@@ -187,11 +209,13 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          address?: string | null
           appointment_date?: string
           country?: string | null
           created_at?: string | null
           email_address?: string | null
           full_name?: string | null
+          hospital_email?: string | null
           hospital_name?: string
           id?: string
           phone_number?: string | null
