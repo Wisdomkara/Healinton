@@ -24,7 +24,8 @@ import {
   Utensils,
   Pill,
   Building2,
-  Activity
+  Activity,
+  LogOut
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -36,7 +37,7 @@ interface SidebarProps {
 
 const Sidebar = ({ isOpen = true, onClose, onSectionChange, activeSection = 'overview' }: SidebarProps) => {
   const location = useLocation();
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const { isPremium } = usePremium();
 
   const navItems = [
@@ -60,7 +61,6 @@ const Sidebar = ({ isOpen = true, onClose, onSectionChange, activeSection = 'ove
 
   const handleNavClick = (section: string, itemIsPremium: boolean) => {
     if (itemIsPremium && !isPremium) {
-      // Redirect to premium page if trying to access premium features
       window.location.href = '/premium';
       return;
     }
@@ -78,48 +78,47 @@ const Sidebar = ({ isOpen = true, onClose, onSectionChange, activeSection = 'ove
     if (onSectionChange) {
       onSectionChange(section);
     }
-    if (onClose) {
-      onClose();
-    }
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
   };
 
   return (
-    <div className={`
-      fixed md:relative z-50 bg-white dark:bg-gray-800 shadow-lg h-full transition-transform duration-300 ease-in-out
-      ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
-      w-64 md:w-64
-    `}>
-      <div className="p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-            Healinton Hub
-          </h2>
-          {onClose && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onClose}
-              className="md:hidden hover:scale-110 transition-transform"
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          )}
-        </div>
+    <div className="flex flex-col h-full bg-white dark:bg-gray-800 shadow-lg border-r border-gray-200 dark:border-gray-700">
+      {/* Header */}
+      <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+        <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+          Healinton Hub
+        </h2>
+        {onClose && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onClose}
+            className="lg:hidden hover:bg-gray-100 dark:hover:bg-gray-700"
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        )}
+      </div>
 
-        {/* Back to Home Button */}
-        <div className="mb-4">
-          <Link to="/">
-            <Button
-              variant="outline"
-              className="w-full justify-start transition-all transform hover:scale-105 text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 border-blue-200 dark:border-blue-800"
-            >
-              <ArrowLeft className="h-4 w-4 mr-3" />
-              <span className="flex-1 text-left">Back to Home</span>
-            </Button>
-          </Link>
-        </div>
+      {/* Back to Home Button */}
+      <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+        <Link to="/">
+          <Button
+            variant="outline"
+            className="w-full justify-start text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 border-blue-200 dark:border-blue-800"
+          >
+            <ArrowLeft className="h-4 w-4 mr-3" />
+            <span className="flex-1 text-left">Back to Home</span>
+          </Button>
+        </Link>
+      </div>
 
-        <nav className="space-y-2 max-h-[calc(100vh-200px)] overflow-y-auto">
+      {/* Navigation */}
+      <nav className="flex-1 p-4 overflow-y-auto">
+        <div className="space-y-1">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeSection === item.section;
@@ -127,27 +126,54 @@ const Sidebar = ({ isOpen = true, onClose, onSectionChange, activeSection = 'ove
               <Button
                 key={item.section}
                 variant={isActive ? "default" : "ghost"}
-                className={`w-full justify-start transition-all transform hover:scale-105 ${
+                className={`w-full justify-start h-10 ${
                   isActive 
-                    ? 'bg-green-600 text-white hover:bg-green-700 shadow-md' 
-                    : 'text-gray-700 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-gray-700 hover:text-green-600'
+                    ? 'bg-green-600 text-white hover:bg-green-700 shadow-sm' 
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-green-600 dark:hover:text-green-400'
                 }`}
                 onClick={() => handleNavClick(item.section, item.isPremium)}
               >
-                <Icon className="h-4 w-4 mr-3" />
-                <span className="flex-1 text-left">{item.label}</span>
+                <Icon className="h-4 w-4 mr-3 flex-shrink-0" />
+                <span className="flex-1 text-left truncate">{item.label}</span>
                 {item.isPremium && (
-                  <Crown className="h-3 w-3 text-yellow-500 ml-1" />
+                  <Crown className="h-3 w-3 text-yellow-500 ml-1 flex-shrink-0" />
                 )}
                 {item.badge && (
-                  <Badge variant="destructive" className="text-xs ml-auto">
+                  <Badge variant="destructive" className="text-xs ml-1 flex-shrink-0">
                     {item.badge}
                   </Badge>
                 )}
               </Button>
             );
           })}
-        </nav>
+        </div>
+      </nav>
+
+      {/* User info and sign out - Desktop only */}
+      <div className="hidden lg:block p-4 border-t border-gray-200 dark:border-gray-700">
+        <div className="flex items-center space-x-3 mb-3">
+          <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
+            <span className="text-white text-sm font-medium">
+              {user?.user_metadata?.first_name?.charAt(0) || 'U'}
+            </span>
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+              {user?.user_metadata?.first_name || 'User'}
+            </p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+              {user?.email}
+            </p>
+          </div>
+        </div>
+        <Button
+          variant="ghost"
+          onClick={handleSignOut}
+          className="w-full justify-start text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+        >
+          <LogOut className="h-4 w-4 mr-3" />
+          Sign Out
+        </Button>
       </div>
     </div>
   );

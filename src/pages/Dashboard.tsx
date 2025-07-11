@@ -60,36 +60,57 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex w-full">
-      {/* Mobile Header */}
-      <DashboardHeader 
-        onMenuClick={() => setSidebarOpen(true)} 
-        userName={userName}
-      />
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex">
+      {/* Sidebar - Hidden on mobile, fixed on desktop */}
+      <div className="hidden lg:flex lg:flex-shrink-0">
+        <div className="flex flex-col w-64">
+          <Sidebar 
+            isOpen={true}
+            onSectionChange={setActiveSection}
+            activeSection={activeSection}
+          />
+        </div>
+      </div>
 
-      {/* Sidebar */}
-      <Sidebar 
-        isOpen={sidebarOpen} 
-        onClose={() => setSidebarOpen(false)}
-        onSectionChange={setActiveSection}
-        activeSection={activeSection}
-      />
-
-      {/* Overlay for mobile */}
+      {/* Mobile sidebar overlay */}
       {sidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
+        <>
+          <div 
+            className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+          <div className="fixed inset-y-0 left-0 z-50 w-64 lg:hidden">
+            <Sidebar 
+              isOpen={sidebarOpen}
+              onClose={() => setSidebarOpen(false)}
+              onSectionChange={(section) => {
+                setActiveSection(section);
+                setSidebarOpen(false);
+              }}
+              activeSection={activeSection}
+            />
+          </div>
+        </>
       )}
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col md:ml-64">
-        <div className="flex-1 p-6 pt-20 md:pt-6">
-          <div className="max-w-7xl mx-auto">
-            {renderContent()}
-          </div>
+      {/* Main content area */}
+      <div className="flex-1 flex flex-col min-w-0">
+        {/* Mobile header - only visible on mobile */}
+        <div className="lg:hidden">
+          <DashboardHeader 
+            onMenuClick={() => setSidebarOpen(true)} 
+            userName={userName}
+          />
         </div>
+
+        {/* Main content */}
+        <main className="flex-1 overflow-auto">
+          <div className="p-4 lg:p-8">
+            <div className="max-w-7xl mx-auto">
+              {renderContent()}
+            </div>
+          </div>
+        </main>
       </div>
     </div>
   );
