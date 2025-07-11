@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -118,68 +119,73 @@ const Index = () => {
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 relative overflow-hidden">
       {/* Enhanced Decorative background blobs - much more visible */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Large primary blobs - increased opacity and size */}
-        <div className="absolute -top-20 -left-20 w-96 h-96 bg-green-400/70 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute -top-32 right-10 w-80 h-80 bg-blue-400/60 rounded-full blur-3xl animate-bounce"></div>
-        <div className="absolute top-1/3 -left-16 w-72 h-72 bg-purple-400/65 rounded-full blur-2xl animate-pulse"></div>
-        <div className="absolute top-1/2 -right-20 w-88 h-88 bg-green-500/75 rounded-full blur-3xl animate-bounce"></div>
-        <div className="absolute bottom-20 left-1/4 w-64 h-64 bg-blue-500/70 rounded-full blur-2xl animate-pulse"></div>
-        <div className="absolute bottom-10 -right-10 w-76 h-76 bg-purple-500/65 rounded-full blur-3xl animate-bounce"></div>
+        {/* Large primary blobs - significantly increased opacity and size */}
+        <div className="absolute -top-20 -left-20 w-[500px] h-[500px] bg-gradient-to-br from-green-400/90 to-green-500/80 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute -top-32 right-10 w-[400px] h-[400px] bg-gradient-to-br from-blue-400/80 to-blue-500/70 rounded-full blur-3xl animate-bounce"></div>
+        <div className="absolute top-1/3 -left-16 w-[350px] h-[350px] bg-gradient-to-br from-purple-400/85 to-purple-500/75 rounded-full blur-2xl animate-pulse"></div>
+        <div className="absolute top-1/2 -right-20 w-[450px] h-[450px] bg-gradient-to-br from-green-500/90 to-green-600/80 rounded-full blur-3xl animate-bounce"></div>
+        <div className="absolute bottom-20 left-1/4 w-[320px] h-[320px] bg-gradient-to-br from-blue-500/85 to-blue-600/75 rounded-full blur-2xl animate-pulse"></div>
+        <div className="absolute bottom-10 -right-10 w-[380px] h-[380px] bg-gradient-to-br from-purple-500/80 to-purple-600/70 rounded-full blur-3xl animate-bounce"></div>
         
         {/* Medium accent blobs - enhanced visibility */}
-        <div className="absolute top-20 left-1/3 w-48 h-48 bg-green-300/80 rounded-full blur-xl animate-pulse"></div>
-        <div className="absolute top-2/3 right-1/4 w-56 h-56 bg-blue-300/75 rounded-full blur-xl animate-bounce"></div>
-        <div className="absolute bottom-1/3 left-10 w-40 h-40 bg-purple-300/70 rounded-full blur-lg animate-pulse"></div>
+        <div className="absolute top-20 left-1/3 w-[240px] h-[240px] bg-gradient-to-br from-green-300/90 to-green-400/80 rounded-full blur-xl animate-pulse"></div>
+        <div className="absolute top-2/3 right-1/4 w-[280px] h-[280px] bg-gradient-to-br from-blue-300/85 to-blue-400/75 rounded-full blur-xl animate-bounce"></div>
+        <div className="absolute bottom-1/3 left-10 w-[200px] h-[200px] bg-gradient-to-br from-purple-300/80 to-purple-400/70 rounded-full blur-lg animate-pulse"></div>
         
         {/* Small decorative blobs - more prominent */}
-        <div className="absolute top-10 right-1/3 w-32 h-32 bg-green-200/85 rounded-full blur-lg animate-bounce"></div>
-        <div className="absolute top-1/4 left-1/2 w-28 h-28 bg-blue-200/80 rounded-full blur-md animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/3 w-36 h-36 bg-purple-200/75 rounded-full blur-lg animate-bounce"></div>
+        <div className="absolute top-10 right-1/3 w-[160px] h-[160px] bg-gradient-to-br from-green-200/95 to-green-300/85 rounded-full blur-lg animate-bounce"></div>
+        <div className="absolute top-1/4 left-1/2 w-[140px] h-[140px] bg-gradient-to-br from-blue-200/90 to-blue-300/80 rounded-full blur-md animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/3 w-[180px] h-[180px] bg-gradient-to-br from-purple-200/85 to-purple-300/75 rounded-full blur-lg animate-bounce"></div>
         
         {/* Additional floating organic shapes - enhanced */}
-        <div className="absolute top-1/2 left-1/5 w-24 h-44 bg-green-400/65 rounded-full blur-lg rotate-45 animate-pulse"></div>
-        <div className="absolute bottom-1/3 right-1/5 w-52 h-28 bg-blue-400/70 rounded-full blur-xl rotate-12 animate-bounce"></div>
-        <div className="absolute top-1/6 right-1/2 w-36 h-60 bg-purple-400/60 rounded-full blur-lg -rotate-12 animate-pulse"></div>
+        <div className="absolute top-1/2 left-1/5 w-[120px] h-[220px] bg-gradient-to-br from-green-400/75 to-green-500/65 rounded-full blur-lg rotate-45 animate-pulse"></div>
+        <div className="absolute bottom-1/3 right-1/5 w-[260px] h-[140px] bg-gradient-to-br from-blue-400/80 to-blue-500/70 rounded-full blur-xl rotate-12 animate-bounce"></div>
+        <div className="absolute top-1/6 right-1/2 w-[180px] h-[300px] bg-gradient-to-br from-purple-400/70 to-purple-500/60 rounded-full blur-lg -rotate-12 animate-pulse"></div>
       </div>
 
-      {/* Very light overlay for readability - minimal opacity */}
-      <div className="absolute inset-0 bg-white/10 dark:bg-gray-900/10"></div>
+      {/* Light overlay for readability - reduced opacity */}
+      <div className="absolute inset-0 bg-white/5 dark:bg-gray-900/5"></div>
 
       <div className="relative z-10">
         {/* Hero Section */}
         <section className="pt-20 pb-16 px-4 sm:px-6 lg:px-8 relative">
-          {/* Hero background image - more prominent */}
-          <div className="absolute inset-0 opacity-20 dark:opacity-10">
-            <div className="w-full h-full bg-gradient-to-r from-green-100 to-blue-100 dark:from-green-900 dark:to-blue-900"></div>
+          {/* Hero background with uploaded image */}
+          <div className="absolute inset-0 opacity-15 dark:opacity-8">
+            <img 
+              src="/lovable-uploads/28fa4c6a-e383-4c64-905c-130b84bf1e79.png" 
+              alt="Healthcare background" 
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-green-100/80 to-blue-100/80 dark:from-green-900/80 dark:to-blue-900/80"></div>
           </div>
           
           <div className="max-w-7xl mx-auto relative">
             <div className="text-center mb-16">
-              <div className="inline-flex items-center px-4 py-2 bg-green-100 dark:bg-green-900 rounded-full text-green-800 dark:text-green-200 text-sm font-medium mb-6 backdrop-blur-sm">
+              <div className="inline-flex items-center px-4 py-2 bg-green-100/90 dark:bg-green-900/90 rounded-full text-green-800 dark:text-green-200 text-sm font-medium mb-6 backdrop-blur-sm border border-green-200/50 dark:border-green-700/50">
                 <CheckCircle className="h-4 w-4 mr-2" />
                 Trusted by 10,000+ people managing chronic conditions
               </div>
               
-              <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
+              <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-gray-900 dark:text-white mb-6 leading-tight drop-shadow-sm">
                 Your Health Journey,{' '}
                 <span className="bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
                   Simplified
                 </span>
               </h1>
               
-              <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-8 max-w-4xl mx-auto leading-relaxed">
+              <p className="text-xl md:text-2xl text-gray-700 dark:text-gray-200 mb-8 max-w-4xl mx-auto leading-relaxed drop-shadow-sm">
                 Healinton helps you manage chronic conditions like diabetes, hypertension, and heart disease 
                 with personalized meal plans, medication reminders, and health tracking tools.
               </p>
               
               <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4 mb-16">
                 <Link to={user ? "/dashboard" : "/auth"}>
-                  <Button size="lg" className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white px-8 py-4 text-lg font-semibold transform hover:scale-105 transition-all duration-200 shadow-lg">
+                  <Button size="lg" className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white px-8 py-4 text-lg font-semibold transform hover:scale-105 transition-all duration-200 shadow-xl">
                     {user ? "Go to Dashboard" : "Start Your Health Journey"}
                   </Button>
                 </Link>
                 <Link to="/about">
-                  <Button variant="outline" size="lg" className="px-8 py-4 text-lg font-semibold border-2 hover:bg-green-50 dark:hover:bg-green-900/20 transform hover:scale-105 transition-all duration-200">
+                  <Button variant="outline" size="lg" className="px-8 py-4 text-lg font-semibold border-2 bg-white/20 dark:bg-gray-800/20 backdrop-blur-sm hover:bg-green-50/80 dark:hover:bg-green-900/30 transform hover:scale-105 transition-all duration-200 shadow-lg">
                     Contact Sales
                   </Button>
                 </Link>
@@ -187,7 +193,7 @@ const Index = () => {
               
               {/* App Preview Mockup - mobile responsive */}
               <div className="relative mx-auto max-w-4xl">
-                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-4 md:p-8 backdrop-blur-sm border border-gray-200 dark:border-gray-700">
+                <div className="bg-white/95 dark:bg-gray-800/95 rounded-2xl shadow-2xl p-4 md:p-8 backdrop-blur-md border border-gray-200/50 dark:border-gray-700/50">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
                     {healthMetrics.map((metric, index) => (
                       <div key={index} className="transform hover:scale-105 transition-transform">
@@ -215,7 +221,7 @@ const Index = () => {
             
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {features.map((feature, index) => (
-                <Card key={index} className="p-8 hover:shadow-xl transition-all duration-300 transform hover:scale-105 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-lg">
+                <Card key={index} className="p-8 hover:shadow-xl transition-all duration-300 transform hover:scale-105 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-0 shadow-lg">
                   <div className="flex flex-col items-center text-center">
                     <div className="p-4 bg-gradient-to-br from-green-100 to-blue-100 dark:from-green-900/30 dark:to-blue-900/30 rounded-full mb-6">
                       {feature.icon}
@@ -230,7 +236,7 @@ const Index = () => {
         </section>
 
         {/* Drug Store Section */}
-        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white/50 dark:bg-gray-800/50">
+        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4 flex items-center justify-center">
@@ -273,7 +279,7 @@ const Index = () => {
         </section>
 
         {/* Dashboard Preview */}
-        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-green-50/50 dark:bg-green-900/10">
+        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-green-50/60 dark:bg-green-900/20 backdrop-blur-sm">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
@@ -297,7 +303,7 @@ const Index = () => {
         </section>
 
         {/* CTA Section */}
-        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50 dark:bg-gray-800">
+        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50/80 dark:bg-gray-800/80 backdrop-blur-sm">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
               Ready to Take Control of Your Health?
