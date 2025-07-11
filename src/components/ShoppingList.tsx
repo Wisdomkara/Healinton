@@ -4,405 +4,261 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
-import { ShoppingCart, Plus, Check, X } from 'lucide-react';
+import { ShoppingCart, Trash2, Package, Clock } from 'lucide-react';
 
 const ShoppingList = () => {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [medications, setMedications] = useState<any[]>([]);
-  const [isAdding, setIsAdding] = useState(false);
-  const [newMedication, setNewMedication] = useState({
-    medication_name: '',
-    pharmacy_name: '',
-    full_name: '',
-    phone_number: '',
-    email_address: '',
-    country: '',
-    address: ''
+  const [items, setItems] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    medicationName: '',
+    pharmacyName: '',
+    fullName: '',
+    phoneNumber: '',
+    emailAddress: '',
+    country: ''
   });
 
   useEffect(() => {
     if (user) {
-      fetchMedications();
+      fetchItems();
     }
   }, [user]);
 
-  const fetchMedications = async () => {
+  const fetchItems = async () => {
     if (!user) return;
 
-    const { data, error } = await supabase
-      .from('shopping_lists')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false });
+    try {
+      const { data, error } = await supabase
+        .from('shopping_lists')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
 
-    if (error) {
-      console.error('Error fetching medications:', error);
-      return;
+      if (error) throw error;
+      setItems(data || []);
+    } catch (error) {
+      console.error('Error fetching shopping list:', error);
     }
-
-    setMedications(data || []);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
 
+    setLoading(true);
+    
     try {
-      // Generate reference number
       const referenceNumber = `MED-${Date.now().toString().slice(-6)}`;
 
       const { error } = await supabase
         .from('shopping_lists')
         .insert({
-          ...newMedication,
           user_id: user.id,
-          reference_number: referenceNumber,
-          is_purchased: false
+          medication_name: formData.medicationName,
+          pharmacy_name: formData.pharmacyName,
+          full_name: formData.fullName,
+          phone_number: formData.phoneNumber,
+          email_address: formData.emailAddress,
+          country: formData.country,
+          reference_number: referenceNumber
         });
 
       if (error) throw error;
 
       toast({
-        title: 'Medication Added Successfully!',
-        description: `Reference number: ${referenceNumber}. Your order will be processed for doorstep delivery.`,
+        title: "Medication Added Successfully!",
+        description: `${formData.medicationName} has been added to your shopping list. Reference: ${referenceNumber}`
       });
 
-      setNewMedication({
-        medication_name: '',
-        pharmacy_name: '',
-        full_name: '',
-        phone_number: '',
-        email_address: '',
-        country: '',
-        address: ''
+      // Reset form
+      setFormData({
+        medicationName: '',
+        pharmacyName: '',
+        fullName: '',
+        phoneNumber: '',
+        emailAddress: '',
+        country: ''
       });
-      setIsAdding(false);
-      fetchMedications();
 
+      fetchItems();
     } catch (error) {
       console.error('Error adding medication:', error);
       toast({
-        title: 'Error',
-        description: 'Failed to add medication to shopping list.',
-        variant: 'destructive'
+        title: "Error",
+        description: "Failed to add medication. Please try again.",
+        variant: "destructive"
       });
+    } finally {
+      setLoading(false);
     }
   };
 
-  const markAsPurchased = async (id: string) => {
-    try {
-      const { error } = await supabase
-        .from('shopping_lists')
-        .update({ is_purchased: true })
-        .eq('id', id);
-
-      if (error) throw error;
-
-      toast({
-        title: 'Medication Purchased',
-        description: 'Medication marked as purchased successfully.',
-      });
-
-      fetchMedications();
-    } catch (error) {
-      console.error('Error updating medication:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to update medication status.',
-        variant: 'destructive'
-      });
-    }
-  };
-
-  const deleteMedication = async (id: string) => {
-    if (!confirm('Are you sure you want to remove this medication?')) return;
+  const clearAllItems = async () => {
+    if (!user) return;
 
     try {
       const { error } = await supabase
         .from('shopping_lists')
         .delete()
-        .eq('id', id);
+        .eq('user_id', user.id);
 
       if (error) throw error;
 
+      setItems([]);
       toast({
-        title: 'Medication Removed',
-        description: 'Medication removed from shopping list.',
+        title: "Shopping List Cleared",
+        description: "All items have been cleared successfully.",
       });
-
-      fetchMedications();
     } catch (error) {
-      console.error('Error deleting medication:', error);
+      console.error('Error clearing shopping list:', error);
       toast({
-        title: 'Error',
-        description: 'Failed to remove medication.',
-        variant: 'destructive'
+        title: "Error",
+        description: "Failed to clear shopping list. Please try again.",
+        variant: "destructive"
       });
     }
   };
 
   return (
-    <div className="space-y-4 md:space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white flex items-center">
-          <ShoppingCart className="h-5 w-5 md:h-6 md:w-6 mr-2 text-green-600" />
-          Shopping List
-        </h2>
-        
-        {!isAdding && (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Shopping List</h2>
+        {items.length > 0 && (
           <Button
-            onClick={() => setIsAdding(true)}
-            className="bg-green-600 hover:bg-green-700 w-full sm:w-auto"
+            onClick={clearAllItems}
+            variant="destructive"
+            size="sm"
           >
-            <Plus className="h-4 w-4 mr-2" />
-            Add Medication
+            <Trash2 className="h-4 w-4 mr-2" />
+            Clear All
           </Button>
         )}
       </div>
 
-      {isAdding && (
-        <Card className="p-4 md:p-6">
-          <h3 className="text-lg font-semibold mb-4">Add New Medication</h3>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="sm:col-span-2">
-                <Label htmlFor="medication_name">Medication Name *</Label>
-                <Input
-                  id="medication_name"
-                  value={newMedication.medication_name}
-                  onChange={(e) => setNewMedication(prev => ({
-                    ...prev,
-                    medication_name: e.target.value
-                  }))}
-                  required
-                  className="w-full"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="pharmacy_name">Preferred Pharmacy</Label>
-                <Input
-                  id="pharmacy_name"
-                  value={newMedication.pharmacy_name}
-                  onChange={(e) => setNewMedication(prev => ({
-                    ...prev,
-                    pharmacy_name: e.target.value
-                  }))}
-                  className="w-full"
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="full_name">Your Full Name *</Label>
-                <Input
-                  id="full_name"
-                  value={newMedication.full_name}
-                  onChange={(e) => setNewMedication(prev => ({
-                    ...prev,
-                    full_name: e.target.value
-                  }))}
-                  required
-                  className="w-full"
-                />
-              </div>
+      <Card className="p-6">
+        <h3 className="text-lg font-semibold mb-4">Add Medication</h3>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="medicationName">Medication Name *</Label>
+              <Input
+                id="medicationName"
+                value={formData.medicationName}
+                onChange={(e) => setFormData({ ...formData, medicationName: e.target.value })}
+                required
+              />
             </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="phone_number">Phone Number *</Label>
-                <Input
-                  id="phone_number"
-                  type="tel"
-                  value={newMedication.phone_number}
-                  onChange={(e) => setNewMedication(prev => ({
-                    ...prev,
-                    phone_number: e.target.value
-                  }))}
-                  required
-                  className="w-full"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="email_address">Email Address *</Label>
-                <Input
-                  id="email_address"
-                  type="email"
-                  value={newMedication.email_address}
-                  onChange={(e) => setNewMedication(prev => ({
-                    ...prev,
-                    email_address: e.target.value
-                  }))}
-                  required
-                  className="w-full"
-                />
-              </div>
+            
+            <div>
+              <Label htmlFor="pharmacyName">Pharmacy Name</Label>
+              <Input
+                id="pharmacyName"
+                value={formData.pharmacyName}
+                onChange={(e) => setFormData({ ...formData, pharmacyName: e.target.value })}
+              />
             </div>
+          </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="country">Country *</Label>
-                <Input
-                  id="country"
-                  value={newMedication.country}
-                  onChange={(e) => setNewMedication(prev => ({
-                    ...prev,
-                    country: e.target.value
-                  }))}
-                  required
-                  className="w-full"
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="address">Delivery Address *</Label>
-                <Input
-                  id="address"
-                  value={newMedication.address}
-                  onChange={(e) => setNewMedication(prev => ({
-                    ...prev,
-                    address: e.target.value
-                  }))}
-                  placeholder="Full address for doorstep delivery"
-                  required
-                  className="w-full"
-                />
-              </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="fullName">Full Name *</Label>
+              <Input
+                id="fullName"
+                value={formData.fullName}
+                onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                required
+              />
             </div>
-
-            <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3 pt-4">
-              <Button type="submit" className="bg-green-600 hover:bg-green-700 flex-1 sm:flex-none">
-                Add to Shopping List
-              </Button>
-              <Button 
-                type="button" 
-                variant="outline" 
-                onClick={() => setIsAdding(false)}
-                className="flex-1 sm:flex-none"
-              >
-                Cancel
-              </Button>
+            
+            <div>
+              <Label htmlFor="phoneNumber">Phone Number *</Label>
+              <Input
+                id="phoneNumber"
+                type="tel"
+                value={formData.phoneNumber}
+                onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
+                required
+              />
             </div>
-          </form>
-        </Card>
-      )}
+          </div>
 
-      {/* Medications List */}
-      <div className="grid grid-cols-1 gap-4">
-        {medications.map((medication) => (
-          <Card key={medication.id} className="p-4 hover:shadow-lg transition-shadow">
-            <div className="flex flex-col space-y-3">
-              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start space-y-2 sm:space-y-0">
-                <h3 className="font-semibold text-lg text-gray-900 dark:text-white break-words">
-                  {medication.medication_name}
-                </h3>
-                <Badge
-                  variant={medication.is_purchased ? "default" : "secondary"}
-                  className={`self-start sm:self-center ${medication.is_purchased ? "bg-green-600" : ""}`}
-                >
-                  {medication.is_purchased ? 'Purchased' : 'Pending'}
-                </Badge>
-              </div>
-              
-              {medication.reference_number && (
-                <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg">
-                  <p className="text-sm font-medium text-blue-800 dark:text-blue-200">
-                    Reference Number
-                  </p>
-                  <p className="text-lg sm:text-xl font-bold text-blue-900 dark:text-blue-100 font-mono break-all">
-                    {medication.reference_number}
-                  </p>
-                </div>
-              )}
-              
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
-                {medication.pharmacy_name && (
-                  <div className="bg-gray-50 dark:bg-gray-800 p-2 rounded">
-                    <p className="text-gray-600 dark:text-gray-300">
-                      <strong>Pharmacy:</strong> {medication.pharmacy_name}
-                    </p>
-                  </div>
-                )}
-                {medication.full_name && (
-                  <div className="bg-gray-50 dark:bg-gray-800 p-2 rounded">
-                    <p className="text-gray-600 dark:text-gray-300">
-                      <strong>Name:</strong> {medication.full_name}
-                    </p>
-                  </div>
-                )}
-                {medication.phone_number && (
-                  <div className="bg-gray-50 dark:bg-gray-800 p-2 rounded">
-                    <p className="text-gray-600 dark:text-gray-300">
-                      <strong>Phone:</strong> {medication.phone_number}
-                    </p>
-                  </div>
-                )}
-                {medication.email_address && (
-                  <div className="bg-gray-50 dark:bg-gray-800 p-2 rounded">
-                    <p className="text-gray-600 dark:text-gray-300 break-all">
-                      <strong>Email:</strong> {medication.email_address}
-                    </p>
-                  </div>
-                )}
-                {medication.country && (
-                  <div className="bg-gray-50 dark:bg-gray-800 p-2 rounded">
-                    <p className="text-gray-600 dark:text-gray-300">
-                      <strong>Country:</strong> {medication.country}
-                    </p>
-                  </div>
-                )}
-                {medication.address && (
-                  <div className="bg-gray-50 dark:bg-gray-800 p-2 rounded">
-                    <p className="text-gray-600 dark:text-gray-300">
-                      <strong>Address:</strong> {medication.address}
-                    </p>
-                  </div>
-                )}
-              </div>
-              
-              <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 pt-3">
-                {!medication.is_purchased && (
-                  <Button
-                    onClick={() => markAsPurchased(medication.id)}
-                    className="bg-green-600 hover:bg-green-700 flex-1"
-                    size="sm"
-                  >
-                    <Check className="h-4 w-4 mr-2" />
-                    Mark as Purchased
-                  </Button>
-                )}
-                <Button
-                  onClick={() => deleteMedication(medication.id)}
-                  variant="outline"
-                  className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 flex-1"
-                  size="sm"
-                >
-                  <X className="h-4 w-4 mr-2" />
-                  Remove
-                </Button>
-              </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="emailAddress">Email Address *</Label>
+              <Input
+                id="emailAddress"
+                type="email"
+                value={formData.emailAddress}
+                onChange={(e) => setFormData({ ...formData, emailAddress: e.target.value })}
+                required
+              />
             </div>
-          </Card>
-        ))}
-      </div>
+            
+            <div>
+              <Label htmlFor="country">Country *</Label>
+              <Input
+                id="country"
+                value={formData.country}
+                onChange={(e) => setFormData({ ...formData, country: e.target.value })}
+                required
+              />
+            </div>
+          </div>
 
-      {medications.length === 0 && !isAdding && (
-        <div className="text-center py-8 sm:py-12">
-          <ShoppingCart className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-          <p className="text-gray-500 text-lg mb-4">No medications in your shopping list</p>
-          <Button
-            onClick={() => setIsAdding(true)}
-            className="bg-green-600 hover:bg-green-700"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Add Your First Medication
+          <Button type="submit" disabled={loading} className="w-full bg-blue-600 hover:bg-blue-700">
+            {loading ? 'Adding Medication...' : 'Add to Shopping List'}
           </Button>
-        </div>
+        </form>
+      </Card>
+
+      {/* Shopping List Items */}
+      {items.length > 0 && (
+        <Card className="p-6">
+          <h3 className="text-lg font-semibold mb-4">Your Shopping List</h3>
+          <div className="space-y-3">
+            {items.map((item) => (
+              <Card key={item.id} className="p-4 hover:shadow-md transition-shadow">
+                <div className="space-y-2">
+                  <div className="flex justify-between items-start">
+                    <div className="flex items-center space-x-2">
+                      <Package className="h-4 w-4 text-blue-600" />
+                      <h4 className="font-semibold text-sm">{item.medication_name}</h4>
+                    </div>
+                    <span className="text-xs px-2 py-1 rounded bg-blue-100 text-blue-800">
+                      Submitted
+                    </span>
+                  </div>
+                  
+                  <div className="flex items-center justify-between text-xs text-gray-600">
+                    {item.pharmacy_name && (
+                      <div className="flex items-center space-x-2">
+                        <ShoppingCart className="h-3 w-3" />
+                        <span>{item.pharmacy_name}</span>
+                      </div>
+                    )}
+                    <div className="flex items-center space-x-2">
+                      <Clock className="h-3 w-3" />
+                      <span>{new Date(item.created_at).toLocaleDateString()}</span>
+                    </div>
+                  </div>
+
+                  {item.reference_number && (
+                    <div className="bg-gray-50 p-2 rounded">
+                      <span className="text-xs font-mono text-gray-700">
+                        Ref: {item.reference_number}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </Card>
+            ))}
+          </div>
+        </Card>
       )}
     </div>
   );

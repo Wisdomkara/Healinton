@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Calendar, Copy, MapPin, Clock, User } from 'lucide-react';
+import { Calendar, Copy, MapPin, Clock, User, Trash2 } from 'lucide-react';
 
 const AppointmentSummary = () => {
   const { user } = useAuth();
@@ -36,6 +36,32 @@ const AppointmentSummary = () => {
       console.error('Error fetching appointments:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const clearAllAppointments = async () => {
+    if (!user) return;
+
+    try {
+      const { error } = await supabase
+        .from('hospital_bookings')
+        .delete()
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+
+      setAppointments([]);
+      toast({
+        title: "Appointments Cleared",
+        description: "All appointments have been cleared successfully.",
+      });
+    } catch (error) {
+      console.error('Error clearing appointments:', error);
+      toast({
+        title: "Error",
+        description: "Failed to clear appointments. Please try again.",
+        variant: "destructive"
+      });
     }
   };
 
@@ -74,6 +100,19 @@ const AppointmentSummary = () => {
 
   return (
     <div className="space-y-3">
+      <div className="flex justify-between items-center">
+        <h4 className="font-semibold">Recent Appointments</h4>
+        <Button
+          onClick={clearAllAppointments}
+          variant="destructive"
+          size="sm"
+          className="h-8"
+        >
+          <Trash2 className="h-3 w-3 mr-1" />
+          Clear All
+        </Button>
+      </div>
+      
       {appointments.map((appointment) => (
         <Card key={appointment.id} className="p-4 hover:shadow-md transition-shadow">
           <div className="space-y-3">
@@ -82,12 +121,8 @@ const AppointmentSummary = () => {
                 <MapPin className="h-4 w-4 text-green-600" />
                 <h4 className="font-semibold text-sm">{appointment.hospital_name}</h4>
               </div>
-              <span className={`text-xs px-2 py-1 rounded ${
-                appointment.status === 'confirmed' ? 'bg-green-100 text-green-800' :
-                appointment.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                'bg-gray-100 text-gray-800'
-              }`}>
-                {appointment.status}
+              <span className="text-xs px-2 py-1 rounded bg-green-100 text-green-800">
+                Submitted
               </span>
             </div>
             

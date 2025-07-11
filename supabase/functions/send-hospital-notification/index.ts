@@ -30,6 +30,11 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
+    console.log("Starting hospital notification function...");
+    
+    const requestBody = await req.json();
+    console.log("Request body received:", requestBody);
+
     const {
       hospitalEmail,
       hospitalName,
@@ -41,9 +46,23 @@ const handler = async (req: Request): Promise<Response> => {
       referenceNumber,
       patientAddress,
       country
-    }: HospitalNotificationRequest = await req.json();
+    }: HospitalNotificationRequest = requestBody;
 
     console.log("Sending appointment notification to:", hospitalEmail);
+
+    if (!hospitalEmail) {
+      console.log("No hospital email provided, skipping email notification");
+      return new Response(JSON.stringify({ 
+        success: true, 
+        message: "No hospital email provided" 
+      }), {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+          ...corsHeaders,
+        },
+      });
+    }
 
     const formattedDate = new Date(appointmentDate).toLocaleString();
 
@@ -89,7 +108,8 @@ const handler = async (req: Request): Promise<Response> => {
 
     return new Response(JSON.stringify({ 
       success: true, 
-      emailId: emailResponse.data?.id 
+      emailId: emailResponse.data?.id,
+      message: "Email sent successfully"
     }), {
       status: 200,
       headers: {
@@ -102,7 +122,8 @@ const handler = async (req: Request): Promise<Response> => {
     return new Response(
       JSON.stringify({ 
         success: false, 
-        error: error.message 
+        error: error.message,
+        details: error.stack
       }),
       {
         status: 500,

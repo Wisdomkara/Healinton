@@ -1,90 +1,94 @@
 
-import React from 'react';
-import { Card } from '@/components/ui/card';
+import React, { useState } from 'react';
+import { useAuth } from '@/hooks/useAuth';
+import Sidebar from '@/components/Sidebar';
+import DashboardHeader from '@/components/DashboardHeader';
+import DashboardOverview from '@/components/DashboardOverview';
 import HealthMetricsForm from '@/components/HealthMetricsForm';
-import MealTracker from '@/components/MealTracker';
-import ReminderForm from '@/components/ReminderForm';
 import SymptomLogger from '@/components/SymptomLogger';
 import EnhancedHospitalBooking from '@/components/EnhancedHospitalBooking';
-import ShoppingList from '@/components/ShoppingList';
-import AppointmentSummary from '@/components/AppointmentSummary';
-import DrugOrderSummary from '@/components/DrugOrderSummary';
-import EnhancedMealTracker from '@/components/EnhancedMealTracker';
 import NotificationSettings from '@/components/NotificationSettings';
-import { Activity, Calendar, ShoppingCart, Bell } from 'lucide-react';
+import ReminderForm from '@/components/ReminderForm';
+import EnhancedMealTracker from '@/components/EnhancedMealTracker';
+import ShoppingList from '@/components/ShoppingList';
+import AIChat from '@/components/AIChat';
+import HealthBlog from '@/components/HealthBlog';
+import Settings from '@/components/Settings';
+import DrugStore from '@/components/DrugStore';
+import HospitalForm from '@/components/HospitalForm';
+import RateUs from '@/components/RateUs';
 
 const Dashboard = () => {
+  const { user } = useAuth();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState('overview');
+
+  const userName = user?.user_metadata?.first_name || 'User';
+
+  const renderContent = () => {
+    switch (activeSection) {
+      case 'health-metrics':
+        return <HealthMetricsForm />;
+      case 'symptoms':
+        return <SymptomLogger />;
+      case 'appointments':
+        return <EnhancedHospitalBooking />;
+      case 'notifications':
+        return <NotificationSettings />;
+      case 'reminders':
+        return <ReminderForm />;
+      case 'meal-tracker':
+        return <EnhancedMealTracker />;
+      case 'shopping':
+        return <ShoppingList />;
+      case 'drugs':
+        return <DrugStore />;
+      case 'hospital-info':
+        return <HospitalForm />;
+      case 'chat':
+        return <AIChat />;
+      case 'blog':
+        return <HealthBlog />;
+      case 'rate-us':
+        return <RateUs />;
+      case 'settings':
+        return <Settings />;
+      case 'overview':
+      default:
+        return <DashboardOverview />;
+    }
+  };
+
   return (
-    <div className="container mx-auto px-4 py-6 space-y-6">
-      {/* Header */}
-      <div className="text-center mb-8">
-        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2">
-          Health Dashboard
-        </h1>
-        <p className="text-gray-600 dark:text-gray-300">
-          Manage your health journey in one place
-        </p>
-      </div>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex w-full">
+      {/* Mobile Header */}
+      <DashboardHeader 
+        onMenuClick={() => setSidebarOpen(true)} 
+        userName={userName}
+      />
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-        <Card className="p-6">
-          <div className="flex items-center space-x-3 mb-4">
-            <Calendar className="h-6 w-6 text-green-600" />
-            <h3 className="text-lg font-semibold">Recent Appointments</h3>
+      {/* Sidebar */}
+      <Sidebar 
+        isOpen={sidebarOpen} 
+        onClose={() => setSidebarOpen(false)}
+        onSectionChange={setActiveSection}
+        activeSection={activeSection}
+      />
+
+      {/* Overlay for mobile */}
+      {sidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col md:ml-64">
+        <div className="flex-1 p-6 pt-20 md:pt-6">
+          <div className="max-w-7xl mx-auto">
+            {renderContent()}
           </div>
-          <AppointmentSummary />
-        </Card>
-
-        <Card className="p-6">
-          <div className="flex items-center space-x-3 mb-4">
-            <ShoppingCart className="h-6 w-6 text-blue-600" />
-            <h3 className="text-lg font-semibold">Drug Orders</h3>
-          </div>
-          <DrugOrderSummary />
-        </Card>
-
-        <Card className="p-6">
-          <div className="flex items-center space-x-3 mb-4">
-            <Bell className="h-6 w-6 text-purple-600" />
-            <h3 className="text-lg font-semibold">Notifications</h3>
-          </div>
-          <NotificationSettings />
-        </Card>
-      </div>
-
-      {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Left Column */}
-        <div className="space-y-6">
-          <Card className="p-6">
-            <div className="flex items-center space-x-3 mb-4">
-              <Activity className="h-6 w-6 text-red-600" />
-              <h2 className="text-xl font-semibold">Health Metrics</h2>
-            </div>
-            <HealthMetricsForm />
-          </Card>
-
-          <Card className="p-6">
-            <EnhancedMealTracker />
-          </Card>
-
-          <Card className="p-6">
-            <SymptomLogger />
-          </Card>
-        </div>
-
-        {/* Right Column */}
-        <div className="space-y-6">
-          <EnhancedHospitalBooking />
-          
-          <Card className="p-6">
-            <ShoppingList />
-          </Card>
-
-          <Card className="p-6">
-            <ReminderForm />
-          </Card>
         </div>
       </div>
     </div>
