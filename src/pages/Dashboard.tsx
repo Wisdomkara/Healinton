@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,6 +7,7 @@ import HealthMetricCard from '@/components/HealthMetricCard';
 import HealthMetricsForm from '@/components/HealthMetricsForm';
 import SymptomLogger from '@/components/SymptomLogger';
 import HospitalBooking from '@/components/HospitalBooking';
+import EnhancedHospitalBooking from '@/components/EnhancedHospitalBooking';
 import ReminderForm from '@/components/ReminderForm';
 import ShoppingList from '@/components/ShoppingList';
 import AIChat from '@/components/AIChat';
@@ -17,14 +17,17 @@ import NotificationCenter from '@/components/NotificationCenter';
 import PremiumBanner from '@/components/PremiumBanner';
 import RateUs from '@/components/RateUs';
 import MealTracker from '@/components/MealTracker';
+import EnhancedMealTracker from '@/components/EnhancedMealTracker';
 import DrugStore from '@/components/DrugStore';
 import HospitalForm from '@/components/HospitalForm';
+import AppointmentSummary from '@/components/AppointmentSummary';
+import DrugOrderSummary from '@/components/DrugOrderSummary';
 import { useScrollAnimation, useStaggerAnimation } from '@/hooks/useScrollAnimation';
 import { useAuth } from '@/hooks/useAuth';
 import { usePremium } from '@/hooks/usePremium';
 import { supabase } from '@/integrations/supabase/client';
 import { getMealPlanForIllness, getHealthTipsForIllness } from '@/utils/mealPlans';
-import { Heart, Calendar, Bell, Clock, TrendingUp, Activity, Utensils } from 'lucide-react';
+import { Heart, Calendar, Bell, Clock, TrendingUp, Activity, Utensils, Pill } from 'lucide-react';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -121,7 +124,7 @@ const Dashboard = () => {
         return (
           <div className="w-full">
             <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-4 md:mb-6">Hospital Appointments</h2>
-            <HospitalBooking />
+            <EnhancedHospitalBooking />
           </div>
         );
       case 'notifications':
@@ -155,7 +158,7 @@ const Dashboard = () => {
         return (
           <div className="w-full">
             <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-4 md:mb-6">Meal Tracker</h2>
-            <MealTracker userProfile={userProfile} />
+            <EnhancedMealTracker userProfile={userProfile} />
           </div>
         );
       case 'hospital-info':
@@ -197,30 +200,34 @@ const Dashboard = () => {
             {/* Premium Banner - only show if not premium */}
             <PremiumBanner />
 
-            {/* Meal Tracker */}
-            <Card className="p-6">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-semibold flex items-center">
-                  <Utensils className="h-5 w-5 mr-2 text-green-600" />
-                  Today's Meal Progress
+            {/* Recent Appointments and Drug Orders */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div>
+                <h3 className="text-lg font-semibold mb-4 flex items-center">
+                  <Calendar className="h-5 w-5 mr-2 text-green-600" />
+                  Recent Appointments
                 </h3>
-                <Button
-                  variant="outline"
-                  onClick={() => setActiveSection('meal-tracker')}
-                  size="sm"
-                >
-                  View Full Tracker
-                </Button>
+                <AppointmentSummary />
               </div>
-              <MealTracker userProfile={userProfile} />
-            </Card>
+              
+              <div>
+                <h3 className="text-lg font-semibold mb-4 flex items-center">
+                  <Pill className="h-5 w-5 mr-2 text-blue-600" />
+                  Recent Drug Orders
+                </h3>
+                <DrugOrderSummary />
+              </div>
+            </div>
+
+            {/* Enhanced Meal Tracker */}
+            <EnhancedMealTracker userProfile={userProfile} />
 
             {/* Today's Meal Plan */}
             <div className="w-full">
               <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 md:mb-6 space-y-2 sm:space-y-0">
                 <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white flex items-center">
                   <Utensils className="h-5 w-5 md:h-6 md:w-6 mr-2 text-green-600" />
-                  <span className="break-words">Today's Meal Plan ({userProfile?.illness_type?.replace('_', ' ').toUpperCase() || 'HYPERTENSION'})</span>
+                  <span className="break-words">Recommended Meal Plan ({userProfile?.illness_type?.replace('_', ' ').toUpperCase() || 'HYPERTENSION'})</span>
                 </h2>
               </div>
               <div ref={mealsRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
@@ -230,9 +237,15 @@ const Dashboard = () => {
                       <h3 className="font-semibold text-base md:text-lg mb-3 capitalize text-green-700 dark:text-green-300">{time}</h3>
                       <div className="space-y-2">
                         <div className="p-2 md:p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border-l-4 border-green-500">
-                          <p className="text-xs md:text-sm font-medium text-green-800 dark:text-green-300">Recommended</p>
+                          <p className="text-xs md:text-sm font-medium text-green-800 dark:text-green-300">Low Budget</p>
                           <p className="text-xs text-gray-600 dark:text-gray-300 break-words">
                             {todaysMealPlan[time as keyof typeof todaysMealPlan].low}
+                          </p>
+                        </div>
+                        <div className="p-2 md:p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border-l-4 border-blue-500">
+                          <p className="text-xs md:text-sm font-medium text-blue-800 dark:text-blue-300">High Budget</p>
+                          <p className="text-xs text-gray-600 dark:text-gray-300 break-words">
+                            {todaysMealPlan[time as keyof typeof todaysMealPlan].high}
                           </p>
                         </div>
                       </div>
