@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -58,9 +57,51 @@ const EnhancedHospitalBooking = () => {
   const [loading, setLoading] = useState(false);
   const [isManualHospital, setIsManualHospital] = useState(false);
 
+  const sendHospitalNotification = async (bookingData: any, referenceNumber: string) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('send-hospital-notification', {
+        body: {
+          hospitalEmail: bookingData.hospitalEmail,
+          hospitalName: bookingData.hospitalName,
+          patientName: bookingData.fullName,
+          patientEmail: bookingData.emailAddress,
+          patientPhone: bookingData.phoneNumber,
+          appointmentDate: bookingData.appointmentDate,
+          reason: bookingData.reason,
+          referenceNumber: referenceNumber,
+          patientAddress: bookingData.address,
+          country: bookingData.country
+        }
+      });
+
+      if (error) {
+        console.error('Error sending hospital notification:', error);
+        toast({
+          title: "Email Warning",
+          description: "Appointment booked successfully, but hospital notification email failed to send.",
+          variant: "destructive"
+        });
+      } else {
+        console.log('Hospital notification sent successfully:', data);
+      }
+    } catch (error) {
+      console.error('Error calling email function:', error);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
+
+    // Validate hospital email is provided when manual hospital is selected
+    if (isManualHospital && !formData.hospitalEmail) {
+      toast({
+        title: "Hospital Email Required",
+        description: "Please provide the hospital email address for manual entries.",
+        variant: "destructive"
+      });
+      return;
+    }
 
     setLoading(true);
     
@@ -85,9 +126,14 @@ const EnhancedHospitalBooking = () => {
 
       if (error) throw error;
 
+      // Send email notification to hospital if email is provided
+      if (formData.hospitalEmail) {
+        await sendHospitalNotification(formData, referenceNumber);
+      }
+
       toast({
         title: "Appointment Booked Successfully!",
-        description: `Your appointment has been scheduled. Reference: ${referenceNumber}. Hospital will be notified via email.`
+        description: `Your appointment has been scheduled. Reference: ${referenceNumber}. ${formData.hospitalEmail ? 'Hospital has been notified via email.' : ''}`
       });
 
       // Reset form
