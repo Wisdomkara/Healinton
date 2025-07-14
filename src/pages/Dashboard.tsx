@@ -17,6 +17,7 @@ import Settings from '@/components/Settings';
 import DrugStore from '@/components/DrugStore';
 import HospitalForm from '@/components/HospitalForm';
 import RateUs from '@/components/RateUs';
+import ThemeToggle from '@/components/ThemeToggle';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -61,7 +62,7 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex">
-      {/* Sidebar - Hidden on mobile, fixed on desktop */}
+      {/* Desktop Sidebar - Fixed */}
       <div className="hidden lg:flex lg:flex-shrink-0">
         <div className="flex flex-col w-64">
           <Sidebar 
@@ -95,12 +96,22 @@ const Dashboard = () => {
 
       {/* Main content area */}
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Mobile header - only visible on mobile */}
+        {/* Mobile header with theme toggle */}
         <div className="lg:hidden">
           <DashboardHeader 
             onMenuClick={() => setSidebarOpen(true)} 
             userName={userName}
           />
+        </div>
+
+        {/* Desktop theme toggle - positioned at top right */}
+        <div className="hidden lg:block absolute top-4 right-4 z-30">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-2 shadow-lg border border-gray-200 dark:border-gray-700">
+            <div className="flex items-center space-x-2">
+              <span className="text-sm text-gray-600 dark:text-gray-300">Theme:</span>
+              <ThemeToggle />
+            </div>
+          </div>
         </div>
 
         {/* Main content */}

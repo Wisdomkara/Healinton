@@ -207,7 +207,7 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Features Section */}
+        {/* Features Section with Glow Animation */}
         <section className="py-20 px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-16">
@@ -221,8 +221,12 @@ const Index = () => {
             
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {features.map((feature, index) => (
-                <Card key={index} className="p-8 hover:shadow-xl transition-all duration-300 transform hover:scale-105 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-0 shadow-lg">
-                  <div className="flex flex-col items-center text-center">
+                <Card key={index} className="p-8 hover:shadow-xl transition-all duration-300 transform hover:scale-105 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-0 shadow-lg relative overflow-hidden group">
+                  {/* Glow animation behind each card */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-green-400/20 via-blue-400/20 to-purple-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-green-500/10 via-blue-500/10 to-purple-500/10 animate-pulse"></div>
+                  
+                  <div className="flex flex-col items-center text-center relative z-10">
                     <div className="p-4 bg-gradient-to-br from-green-100 to-blue-100 dark:from-green-900/30 dark:to-blue-900/30 rounded-full mb-6">
                       {feature.icon}
                     </div>
@@ -302,9 +306,12 @@ const Index = () => {
           </div>
         </section>
 
-        {/* CTA Section */}
-        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50/80 dark:bg-gray-800/80 backdrop-blur-sm">
-          <div className="max-w-4xl mx-auto text-center">
+        {/* CTA Section with animated background */}
+        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50/80 dark:bg-gray-800/80 backdrop-blur-sm relative overflow-hidden">
+          {/* Animated background gradient */}
+          <div className="absolute inset-0 bg-gradient-to-r from-green-400/20 via-blue-400/20 via-purple-400/20 to-green-400/20 animate-gradient-shift"></div>
+          
+          <div className="max-w-4xl mx-auto text-center relative z-10">
             <h2 className="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
               Ready to Take Control of Your Health?
             </h2>
@@ -324,7 +331,7 @@ const Index = () => {
               </Link>
             </div>
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-4">
-              No credit card required • Free till July 31st, 2025
+              No credit card required • Free till August 31st, 2025
             </p>
           </div>
         </section>

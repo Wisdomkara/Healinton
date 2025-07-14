@@ -1,10 +1,11 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Heart } from 'lucide-react';
+import { Heart, Eye, EyeOff } from 'lucide-react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
@@ -23,18 +24,31 @@ const countries = [
 ];
 
 const illnesses = [
+  { value: 'mild_hypertension', label: 'Mild Hypertension (High Blood Pressure)' },
+  { value: 'mild_diabetes', label: 'Mild Type 2 Diabetes / Pre-diabetes' },
   { value: 'hypertension', label: 'Hypertension (High Blood Pressure)' },
   { value: 'diabetes', label: 'Diabetes (Type 1 & 2)' },
   { value: 'heart_disease', label: 'Heart Disease' },
+  { value: 'high_cholesterol', label: 'High Cholesterol (Mild)' },
   { value: 'obesity', label: 'Obesity & Weight Management' },
-  { value: 'high_cholesterol', label: 'High Cholesterol' },
   { value: 'asthma', label: 'Asthma & Respiratory Issues' },
   { value: 'arthritis', label: 'Arthritis & Joint Pain' },
   { value: 'kidney_disease', label: 'Kidney Disease' },
   { value: 'liver_disease', label: 'Liver Disease' },
+  { value: 'mild_fatty_liver', label: 'Mild Fatty Liver' },
   { value: 'thyroid_disorders', label: 'Thyroid Disorders' },
   { value: 'anxiety_depression', label: 'Anxiety & Depression' },
-  { value: 'chronic_pain', label: 'Chronic Pain Management' }
+  { value: 'chronic_pain', label: 'Chronic Pain Management' },
+  { value: 'acid_reflux', label: 'Acid Reflux / Mild Gastritis' },
+  { value: 'constipation', label: 'Constipation' },
+  { value: 'mild_anemia', label: 'Mild Anemia (Iron Deficiency)' },
+  { value: 'skin_issues', label: 'Skin Issues (Acne, Eczema)' },
+  { value: 'ibs', label: 'Irritable Bowel Syndrome (IBS - Mild)' },
+  { value: 'low_immunity', label: 'Low Immunity / Frequent Colds' },
+  { value: 'insomnia', label: 'Insomnia & Sleep Disorders' },
+  { value: 'migraine', label: 'Migraine & Headaches' },
+  { value: 'osteoporosis', label: 'Osteoporosis & Bone Health' },
+  { value: 'gout', label: 'Gout & Uric Acid' }
 ];
 
 const Auth = () => {
@@ -44,6 +58,8 @@ const Auth = () => {
   const [searchParams] = useSearchParams();
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -65,7 +81,6 @@ const Auth = () => {
         title: "Email Verified Successfully!",
         description: "Your account has been verified. You can now sign in to your account.",
       });
-      // Don't auto-redirect, let user sign in manually
     }
   }, [searchParams, navigate, toast]);
 
@@ -162,7 +177,6 @@ const Auth = () => {
     }
   };
 
-  // Show verification success message if redirected from email verification
   const isVerificationSuccess = searchParams.get('type') === 'signup' && searchParams.get('access_token');
 
   return (
@@ -327,33 +341,51 @@ const Auth = () => {
 
                 <div>
                   <Label htmlFor="password" className="text-gray-900 dark:text-white font-medium">Password</Label>
-                  <Input
-                    id="password"
-                    name="password"
-                    type="password"
-                    required
-                    value={formData.password}
-                    onChange={handleInputChange}
-                    className="mt-1 border-green-200 focus:border-green-500 focus:ring-green-500"
-                    placeholder="••••••••"
-                    minLength={6}
-                  />
+                  <div className="relative">
+                    <Input
+                      id="password"
+                      name="password"
+                      type={showPassword ? "text" : "password"}
+                      required
+                      value={formData.password}
+                      onChange={handleInputChange}
+                      className="mt-1 border-green-200 focus:border-green-500 focus:ring-green-500 pr-10"
+                      placeholder="••••••••"
+                      minLength={6}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
+                    >
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
                 </div>
 
                 {!isLogin && (
                   <div>
                     <Label htmlFor="confirmPassword" className="text-gray-900 dark:text-white font-medium">Confirm Password</Label>
-                    <Input
-                      id="confirmPassword"
-                      name="confirmPassword"
-                      type="password"
-                      required
-                      value={formData.confirmPassword}
-                      onChange={handleInputChange}
-                      className="mt-1 border-green-200 focus:border-green-500 focus:ring-green-500"
-                      placeholder="••••••••"
-                      minLength={6}
-                    />
+                    <div className="relative">
+                      <Input
+                        id="confirmPassword"
+                        name="confirmPassword"
+                        type={showConfirmPassword ? "text" : "password"}
+                        required
+                        value={formData.confirmPassword}
+                        onChange={handleInputChange}
+                        className="mt-1 border-green-200 focus:border-green-500 focus:ring-green-500 pr-10"
+                        placeholder="••••••••"
+                        minLength={6}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
+                      >
+                        {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
                   </div>
                 )}
 
