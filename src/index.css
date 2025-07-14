@@ -109,7 +109,7 @@
 
   .animate-gradient-shift {
     background-size: 400% 400%;
-    animation: gradientShift 6s ease infinite;
+    animation: gradientShift 8s ease infinite;
   }
 
   /* Mobile-first responsive design */
@@ -187,8 +187,14 @@
   0% {
     background-position: 0% 50%;
   }
-  50% {
+  25% {
     background-position: 100% 50%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+  75% {
+    background-position: 0% 100%;
   }
   100% {
     background-position: 0% 50%;

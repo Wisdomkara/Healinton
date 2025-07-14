@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -6,16 +7,16 @@ import HealthMetricCard from '@/components/HealthMetricCard';
 import MealPlanCard from '@/components/MealPlanCard';
 import PremiumBanner from '@/components/PremiumBanner';
 import TestimonialsSection from '@/components/TestimonialsSection';
+import DrugStorePreview from '@/components/DrugStorePreview';
 import Loader from '@/components/Loader';
 import { useAuth } from '@/hooks/useAuth';
-import { Heart, User, Calendar, Stethoscope, Clock, Settings, Shield, Users, TrendingUp, Smartphone, CheckCircle } from 'lucide-react';
+import { Heart, Calendar, Stethoscope, Clock, Shield, Users, TrendingUp, Smartphone, CheckCircle, Activity, Brain, Phone, Mail, MapPin, Pill, Plus } from 'lucide-react';
 
 const Index = () => {
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate app loading
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 2000);
@@ -29,7 +30,7 @@ const Index = () => {
       value: '120',
       unit: '/80 mmHg',
       trend: 'stable' as const,
-      icon: <Heart className="h-5 w-5 text-primary-600" />,
+      icon: <Heart className="h-5 w-5 text-green-600" />,
       calories: 0
     },
     {
@@ -37,7 +38,7 @@ const Index = () => {
       value: '72.5',
       unit: 'kg',
       trend: 'down' as const,
-      icon: <User className="h-5 w-5 text-primary-600" />,
+      icon: <Activity className="h-5 w-5 text-blue-600" />,
       calories: 0
     },
     {
@@ -45,7 +46,7 @@ const Index = () => {
       value: '95',
       unit: 'mg/dL',
       trend: 'stable' as const,
-      icon: <Calendar className="h-5 w-5 text-primary-600" />,
+      icon: <TrendingUp className="h-5 w-5 text-purple-600" />,
       calories: 0
     }
   ];
@@ -71,34 +72,34 @@ const Index = () => {
 
   const features = [
     {
-      icon: <Heart className="h-6 w-6 md:h-8 md:w-8 text-green-600" />,
+      icon: <Heart className="h-12 w-12 text-green-600" />,
       title: 'Health Monitoring',
       description: 'Track your vital signs, medications, and symptoms in one comprehensive dashboard.'
     },
     {
-      icon: <Calendar className="h-6 w-6 md:h-8 md:w-8 text-blue-600" />,
+      icon: <Calendar className="h-12 w-12 text-blue-600" />,
       title: 'Smart Scheduling',
       description: 'Never miss appointments or medication doses with intelligent reminders and notifications.'
     },
     {
-      icon: <Stethoscope className="h-6 w-6 md:h-8 md:w-8 text-purple-600" />,
-      title: 'Expert Guidance',
-      description: 'Get personalized meal plans and health tips tailored to your specific conditions.'
+      icon: <Brain className="h-12 w-12 text-purple-600" />,
+      title: 'AI Health Insights',
+      description: 'Get personalized meal plans and health tips tailored to your specific conditions with AI analysis.'
     },
     {
-      icon: <Users className="h-6 w-6 md:h-8 md:w-8 text-orange-600" />,
+      icon: <Users className="h-12 w-12 text-orange-600" />,
       title: 'Community Support',
       description: 'Connect with others managing similar conditions and share experiences.'
     },
     {
-      icon: <Shield className="h-6 w-6 md:h-8 md:w-8 text-red-600" />,
+      icon: <Shield className="h-12 w-12 text-red-600" />,
       title: 'Secure & Private',
       description: 'Your health data is encrypted and protected with enterprise-grade security.'
     },
     {
-      icon: <Smartphone className="h-6 w-6 md:h-8 md:w-8 text-indigo-600" />,
-      title: 'Mobile Friendly',
-      description: 'Access your health dashboard anywhere, anytime with our responsive design.'
+      icon: <Smartphone className="h-12 w-12 text-indigo-600" />,
+      title: 'Mobile Optimized',
+      description: 'Access your health dashboard anywhere, anytime with our fully responsive design.'
     }
   ];
 
@@ -115,112 +116,87 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100 dark:from-green-950 dark:via-gray-900 dark:to-green-900 relative overflow-hidden">
-      {/* Enhanced Decorative background blobs - removed overlay for better visibility */}
-      <div className="absolute inset-0 pointer-events-none">
-        {/* Large primary blobs */}
-        <div className="absolute top-10 left-10 w-72 h-64 bg-green-500/40 rounded-full blur-2xl animate-pulse"></div>
-        <div className="absolute top-32 right-20 w-96 h-80 bg-green-400/45 rounded-full blur-3xl transform rotate-12 animate-bounce-gentle"></div>
-        <div className="absolute top-64 left-1/4 w-48 h-56 bg-green-600/50 rounded-full blur-xl transform -rotate-45"></div>
-        <div className="absolute top-80 right-1/3 w-80 h-72 bg-green-300/40 rounded-full blur-2xl transform rotate-45"></div>
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 relative overflow-hidden">
+      {/* Enhanced Decorative background blobs - much more visible */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Large primary blobs - significantly increased opacity and size */}
+        <div className="absolute -top-20 -left-20 w-[500px] h-[500px] bg-gradient-to-br from-green-400/90 to-green-500/80 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute -top-32 right-10 w-[400px] h-[400px] bg-gradient-to-br from-blue-400/80 to-blue-500/70 rounded-full blur-3xl animate-bounce"></div>
+        <div className="absolute top-1/3 -left-16 w-[350px] h-[350px] bg-gradient-to-br from-purple-400/85 to-purple-500/75 rounded-full blur-2xl animate-pulse"></div>
+        <div className="absolute top-1/2 -right-20 w-[450px] h-[450px] bg-gradient-to-br from-green-500/90 to-green-600/80 rounded-full blur-3xl animate-bounce"></div>
+        <div className="absolute bottom-20 left-1/4 w-[320px] h-[320px] bg-gradient-to-br from-blue-500/85 to-blue-600/75 rounded-full blur-2xl animate-pulse"></div>
+        <div className="absolute bottom-10 -right-10 w-[380px] h-[380px] bg-gradient-to-br from-purple-500/80 to-purple-600/70 rounded-full blur-3xl animate-bounce"></div>
         
-        {/* Medium accent blobs */}
-        <div className="absolute bottom-32 left-20 w-64 h-88 bg-green-500/45 rounded-full blur-xl transform -rotate-12"></div>
-        <div className="absolute bottom-48 right-16 w-56 h-64 bg-green-400/50 rounded-full blur-lg transform rotate-30"></div>
-        <div className="absolute bottom-80 left-1/2 w-88 h-96 bg-green-600/35 rounded-full blur-3xl transform -rotate-30"></div>
-        <div className="absolute top-1/2 left-8 w-40 h-48 bg-green-500/55 rounded-full blur-md transform rotate-60"></div>
+        {/* Medium accent blobs - enhanced visibility */}
+        <div className="absolute top-20 left-1/3 w-[240px] h-[240px] bg-gradient-to-br from-green-300/90 to-green-400/80 rounded-full blur-xl animate-pulse"></div>
+        <div className="absolute top-2/3 right-1/4 w-[280px] h-[280px] bg-gradient-to-br from-blue-300/85 to-blue-400/75 rounded-full blur-xl animate-bounce"></div>
+        <div className="absolute bottom-1/3 left-10 w-[200px] h-[200px] bg-gradient-to-br from-purple-300/80 to-purple-400/70 rounded-full blur-lg animate-pulse"></div>
         
-        {/* Small decorative blobs */}
-        <div className="absolute top-1/3 right-8 w-60 h-72 bg-green-400/40 rounded-full blur-xl transform -rotate-45"></div>
-        <div className="absolute top-2/3 left-1/3 w-96 h-80 bg-green-300/30 rounded-full blur-3xl transform rotate-15"></div>
-        <div className="absolute top-1/4 left-2/3 w-52 h-64 bg-green-600/45 rounded-full blur-2xl transform -rotate-60"></div>
+        {/* Small decorative blobs - more prominent */}
+        <div className="absolute top-10 right-1/3 w-[160px] h-[160px] bg-gradient-to-br from-green-200/95 to-green-300/85 rounded-full blur-lg animate-bounce"></div>
+        <div className="absolute top-1/4 left-1/2 w-[140px] h-[140px] bg-gradient-to-br from-blue-200/90 to-blue-300/80 rounded-full blur-md animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/3 w-[180px] h-[180px] bg-gradient-to-br from-purple-200/85 to-purple-300/75 rounded-full blur-lg animate-bounce"></div>
         
-        {/* Extra organic shapes */}
-        <div className="absolute top-96 left-12 w-32 h-40 bg-green-500/50 rounded-full blur-lg transform rotate-90"></div>
-        <div className="absolute bottom-64 right-32 w-44 h-56 bg-green-400/45 rounded-full blur-xl transform -rotate-30"></div>
-        <div className="absolute top-48 left-3/4 w-68 h-80 bg-green-600/35 rounded-full blur-2xl transform rotate-75"></div>
-        <div className="absolute bottom-96 left-1/4 w-48 h-56 bg-green-300/50 rounded-full blur-xl transform -rotate-15"></div>
-        
-        {/* Additional floating blobs */}
-        <div className="absolute top-2/4 right-1/4 w-76 h-88 bg-green-500/30 rounded-full blur-3xl transform rotate-45"></div>
-        <div className="absolute bottom-1/3 left-2/3 w-56 h-68 bg-green-400/40 rounded-full blur-2xl transform -rotate-75"></div>
-        
-        {/* More varied shapes */}
-        <div className="absolute top-20 left-1/2 w-84 h-72 bg-green-600/25 rounded-full blur-3xl transform rotate-30"></div>
-        <div className="absolute bottom-20 right-1/2 w-72 h-64 bg-green-500/35 rounded-full blur-2xl transform -rotate-45"></div>
-        
-        {/* Additional random blobs for more decoration */}
-        <div className="absolute top-1/5 left-1/5 w-36 h-44 bg-green-400/50 rounded-full blur-lg transform rotate-25"></div>
-        <div className="absolute bottom-1/5 right-1/5 w-28 h-36 bg-green-600/40 rounded-full blur-md transform -rotate-35"></div>
-        <div className="absolute top-3/5 right-3/5 w-52 h-60 bg-green-300/45 rounded-full blur-xl transform rotate-80"></div>
-        <div className="absolute bottom-2/5 left-4/5 w-40 h-48 bg-green-500/40 rounded-full blur-lg transform -rotate-50"></div>
+        {/* Additional floating organic shapes - enhanced */}
+        <div className="absolute top-1/2 left-1/5 w-[120px] h-[220px] bg-gradient-to-br from-green-400/75 to-green-500/65 rounded-full blur-lg rotate-45 animate-pulse"></div>
+        <div className="absolute bottom-1/3 right-1/5 w-[260px] h-[140px] bg-gradient-to-br from-blue-400/80 to-blue-500/70 rounded-full blur-xl rotate-12 animate-bounce"></div>
+        <div className="absolute top-1/6 right-1/2 w-[180px] h-[300px] bg-gradient-to-br from-purple-400/70 to-purple-500/60 rounded-full blur-lg -rotate-12 animate-pulse"></div>
       </div>
-      
-      {/* Light white overlay for readability - reduced opacity */}
-      <div className="absolute inset-0 bg-white/20 dark:bg-gray-900/20"></div>
-      
-      <div className="relative z-10 w-full overflow-x-hidden">
+
+      {/* Light overlay for readability - reduced opacity */}
+      <div className="absolute inset-0 bg-white/5 dark:bg-gray-900/5"></div>
+
+      <div className="relative z-10">
         {/* Hero Section */}
-        <section className="relative overflow-hidden w-full">
-          {/* Hero background image with high transparency */}
-          <div 
-            className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-5"
-            style={{
-              backgroundImage: `url(/lovable-uploads/28fa4c6a-e383-4c64-905c-130b84bf1e79.png)`
-            }}
-          ></div>
+        <section className="pt-20 pb-16 px-4 sm:px-6 lg:px-8 relative">
+          {/* Hero background with uploaded image */}
+          <div className="absolute inset-0 opacity-15 dark:opacity-8">
+            <img 
+              src="/lovable-uploads/28fa4c6a-e383-4c64-905c-130b84bf1e79.png" 
+              alt="Healthcare background" 
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-green-100/80 to-blue-100/80 dark:from-green-900/80 dark:to-blue-900/80"></div>
+          </div>
           
-          <div className="absolute inset-0 bg-gradient-to-br from-green-50/30 via-blue-50/20 to-purple-50/30 dark:from-green-950/50 dark:via-blue-950/40 dark:to-purple-950/50 animate-gradient-shift"></div>
-          <div className="relative w-full max-w-none px-4 sm:px-6 lg:px-8 mx-auto py-12 md:py-24">
-            <div className="text-center animate-fade-in-up max-w-7xl mx-auto">
-              <div className="inline-flex items-center justify-center space-x-2 bg-gradient-to-r from-green-100/80 to-blue-100/80 dark:from-green-900/70 dark:to-blue-900/70 px-3 py-2 rounded-full mb-6 hover:scale-105 transition-transform backdrop-blur-sm">
-                <Heart className="h-4 w-4 text-green-600 animate-pulse" />
-                <span className="text-xs sm:text-sm font-medium text-green-700 dark:text-green-300">
-                  Trusted by 10,000+ people managing chronic conditions
-                </span>
+          <div className="max-w-7xl mx-auto relative">
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center px-4 py-2 bg-green-100/90 dark:bg-green-900/90 rounded-full text-green-800 dark:text-green-200 text-sm font-medium mb-6 backdrop-blur-sm border border-green-200/50 dark:border-green-700/50">
+                <CheckCircle className="h-4 w-4 mr-2" />
+                Trusted by 10,000+ people managing chronic conditions
               </div>
               
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6 leading-tight text-center">
+              <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-gray-900 dark:text-white mb-6 leading-tight drop-shadow-sm">
                 Your Health Journey,{' '}
                 <span className="bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
                   Simplified
                 </span>
               </h1>
               
-              <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed px-2 text-center">
+              <p className="text-xl md:text-2xl text-gray-700 dark:text-gray-200 mb-8 max-w-4xl mx-auto leading-relaxed drop-shadow-sm">
                 Healinton helps you manage chronic conditions like diabetes, hypertension, and heart disease 
                 with personalized meal plans, medication reminders, and health tracking tools.
               </p>
               
-              <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4 mb-12 px-2">
-                <Link to={user ? "/dashboard" : "/auth"} className="w-full sm:w-auto">
-                  <Button size="lg" className="w-full sm:w-auto bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 px-6 md:px-8 py-3 md:py-4 text-base md:text-lg transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl">
-                    Start Your Health Journey
+              <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4 mb-16">
+                <Link to={user ? "/dashboard" : "/auth"}>
+                  <Button size="lg" className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white px-8 py-4 text-lg font-semibold transform hover:scale-105 transition-all duration-200 shadow-xl">
+                    {user ? "Go to Dashboard" : "Start Your Health Journey"}
                   </Button>
                 </Link>
-                <Link to="/about" className="w-full sm:w-auto">
-                  <Button size="lg" className="w-full sm:w-auto px-6 md:px-8 py-3 md:py-4 text-base md:text-lg bg-green-600 text-white hover:bg-white hover:text-green-600 border-2 border-green-600 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl">
+                <Link to="/about">
+                  <Button variant="outline" size="lg" className="px-8 py-4 text-lg font-semibold border-2 bg-white/20 dark:bg-gray-800/20 backdrop-blur-sm hover:bg-green-50/80 dark:hover:bg-green-900/30 transform hover:scale-105 transition-all duration-200 shadow-lg">
                     Contact Sales
                   </Button>
                 </Link>
               </div>
-
-              {/* App Preview Mockup */}
-              <div className="relative max-w-4xl mx-auto animate-slide-up px-2">
-                <div className="bg-gradient-to-br from-white/90 to-gray-50/90 dark:from-gray-800/90 dark:to-gray-900/90 backdrop-blur-sm rounded-2xl shadow-2xl p-4 md:p-8 border overflow-hidden">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 justify-items-center">
+              
+              {/* App Preview Mockup - mobile responsive */}
+              <div className="relative mx-auto max-w-4xl">
+                <div className="bg-white/95 dark:bg-gray-800/95 rounded-2xl shadow-2xl p-4 md:p-8 backdrop-blur-md border border-gray-200/50 dark:border-gray-700/50">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
                     {healthMetrics.map((metric, index) => (
-                      <div 
-                        key={index} 
-                        className="animate-stagger overflow-hidden w-full max-w-sm"
-                        style={{
-                          background: `linear-gradient(135deg, ${
-                            index % 3 === 0 ? 'rgba(34, 197, 94, 0.1), rgba(59, 130, 246, 0.1)' :
-                            index % 3 === 1 ? 'rgba(59, 130, 246, 0.1), rgba(147, 51, 234, 0.1)' :
-                            'rgba(147, 51, 234, 0.1), rgba(34, 197, 94, 0.1)'
-                          })`
-                        }}
-                      >
+                      <div key={index} className="transform hover:scale-105 transition-transform">
                         <HealthMetricCard {...metric} />
                       </div>
                     ))}
@@ -231,44 +207,52 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Features Section */}
-        <section className="py-12 md:py-16 lg:py-20 bg-gradient-to-br from-gray-50/60 to-white/60 dark:from-gray-900/40 dark:to-gray-800/40 backdrop-blur-sm w-full overflow-hidden">
-          <div className="w-full max-w-none px-4 sm:px-6 lg:px-8 mx-auto">
-            <div className="text-center mb-12 md:mb-16 max-w-7xl mx-auto">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4 text-center">
-                Everything You Need to Manage Your Health
+        {/* Features Section with Glow Animation */}
+        <section className="py-20 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+                Everything You Need for Better Health
               </h2>
-              <p className="text-base sm:text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto px-2 text-center">
-                Comprehensive tools designed specifically for chronic condition management
+              <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+                Comprehensive health management tools designed specifically for chronic condition management
               </p>
             </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 max-w-7xl mx-auto justify-items-center">
+            
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {features.map((feature, index) => (
-                <Card 
-                  key={index} 
-                  className="p-4 sm:p-6 md:p-8 text-center hover:shadow-xl transition-all duration-300 transform hover:scale-105 border-0 backdrop-blur-sm shadow-lg overflow-hidden w-full max-w-sm"
-                  style={{
-                    background: `linear-gradient(135deg, ${
-                      index % 6 === 0 ? 'rgba(34, 197, 94, 0.1), rgba(59, 130, 246, 0.1)' :
-                      index % 6 === 1 ? 'rgba(59, 130, 246, 0.1), rgba(147, 51, 234, 0.1)' :
-                      index % 6 === 2 ? 'rgba(147, 51, 234, 0.1), rgba(236, 72, 153, 0.1)' :
-                      index % 6 === 3 ? 'rgba(236, 72, 153, 0.1), rgba(251, 146, 60, 0.1)' :
-                      index % 6 === 4 ? 'rgba(251, 146, 60, 0.1), rgba(34, 197, 94, 0.1)' :
-                      'rgba(34, 197, 94, 0.1), rgba(59, 130, 246, 0.1)'
-                    })`
-                  }}
-                >
-                  <div className="p-2 md:p-3 bg-white/50 dark:bg-gray-800/50 rounded-xl w-fit mx-auto mb-4 md:mb-6 hover:bg-white/70 dark:hover:bg-gray-700/70 transition-colors backdrop-blur-sm">
-                    {feature.icon}
+                <Card key={index} className="p-8 hover:shadow-xl transition-all duration-300 transform hover:scale-105 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-0 shadow-lg relative overflow-hidden group">
+                  {/* Glow animation behind each card */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-green-400/20 via-blue-400/20 to-purple-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-green-500/10 via-blue-500/10 to-purple-500/10 animate-pulse"></div>
+                  
+                  <div className="flex flex-col items-center text-center relative z-10">
+                    <div className="p-4 bg-gradient-to-br from-green-100 to-blue-100 dark:from-green-900/30 dark:to-blue-900/30 rounded-full mb-6">
+                      {feature.icon}
+                    </div>
+                    <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">{feature.title}</h3>
+                    <p className="text-gray-600 dark:text-gray-300 leading-relaxed">{feature.description}</p>
                   </div>
-                  <h3 className="text-lg md:text-xl font-semibold mb-3 md:mb-4 text-gray-900 dark:text-white text-center">{feature.title}</h3>
-                  <p className="text-sm md:text-base text-gray-600 dark:text-gray-300 leading-relaxed text-center">
-                    {feature.description}
-                  </p>
                 </Card>
               ))}
             </div>
+          </div>
+        </section>
+
+        {/* Drug Store Section */}
+        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4 flex items-center justify-center">
+                <Pill className="h-10 w-10 mr-4 text-blue-600" />
+                Order Your Medications
+              </h2>
+              <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+                Access basic, unique, and hard-to-find medications with doorstep delivery
+              </p>
+            </div>
+            
+            <DrugStorePreview />
           </div>
         </section>
 
@@ -276,160 +260,79 @@ const Index = () => {
         <TestimonialsSection />
 
         {/* Benefits Section */}
-        <section className="py-12 md:py-16 lg:py-20 w-full overflow-hidden">
-          <div className="w-full max-w-none px-4 sm:px-6 lg:px-8 mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 xl:gap-16 items-center max-w-7xl mx-auto">
-              <div className="order-2 lg:order-1 text-center lg:text-left">
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-6 text-center lg:text-left">
-                  Join Thousands Who've Transformed Their Health Management
-                </h2>
-                <p className="text-base sm:text-lg text-gray-600 dark:text-gray-300 mb-8 leading-relaxed text-center lg:text-left">
-                  Our users report significant improvements in their health outcomes and quality of life.
-                </p>
-                <div className="space-y-4 flex flex-col items-center lg:items-start">
-                  {benefits.map((benefit, index) => (
-                    <div key={index} className="flex items-center space-x-3">
-                      <CheckCircle className="h-5 w-5 md:h-6 md:w-6 text-green-600 flex-shrink-0" />
-                      <span className="text-gray-700 dark:text-gray-300 text-base md:text-lg">{benefit}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div className="relative order-1 lg:order-2 flex justify-center">
-                <div className="bg-gradient-to-br from-green-100/80 to-blue-200/80 dark:from-green-900/80 dark:to-blue-800/80 backdrop-blur-sm rounded-2xl p-4 sm:p-6 md:p-8 shadow-xl overflow-hidden max-w-lg w-full">
-                  <div className="grid grid-cols-2 gap-3 sm:gap-4">
-                    {[
-                      { icon: TrendingUp, value: "40%", label: "Fewer ER Visits", color: "text-green-600" },
-                      { icon: Heart, value: "85%", label: "Medication Adherence", color: "text-red-500" },
-                      { icon: Users, value: "10K+", label: "Active Users", color: "text-blue-500" },
-                      { icon: Shield, value: "100%", label: "Data Security", color: "text-purple-500" }
-                    ].map((stat, index) => (
-                      <div 
-                        key={index}
-                        className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm p-3 sm:p-4 md:p-6 rounded-xl text-center shadow-md hover:shadow-lg transition-all transform hover:scale-105"
-                      >
-                        <stat.icon className={`h-5 w-5 sm:h-6 sm:w-6 md:h-8 md:w-8 ${stat.color} mx-auto mb-2`} />
-                        <div className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white">{stat.value}</div>
-                        <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">{stat.label}</div>
-                      </div>
-                    ))}
+        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-green-600 to-blue-600 relative overflow-hidden">
+          <div className="absolute inset-0 bg-black/10"></div>
+          <div className="max-w-7xl mx-auto relative z-10">
+            <div className="text-center text-white">
+              <h2 className="text-3xl md:text-5xl font-bold mb-8">Join Thousands Who've Transformed Their Health</h2>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+                {benefits.map((benefit, index) => (
+                  <div key={index} className="flex items-center justify-center space-x-3 bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                    <CheckCircle className="h-6 w-6 text-green-300 flex-shrink-0" />
+                    <span className="text-lg font-medium">{benefit}</span>
                   </div>
-                </div>
+                ))}
               </div>
+              <Link to={user ? "/dashboard" : "/auth"}>
+                <Button size="lg" className="bg-white text-green-600 hover:bg-gray-100 px-8 py-4 text-lg font-semibold transform hover:scale-105 transition-all duration-200">
+                  {user ? "Access Dashboard" : "Get Started Today"}
+                </Button>
+              </Link>
             </div>
           </div>
         </section>
 
         {/* Dashboard Preview */}
-        <section className="py-12 md:py-16 lg:py-20 bg-gradient-to-br from-gray-50/60 to-white/60 dark:from-gray-900/40 dark:to-gray-800/40 backdrop-blur-sm w-full overflow-hidden">
-          <div className="w-full max-w-none px-4 sm:px-6 lg:px-8 mx-auto">
-            <div className="text-center mb-12 max-w-7xl mx-auto">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4 text-center">
-                Your Personalized Health Dashboard
+        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-green-50/60 dark:bg-green-900/20 backdrop-blur-sm">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+                Your Personal Health Command Center
               </h2>
-              <p className="text-base sm:text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto px-2 text-center">
-                Get a complete overview of your health metrics, meal plans, and upcoming activities.
+              <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-12">
+                Everything you need to manage your health conditions effectively, all in one beautiful dashboard
               </p>
             </div>
-
-            <div className="max-w-7xl mx-auto flex flex-col items-center">
-              <div className="w-full flex justify-center mb-8">
-                <PremiumBanner />
-              </div>
-
-              <div className="mb-8 mt-8 w-full">
-                <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4 text-center sm:text-left">
-                  <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white text-center sm:text-left">
-                    Personalized Meal Plans
-                  </h3>
-                  <Link to={user ? "/dashboard" : "/auth"}>
-                    <Button variant="ghost" className="text-green-600 hover:text-green-700 hover:bg-green-50 dark:hover:bg-green-900/20 transition-all hover:scale-105">
-                      View Recipes →
-                    </Button>
-                  </Link>
+            
+            <div className="grid md:grid-cols-2 gap-8 mb-16">
+              {mealPlans.map((meal, index) => (
+                <div key={index} className="transform hover:scale-105 transition-transform">
+                  <MealPlanCard {...meal} />
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 justify-items-center">
-                  {mealPlans.map((meal, index) => (
-                    <div 
-                      key={index} 
-                      className="animate-stagger overflow-hidden w-full max-w-lg"
-                      style={{
-                        background: `linear-gradient(135deg, ${
-                          index % 2 === 0 ? 'rgba(34, 197, 94, 0.1), rgba(59, 130, 246, 0.1)' :
-                          'rgba(59, 130, 246, 0.1), rgba(147, 51, 234, 0.1)'
-                        })`
-                      }}
-                    >
-                      <MealPlanCard {...meal} />
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 w-full max-w-4xl justify-items-center">
-                {[
-                  { icon: Clock, label: "Log Symptoms", color: "hover:bg-green-50 hover:border-green-300 dark:hover:bg-green-900/20" },
-                  { icon: Heart, label: "Track Vitals", color: "hover:bg-blue-50 hover:border-blue-300 dark:hover:bg-blue-900/20" },
-                  { icon: Calendar, label: "Schedule", color: "hover:bg-purple-50 hover:border-purple-300 dark:hover:bg-purple-900/20" },
-                  { icon: Settings, label: "Settings", color: "hover:bg-orange-50 hover:border-orange-300 dark:hover:bg-orange-900/20" }
-                ].map((item, index) => (
-                  <Link key={index} to={user ? "/dashboard" : "/auth"} className="w-full max-w-40">
-                    <Button 
-                      variant="outline" 
-                      className={`p-3 sm:p-4 md:p-6 h-auto flex-col space-y-2 ${item.color} transition-all transform hover:scale-105 backdrop-blur-sm w-full`}
-                    >
-                      <item.icon className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-green-600" />
-                      <span className="text-xs sm:text-sm font-medium text-center">{item.label}</span>
-                    </Button>
-                  </Link>
-                ))}
-              </div>
-
-              {/* Community Section */}
-              <div className="mt-12 text-center">
-                <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-4">
-                  Join Our Community
-                </h3>
-                <p className="text-gray-600 dark:text-gray-300 mb-6">
-                  Connect with others on similar health journeys and share experiences
-                </p>
-                <a 
-                  href="https://www.facebook.com/profile.php?id=61577629151627" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                >
-                  <Button className="bg-blue-600 hover:bg-blue-700 transform hover:scale-105 transition-all">
-                    Join Facebook Group
-                  </Button>
-                </a>
-              </div>
+              ))}
             </div>
+            
+            <PremiumBanner />
           </div>
         </section>
 
-        {/* CTA Section */}
-        <section className="py-12 md:py-16 lg:py-20 bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 w-full animate-gradient-shift overflow-hidden">
-          <div className="w-full max-w-none px-4 sm:px-6 lg:px-8 mx-auto text-center flex justify-center">
-            <div className="max-w-3xl mx-auto backdrop-blur-sm bg-white/10 dark:bg-black/10 rounded-2xl p-6 md:p-8 w-full">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-6 text-center">
-                Take Control of Your Health Today
-              </h2>
-              <p className="text-base sm:text-lg text-white/90 mb-8 leading-relaxed px-2 text-center">
-                Join thousands of people who are successfully managing their chronic conditions with Healinton.
-              </p>
-              <div className="flex justify-center space-x-4">
-                <Link to={user ? "/dashboard" : "/auth"}>
-                  <Button size="lg" className="bg-white text-green-600 hover:bg-gray-100 px-6 md:px-8 py-3 md:py-4 text-base md:text-lg transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl">
-                    Get Started Free
-                  </Button>
-                </Link>
-                <Link to="/premium">
-                  <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10 px-6 md:px-8 py-3 md:py-4 text-base md:text-lg transform hover:scale-105 transition-all duration-200">
-                    Start Premium
-                  </Button>
-                </Link>
-              </div>
+        {/* CTA Section with animated background */}
+        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50/80 dark:bg-gray-800/80 backdrop-blur-sm relative overflow-hidden">
+          {/* Animated background gradient */}
+          <div className="absolute inset-0 bg-gradient-to-r from-green-400/20 via-blue-400/20 via-purple-400/20 to-green-400/20 animate-gradient-shift"></div>
+          
+          <div className="max-w-4xl mx-auto text-center relative z-10">
+            <h2 className="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
+              Ready to Take Control of Your Health?
+            </h2>
+            <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto">
+              Join thousands of people who are successfully managing their chronic conditions with Healinton
+            </p>
+            <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+              <Link to={user ? "/dashboard" : "/auth"}>
+                <Button size="lg" className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white px-8 py-4 text-lg font-semibold transform hover:scale-105 transition-all duration-200">
+                  {user ? "Go to Dashboard" : "Start Free Trial"}
+                </Button>
+              </Link>
+              <Link to="/about">
+                <Button variant="outline" size="lg" className="px-8 py-4 text-lg font-semibold border-2 hover:bg-green-50 dark:hover:bg-green-900/20 transform hover:scale-105 transition-all duration-200">
+                  Learn More
+                </Button>
+              </Link>
             </div>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-4">
+              No credit card required • Free till August 31st, 2025
+            </p>
           </div>
         </section>
       </div>
