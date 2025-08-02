@@ -23,7 +23,7 @@ const Premium = () => {
       const freeExpiryDate = new Date('2025-07-31');
       const currentDate = new Date();
       
-      if (currentDate > freeExpiryDate) {
+      if (currentDate > freeExpiryDate && planType === 'premium') {
         // Redirect to payment integration
         alert('Free period has expired. Please complete payment to access premium features.');
         // Here you would integrate with PayPal, Stripe, or Flutter payment
@@ -32,7 +32,14 @@ const Premium = () => {
         return;
       }
 
-      // Calculate expiry date for free period
+      // For free plan, don't add to premium_users table
+      if (planType === 'free') {
+        alert('You now have access to all free features!');
+        window.location.href = '/dashboard';
+        return;
+      }
+
+      // Calculate expiry date for premium plan
       const expiryDate = new Date('2025-07-31');
 
       const { error } = await supabase
@@ -63,16 +70,18 @@ const Premium = () => {
 
   const plans = [
     {
-      name: 'Basic',
-      price: '$3.99',
-      period: '/month',
-      description: 'Perfect for getting started with health management',
+      name: 'Free',
+      price: '$0',
+      period: '/forever',
+      description: 'Perfect for getting started with basic health management',
       features: [
         'Basic health tracking',
         'Simple meal plans',
         'Medication reminders',
         'Community access',
-        'Email support'
+        'Email support',
+        'Fitness tracking',
+        'Symptom logging'
       ],
       color: 'from-green-500 to-green-600',
       shadow: 'shadow-green-500/20',
@@ -80,10 +89,11 @@ const Premium = () => {
     },
     {
       name: 'Premium',
-      price: '$10.99',
+      price: '$5',
       period: '/month',
       description: 'Complete health management solution with AI insights',
       features: [
+        'Everything in Free',
         'Advanced health analytics',
         'Personalized meal plans',
         'Hospital integration',
@@ -91,30 +101,12 @@ const Premium = () => {
         'Medicine delivery',
         'Priority support',
         'Family sharing',
-        'Custom reports'
+        'Custom reports',
+        'AI-powered insights'
       ],
       color: 'from-blue-500 to-purple-600',
       shadow: 'shadow-blue-500/20',
       popular: true
-    },
-    {
-      name: 'Enterprise',
-      price: 'Custom',
-      period: '',
-      description: 'For healthcare providers and organizations',
-      features: [
-        'Everything in Premium',
-        'Multi-patient management',
-        'Advanced integrations',
-        'Custom branding',
-        'Dedicated support',
-        'SLA guarantees',
-        'Advanced security',
-        'Custom training'
-      ],
-      color: 'from-purple-500 to-pink-600',
-      shadow: 'shadow-purple-500/20',
-      popular: false
     }
   ];
 
@@ -155,15 +147,15 @@ const Premium = () => {
             <Crown className="h-8 w-8 text-primary-600" />
           </div>
           <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6">
-            Premium Health Plans
+            Health Plans for Everyone
           </h1>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-            Upgrade to premium and unlock advanced health tracking, personalized meal plans, expert consultations, and medicine delivery
+            Start with our free plan or upgrade to premium for advanced health tracking, personalized meal plans, expert consultations, and medicine delivery
           </p>
         </div>
 
         {/* Pricing Plans */}
-        <div className="grid md:grid-cols-3 gap-8 mb-16">
+        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-16">
           {plans.map((plan, index) => (
             <Card 
               key={index} 
@@ -243,29 +235,28 @@ const Premium = () => {
           <div className="relative z-10">
             <h2 className="text-3xl font-bold mb-4">Ready to Transform Your Health?</h2>
             <p className="text-xl mb-8 opacity-90">
-              All plans are FREE until July 31st, 2025!
+              Start free or get premium for just $5/month!
             </p>
             <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
               <Button
-                onClick={() => handleSubscribe('premium')}
+                onClick={() => handleSubscribe('free')}
                 disabled={loading}
                 size="lg"
                 className="bg-white text-green-600 hover:bg-gray-100 font-semibold px-8 py-4"
               >
-                {loading ? 'Processing...' : 'Get Premium - FREE till July 31st, 2025'}
+                {loading ? 'Processing...' : 'Start Free'}
               </Button>
-              <Link to="/about">
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="border-white text-white hover:bg-green-600 hover:text-white px-8 py-4"
-                >
-                  Learn More
-                </Button>
-              </Link>
+              <Button
+                onClick={() => handleSubscribe('premium')}
+                disabled={loading}
+                size="lg"
+                className="bg-white/10 text-white hover:bg-white/20 font-semibold px-8 py-4 border border-white/30"
+              >
+                {loading ? 'Processing...' : 'Go Premium - $5/month'}
+              </Button>
             </div>
             <p className="text-sm mt-4 opacity-75">
-              No billing until July 31st, 2025. Cancel anytime.
+              No hidden fees. Cancel premium anytime.
             </p>
           </div>
         </div>
