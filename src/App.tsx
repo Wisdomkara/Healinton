@@ -1,4 +1,5 @@
 
+import React, { useState } from 'react';
 import { Analytics } from '@vercel/analytics/next';
 import { Toaster } from '@/components/ui/toaster';
 import { Toaster as Sonner } from '@/components/ui/sonner';
@@ -22,7 +23,6 @@ import Community from './pages/Community';
 import Accessibility from './pages/Accessibility';
 import DrugsPage from './pages/DrugsPage';
 import NotFound from './pages/NotFound';
-import { useState } from 'react';
 
 const App = () => {
   // Create QueryClient inside the component to avoid SSR issues
