@@ -1,65 +1,21 @@
 
 import React, { useState, useEffect } from 'react';
-import { Card } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Heart, Eye, EyeOff } from 'lucide-react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
-
-const countries = [
-  'Nigeria', 'Ghana', 'Kenya', 'South Africa', 'Egypt', 'Morocco', 
-  'Tanzania', 'Uganda', 'Ethiopia', 'Cameroon', 'Algeria', 'Angola',
-  'Burkina Faso', 'Burundi', 'Botswana', 'Central African Republic',
-  'Chad', 'Congo', 'Democratic Republic of Congo', 'Djibouti',
-  'Equatorial Guinea', 'Eritrea', 'Eswatini', 'Gabon', 'Gambia',
-  'Guinea', 'Guinea-Bissau', 'Ivory Coast', 'Lesotho', 'Liberia',
-  'Libya', 'Madagascar', 'Malawi', 'Mali', 'Mauritania', 'Mauritius',
-  'Mozambique', 'Namibia', 'Niger', 'Rwanda', 'Sao Tome and Principe',
-  'Senegal', 'Seychelles', 'Sierra Leone', 'Somalia', 'South Sudan',
-  'Sudan', 'Togo', 'Tunisia', 'Zambia', 'Zimbabwe', 'Other'
-];
-
-const illnesses = [
-  { value: 'mild_hypertension', label: 'Mild Hypertension (High Blood Pressure)' },
-  { value: 'mild_diabetes', label: 'Mild Type 2 Diabetes / Pre-diabetes' },
-  { value: 'hypertension', label: 'Hypertension (High Blood Pressure)' },
-  { value: 'diabetes', label: 'Diabetes (Type 1 & 2)' },
-  { value: 'heart_disease', label: 'Heart Disease' },
-  { value: 'high_cholesterol', label: 'High Cholesterol (Mild)' },
-  { value: 'obesity', label: 'Obesity & Weight Management' },
-  { value: 'asthma', label: 'Asthma & Respiratory Issues' },
-  { value: 'arthritis', label: 'Arthritis & Joint Pain' },
-  { value: 'kidney_disease', label: 'Kidney Disease' },
-  { value: 'liver_disease', label: 'Liver Disease' },
-  { value: 'mild_fatty_liver', label: 'Mild Fatty Liver' },
-  { value: 'thyroid_disorders', label: 'Thyroid Disorders' },
-  { value: 'anxiety_depression', label: 'Anxiety & Depression' },
-  { value: 'chronic_pain', label: 'Chronic Pain Management' },
-  { value: 'acid_reflux', label: 'Acid Reflux / Mild Gastritis' },
-  { value: 'constipation', label: 'Constipation' },
-  { value: 'mild_anemia', label: 'Mild Anemia (Iron Deficiency)' },
-  { value: 'skin_issues', label: 'Skin Issues (Acne, Eczema)' },
-  { value: 'ibs', label: 'Irritable Bowel Syndrome (IBS - Mild)' },
-  { value: 'low_immunity', label: 'Low Immunity / Frequent Colds' },
-  { value: 'insomnia', label: 'Insomnia & Sleep Disorders' },
-  { value: 'migraine', label: 'Migraine & Headaches' },
-  { value: 'osteoporosis', label: 'Osteoporosis & Bone Health' },
-  { value: 'gout', label: 'Gout & Uric Acid' }
-];
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Eye, EyeOff, CheckCircle, User, Mail, Lock } from 'lucide-react';
 
 const Auth = () => {
-  const { signIn, signUp, user } = useAuth();
-  const { toast } = useToast();
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const [isLogin, setIsLogin] = useState(true);
-  const [loading, setLoading] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
+  const [verificationComplete, setVerificationComplete] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -71,349 +27,366 @@ const Auth = () => {
     illnessType: ''
   });
 
-  // Handle email verification redirect
-  useEffect(() => {
-    const emailVerified = searchParams.get('type') === 'signup';
-    const accessToken = searchParams.get('access_token');
-    
-    if (emailVerified && accessToken) {
-      toast({
-        title: "Email Verified Successfully!",
-        description: "Your account has been verified. You can now sign in to your account.",
-      });
-    }
-  }, [searchParams, navigate, toast]);
+  const { signUp, signIn, user } = useAuth();
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
-  // Redirect authenticated users to dashboard
   useEffect(() => {
+    // Check if user is already authenticated
     if (user) {
       navigate('/dashboard');
+      return;
     }
-  }, [user, navigate]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
+    // Handle email verification callback
+    const type = searchParams.get('type');
+    if (type === 'signup') {
+      setIsEmailVerified(true);
+      setVerificationComplete(true);
+      toast({
+        title: "Email Verified!",
+        description: "Your email has been successfully verified. You can now sign in to access your dashboard.",
+      });
+    }
+  }, [user, navigate, searchParams, toast]);
 
-  const handleSelectChange = (field: string, value: string) => {
-    setFormData({
-      ...formData,
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
       [field]: value
-    });
+    }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (formData.password !== formData.confirmPassword) {
+      toast({
+        title: "Error",
+        description: "Passwords do not match",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      toast({
+        title: "Error",
+        description: "Password must be at least 6 characters long",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setLoading(true);
+
+    const userData = {
+      first_name: formData.firstName,
+      last_name: formData.lastName,
+      gender: formData.gender,
+      country: formData.country,
+      illness_type: formData.illnessType
+    };
+
+    const { error } = await signUp(formData.email, formData.password, userData);
+    
+    if (error) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive"
+      });
+    } else {
+      setIsEmailVerified(true);
+      toast({
+        title: "Check Your Email",
+        description: "We've sent you a verification link. Please check your email and click the link to verify your account.",
+      });
+    }
+    
+    setLoading(false);
+  };
+
+  const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
-    try {
-      if (isLogin) {
-        const { error } = await signIn(formData.email, formData.password);
-        if (error) {
-          toast({
-            title: "Login Failed",
-            description: error.message,
-            variant: "destructive"
-          });
-        } else {
-          toast({
-            title: "Login Successful",
-            description: "Welcome back to Healinton!"
-          });
-          navigate('/dashboard');
-        }
-      } else {
-        if (formData.password !== formData.confirmPassword) {
-          toast({
-            title: "Error",
-            description: "Passwords don't match",
-            variant: "destructive"
-          });
-          return;
-        }
-
-        if (!formData.firstName || !formData.lastName || !formData.gender || !formData.country || !formData.illnessType) {
-          toast({
-            title: "Error",
-            description: "Please fill in all required fields",
-            variant: "destructive"
-          });
-          return;
-        }
-
-        const userData = {
-          first_name: formData.firstName,
-          last_name: formData.lastName,
-          gender: formData.gender,
-          country: formData.country,
-          illness_type: formData.illnessType
-        };
-
-        const { error } = await signUp(formData.email, formData.password, userData);
-        if (error) {
-          toast({
-            title: "Signup Failed",
-            description: error.message,
-            variant: "destructive"
-          });
-        } else {
-          toast({
-            title: "Account Created Successfully!",
-            description: "Please check your email to verify your account. After verification, you'll be redirected to your dashboard."
-          });
-        }
-      }
-    } catch (error) {
+    const { error } = await signIn(formData.email, formData.password);
+    
+    if (error) {
       toast({
         title: "Error",
-        description: "An unexpected error occurred. Please try again.",
+        description: error.message,
         variant: "destructive"
       });
-    } finally {
-      setLoading(false);
+    } else {
+      navigate('/dashboard');
     }
+    
+    setLoading(false);
   };
 
-  const isVerificationSuccess = searchParams.get('type') === 'signup' && searchParams.get('access_token');
+  // Show verification success page
+  if (verificationComplete) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+              <CheckCircle className="h-8 w-8 text-green-600" />
+            </div>
+            <CardTitle className="text-2xl font-bold text-green-600">Email Verified!</CardTitle>
+            <CardDescription>
+              Your email has been successfully verified. You can now sign in to access your dashboard.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Button 
+              onClick={() => setVerificationComplete(false)} 
+              className="w-full bg-green-600 hover:bg-green-700"
+            >
+              Sign In Now
+            </Button>
+            <Button 
+              variant="outline" 
+              onClick={() => navigate('/dashboard')} 
+              className="w-full"
+            >
+              Go to Dashboard
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Show email verification message
+  if (isEmailVerified && !verificationComplete) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <div className="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+              <Mail className="h-8 w-8 text-blue-600" />
+            </div>
+            <CardTitle className="text-2xl font-bold">Check Your Email</CardTitle>
+            <CardDescription>
+              We've sent a verification link to <strong>{formData.email}</strong>. 
+              Please check your email and click the link to verify your account.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="text-sm text-gray-600 bg-blue-50 p-3 rounded-lg">
+              <p className="font-medium">What happens next?</p>
+              <ol className="mt-2 space-y-1 list-decimal list-inside">
+                <li>Check your email inbox (and spam folder)</li>
+                <li>Click the verification link</li>
+                <li>You'll be redirected back with a "Go to Dashboard" button</li>
+                <li>Sign in and start using your account!</li>
+              </ol>
+            </div>
+            <Button 
+              variant="outline" 
+              onClick={() => setIsEmailVerified(false)} 
+              className="w-full"
+            >
+              Back to Sign Up
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100 dark:from-green-950 dark:via-gray-900 dark:to-green-900 flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Decorative background shapes */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-16 left-16 w-24 h-24 bg-green-300/20 rounded-full blur-sm"></div>
-        <div className="absolute top-32 right-24 w-32 h-32 bg-green-400/15 rounded-full blur-md"></div>
-        <div className="absolute bottom-32 left-24 w-28 h-28 bg-green-500/25 rounded-full blur-sm"></div>
-        <div className="absolute bottom-48 right-20 w-36 h-36 bg-green-300/20 rounded-full blur-md"></div>
-        <div className="absolute top-1/2 left-8 w-20 h-20 bg-green-600/25 rounded-full blur-sm"></div>
-        <div className="absolute top-1/3 right-8 w-44 h-44 bg-green-400/15 rounded-full blur-lg"></div>
-      </div>
-      <div className="absolute inset-0 bg-white/40 dark:bg-gray-900/40"></div>
-      <div className="w-full max-w-md relative z-10">
-        {/* Logo */}
-        <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center space-x-2 hover:opacity-80 transition-opacity">
-            <div className="bg-gradient-to-r from-green-600 to-green-800 p-3 rounded-xl shadow-lg">
-              <Heart className="h-8 w-8 text-white" />
-            </div>
-            <span className="text-3xl font-bold bg-gradient-to-r from-green-600 to-green-800 bg-clip-text text-transparent">
-              Healinton
-            </span>
-          </Link>
-          <p className="text-gray-600 dark:text-gray-300 mt-2 text-sm">
-            {isVerificationSuccess 
-              ? 'Email verified successfully! Redirecting to dashboard...' 
-              : isLogin 
-                ? 'Welcome back to your health journey' 
-                : 'Start your personalized health journey'
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <Card className="w-full max-w-md">
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-2xl font-bold text-center">
+            {isSignUp ? 'Create Account' : 'Welcome Back'}
+          </CardTitle>
+          <CardDescription className="text-center">
+            {isSignUp 
+              ? 'Enter your details to create your account' 
+              : 'Enter your email and password to sign in'
             }
-          </p>
-        </div>
-
-        {isVerificationSuccess ? (
-          <Card className="bg-white/95 dark:bg-gray-800/95 backdrop-blur shadow-xl border-2 border-green-200 dark:border-green-800">
-            <div className="p-6 text-center">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Heart className="h-8 w-8 text-green-600" />
-              </div>
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                Email Verified Successfully!
-              </h2>
-              <p className="text-gray-600 dark:text-gray-300 mb-4">
-                Your account has been verified. You can now sign in to your account.
-              </p>
-              <Button 
-                onClick={() => {setIsLogin(true); window.location.reload();}}
-                className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white"
-              >
-                Sign In Now
-              </Button>
-            </div>
-          </Card>
-        ) : (
-          <Card className="bg-white/95 dark:bg-gray-800/95 backdrop-blur shadow-xl border-2 border-green-200 dark:border-green-800">
-            <div className="p-6">
-              <div className="text-center mb-6">
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {isLogin ? 'Sign In' : 'Create Account'}
-                </h1>
-                <p className="text-gray-600 dark:text-gray-300 mt-1 text-sm">
-                  {isLogin 
-                    ? 'Access your personalized health dashboard' 
-                    : 'Join thousands managing their health with Healinton'
-                  }
-                </p>
-              </div>
-
-              <form onSubmit={handleSubmit} className="space-y-4">
-                {!isLogin && (
-                  <>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="firstName" className="text-gray-900 dark:text-white font-medium">First Name *</Label>
-                        <Input
-                          id="firstName"
-                          name="firstName"
-                          type="text"
-                          required
-                          value={formData.firstName}
-                          onChange={handleInputChange}
-                          className="mt-1 border-green-200 focus:border-green-500 focus:ring-green-500"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="lastName" className="text-gray-900 dark:text-white font-medium">Last Name *</Label>
-                        <Input
-                          id="lastName"
-                          name="lastName"
-                          type="text"
-                          required
-                          value={formData.lastName}
-                          onChange={handleInputChange}
-                          className="mt-1 border-green-200 focus:border-green-500 focus:ring-green-500"
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <Label htmlFor="gender" className="text-gray-900 dark:text-white font-medium">Gender *</Label>
-                      <Select value={formData.gender} onValueChange={(value) => handleSelectChange('gender', value)}>
-                        <SelectTrigger className="mt-1 border-green-200 focus:border-green-500 focus:ring-green-500 bg-white dark:bg-gray-800 z-50">
-                          <SelectValue placeholder="Select your gender" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-white dark:bg-gray-800 border-green-200 shadow-xl z-50">
-                          <SelectItem value="male" className="hover:bg-green-50 dark:hover:bg-green-900/20">Male</SelectItem>
-                          <SelectItem value="female" className="hover:bg-green-50 dark:hover:bg-green-900/20">Female</SelectItem>
-                          <SelectItem value="other" className="hover:bg-green-50 dark:hover:bg-green-900/20">Other</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div>
-                      <Label htmlFor="country" className="text-gray-900 dark:text-white font-medium">Country *</Label>
-                      <Select value={formData.country} onValueChange={(value) => handleSelectChange('country', value)}>
-                        <SelectTrigger className="mt-1 border-green-200 focus:border-green-500 focus:ring-green-500 bg-white dark:bg-gray-800 z-40">
-                          <SelectValue placeholder="Select your country" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-white dark:bg-gray-800 border-green-200 shadow-xl max-h-60 overflow-y-auto z-40">
-                          {countries.map(country => (
-                            <SelectItem key={country} value={country} className="hover:bg-green-50 dark:hover:bg-green-900/20">
-                              {country}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div>
-                      <Label htmlFor="illness" className="text-gray-900 dark:text-white font-medium">Health Condition to Manage *</Label>
-                      <Select value={formData.illnessType} onValueChange={(value) => handleSelectChange('illnessType', value)}>
-                        <SelectTrigger className="mt-1 border-green-200 focus:border-green-500 focus:ring-green-500 bg-white dark:bg-gray-800 z-30">
-                          <SelectValue placeholder="Select condition to manage" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-white dark:bg-gray-800 border-green-200 shadow-xl max-h-60 overflow-y-auto z-30">
-                          {illnesses.map(illness => (
-                            <SelectItem key={illness.value} value={illness.value} className="hover:bg-green-50 dark:hover:bg-green-900/20">
-                              {illness.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </>
-                )}
-
+          </CardDescription>
+        </CardHeader>
+        
+        <CardContent>
+          <form onSubmit={isSignUp ? handleSignUp : handleSignIn} className="space-y-4">
+            {isSignUp && (
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="email" className="text-gray-900 dark:text-white font-medium">Email Address</Label>
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    required
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    className="mt-1 border-green-200 focus:border-green-500 focus:ring-green-500"
-                    placeholder="your.email@example.com"
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="password" className="text-gray-900 dark:text-white font-medium">Password</Label>
+                  <Label htmlFor="firstName">First Name</Label>
                   <div className="relative">
+                    <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                     <Input
-                      id="password"
-                      name="password"
-                      type={showPassword ? "text" : "password"}
+                      id="firstName"
+                      placeholder="John"
+                      value={formData.firstName}
+                      onChange={(e) => handleInputChange('firstName', e.target.value)}
+                      className="pl-10"
                       required
-                      value={formData.password}
-                      onChange={handleInputChange}
-                      className="mt-1 border-green-200 focus:border-green-500 focus:ring-green-500 pr-10"
-                      placeholder="••••••••"
-                      minLength={6}
                     />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
-                    >
-                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                    </button>
+                  </div>
+                </div>
+                <div>
+                  <Label htmlFor="lastName">Last Name</Label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                    <Input
+                      id="lastName"
+                      placeholder="Doe"
+                      value={formData.lastName}
+                      onChange={(e) => handleInputChange('lastName', e.target.value)}
+                      className="pl-10"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div>
+              <Label htmlFor="email">Email</Label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="john@example.com"
+                  value={formData.email}
+                  onChange={(e) => handleInputChange('email', e.target.value)}
+                  className="pl-10"
+                  required
+                />
+              </div>
+            </div>
+
+            <div>
+              <Label htmlFor="password">Password</Label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="••••••••"
+                  value={formData.password}
+                  onChange={(e) => handleInputChange('password', e.target.value)}
+                  className="pl-10 pr-10"
+                  required
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4 text-gray-400" />
+                  ) : (
+                    <Eye className="h-4 w-4 text-gray-400" />
+                  )}
+                </Button>
+              </div>
+            </div>
+
+            {isSignUp && (
+              <>
+                <div>
+                  <Label htmlFor="confirmPassword">Confirm Password</Label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                    <Input
+                      id="confirmPassword"
+                      type="password"
+                      placeholder="••••••••"
+                      value={formData.confirmPassword}
+                      onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+                      className="pl-10"
+                      required
+                    />
                   </div>
                 </div>
 
-                {!isLogin && (
+                <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="confirmPassword" className="text-gray-900 dark:text-white font-medium">Confirm Password</Label>
-                    <div className="relative">
-                      <Input
-                        id="confirmPassword"
-                        name="confirmPassword"
-                        type={showConfirmPassword ? "text" : "password"}
-                        required
-                        value={formData.confirmPassword}
-                        onChange={handleInputChange}
-                        className="mt-1 border-green-200 focus:border-green-500 focus:ring-green-500 pr-10"
-                        placeholder="••••••••"
-                        minLength={6}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
-                      >
-                        {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                      </button>
-                    </div>
+                    <Label htmlFor="gender">Gender</Label>
+                    <select
+                      id="gender"
+                      value={formData.gender}
+                      onChange={(e) => handleInputChange('gender', e.target.value)}
+                      className="w-full px-3 py-2 border border-input bg-background rounded-md"
+                    >
+                      <option value="">Select Gender</option>
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                      <option value="other">Other</option>
+                    </select>
                   </div>
-                )}
+                  <div>
+                    <Label htmlFor="country">Country</Label>
+                    <Input
+                      id="country"
+                      placeholder="Nigeria"
+                      value={formData.country}
+                      onChange={(e) => handleInputChange('country', e.target.value)}
+                    />
+                  </div>
+                </div>
 
-                <Button 
-                  type="submit" 
-                  disabled={loading} 
-                  className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold py-3 rounded-lg shadow-lg transition-all duration-200"
-                >
-                  {loading ? 'Processing...' : (isLogin ? 'Sign In' : 'Create Account')}
-                </Button>
-              </form>
+                <div>
+                  <Label htmlFor="illnessType">Health Condition (Optional)</Label>
+                  <select
+                    id="illnessType"
+                    value={formData.illnessType}
+                    onChange={(e) => handleInputChange('illnessType', e.target.value)}
+                    className="w-full px-3 py-2 border border-input bg-background rounded-md"
+                  >
+                    <option value="">Select a condition</option>
+                    <option value="diabetes">Diabetes</option>
+                    <option value="hypertension">Hypertension</option>
+                    <option value="heart_disease">Heart Disease</option>
+                    <option value="asthma">Asthma</option>
+                    <option value="arthritis">Arthritis</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+              </>
+            )}
 
-              <div className="mt-6 text-center">
-                <button
-                  type="button"
-                  onClick={() => setIsLogin(!isLogin)}
-                  className="text-green-600 hover:text-green-700 font-medium transition-colors underline"
-                >
-                  {isLogin 
-                    ? "Don't have an account? Sign up" 
-                    : 'Already have an account? Sign in'
-                  }
-                </button>
-              </div>
-            </div>
-          </Card>
-        )}
-      </div>
+            <Button type="submit" disabled={loading} className="w-full">
+              {loading ? 'Please wait...' : (isSignUp ? 'Create Account' : 'Sign In')}
+            </Button>
+          </form>
+
+          <Separator className="my-4" />
+
+          <div className="text-center">
+            <p className="text-sm text-gray-600">
+              {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
+              <Button
+                variant="link"
+                className="p-0 h-auto font-semibold"
+                onClick={() => setIsSignUp(!isSignUp)}
+              >
+                {isSignUp ? 'Sign In' : 'Sign Up'}
+              </Button>
+            </p>
+          </div>
+
+          <div className="text-center mt-4">
+            <Link to="/">
+              <Button variant="outline" className="w-full">
+                Back to Home
+              </Button>
+            </Link>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

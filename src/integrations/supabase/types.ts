@@ -661,9 +661,33 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      premium_users_admin_view: {
+        Row: {
+          added_by: string | null
+          country: string | null
+          days_remaining: number | null
+          email: string | null
+          end_date: string | null
+          full_name: string | null
+          notes: string | null
+          plan_type: string | null
+          status: string | null
+          subscription_type: string | null
+          user_created_at: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
+      add_premium_user_manual: {
+        Args: {
+          p_user_email: string
+          p_duration_months?: number
+          p_added_by?: string
+          p_notes?: string
+        }
+        Returns: boolean
+      }
       get_user_subscription: {
         Args: { check_user_id: string }
         Returns: {
@@ -676,6 +700,10 @@ export type Database = {
       }
       is_user_premium: {
         Args: { check_user_id: string }
+        Returns: boolean
+      }
+      remove_premium_user_manual: {
+        Args: { p_user_email: string }
         Returns: boolean
       }
       renew_premium_subscription: {
