@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
-import { CreditCard, Lock, Shield } from 'lucide-react';
+import { CreditCard, Lock, Shield, Calendar } from 'lucide-react';
 import { usePayment } from '@/hooks/usePayment';
 
 interface PaymentModalProps {
@@ -34,6 +34,8 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onSuccess 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    console.log('Submitting payment form...');
+    
     const result = await processPayment({
       amount: 5.00,
       currency: 'USD',
@@ -41,10 +43,13 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onSuccess 
     });
 
     if (result.success) {
+      console.log('Payment successful, calling onSuccess');
       onSuccess();
       onClose();
       // Refresh the page to update premium status
-      window.location.reload();
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     }
   };
 
@@ -59,6 +64,16 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onSuccess 
         </DialogHeader>
         
         <Card className="p-6">
+          <div className="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+            <div className="flex items-center gap-2 text-blue-700">
+              <Calendar className="h-4 w-4" />
+              <span className="text-sm font-medium">30-Day Premium Access</span>
+            </div>
+            <p className="text-xs text-blue-600 mt-1">
+              Your subscription will expire after 30 days and requires manual renewal
+            </p>
+          </div>
+
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <Label htmlFor="cardNumber">Card Number</Label>
@@ -124,7 +139,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onSuccess 
             <div className="space-y-2">
               <Button type="submit" disabled={loading} className="w-full">
                 <Lock className="h-4 w-4 mr-2" />
-                {loading ? 'Processing Payment...' : 'Pay $5.00/month'}
+                {loading ? 'Processing Payment...' : 'Pay $5.00 - Get 30 Days Premium'}
               </Button>
               <Button type="button" variant="outline" onClick={onClose} className="w-full">
                 Cancel
@@ -132,7 +147,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onSuccess 
             </div>
             
             <p className="text-xs text-gray-500 text-center">
-              By completing your purchase, you agree to our Terms of Service and Privacy Policy.
+              No auto-renewal. You'll need to manually renew after 30 days.
             </p>
           </form>
         </Card>

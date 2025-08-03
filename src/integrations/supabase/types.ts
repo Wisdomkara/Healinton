@@ -678,6 +678,14 @@ export type Database = {
         Args: { check_user_id: string }
         Returns: boolean
       }
+      renew_premium_subscription: {
+        Args: { p_user_id: string }
+        Returns: boolean
+      }
+      update_expired_subscriptions: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

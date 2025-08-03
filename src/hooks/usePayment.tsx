@@ -27,6 +27,8 @@ export const usePayment = () => {
 
     setLoading(true);
     try {
+      console.log('Processing payment for user:', user.id);
+      
       // Step 1: Create payment record
       const { data: payment, error: paymentError } = await supabase
         .from('payments')
@@ -41,15 +43,14 @@ export const usePayment = () => {
         .select()
         .single();
 
-      if (paymentError) throw paymentError;
+      if (paymentError) {
+        console.error('Payment creation error:', paymentError);
+        throw paymentError;
+      }
 
-      // Step 2: In a real implementation, you would integrate with:
-      // - Stripe: stripe.redirectToCheckout()
-      // - PayPal: paypal.checkout()
-      // - Square: square.payments()
-      
-      // For now, we'll simulate payment success for demo purposes
-      // Remove this simulation when integrating real payment gateway
+      console.log('Payment record created:', payment);
+
+      // Step 2: Simulate payment success (replace with real payment gateway integration)
       const simulatePaymentSuccess = true;
 
       if (simulatePaymentSuccess) {
@@ -62,33 +63,63 @@ export const usePayment = () => {
           })
           .eq('id', payment.id);
 
-        if (updateError) throw updateError;
+        if (updateError) {
+          console.error('Payment update error:', updateError);
+          throw updateError;
+        }
 
-        // Create premium subscription
-        const subscriptionEndDate = new Date();
-        subscriptionEndDate.setMonth(subscriptionEndDate.getMonth() + 1); // 1 month subscription
+        console.log('Payment marked as completed');
 
-        const { error: subscriptionError } = await supabase
+        // Step 3: Create or renew premium subscription using the database function
+        const { data: renewalResult, error: renewalError } = await supabase
+          .rpc('renew_premium_subscription', { p_user_id: user.id });
+
+        if (renewalError) {
+          console.error('Subscription renewal error:', renewalError);
+          throw renewalError;
+        }
+
+        console.log('Subscription renewal result:', renewalResult);
+
+        // Step 4: Link the payment to the subscription
+        const { data: userSubscription, error: subError } = await supabase
           .from('subscriptions')
-          .insert({
-            user_id: user.id,
-            plan_type: 'premium',
-            status: 'active',
-            end_date: subscriptionEndDate.toISOString(),
-            payment_id: payment.id
-          });
+          .select('id')
+          .eq('user_id', user.id)
+          .eq('status', 'active')
+          .order('created_at', { ascending: false })
+          .limit(1);
 
-        if (subscriptionError) throw subscriptionError;
+        if (!subError && userSubscription && userSubscription.length > 0) {
+          await supabase
+            .from('subscriptions')
+            .update({ payment_id: payment.id })
+            .eq('id', userSubscription[0].id);
+        }
 
         toast({
           title: "Payment Successful!",
-          description: "Welcome to Premium! You now have access to all premium features.",
+          description: "Welcome to Premium! Your subscription is active for 30 days.",
         });
 
         return { success: true, paymentId: payment.id };
       }
     } catch (error) {
-      console.error('Payment error:', error);
+      console.error('Payment processing error:', error);
+      
+      // If payment record was created, mark it as failed
+      if (error.message && !error.message.includes('Payment creation error')) {
+        try {
+          await supabase
+            .from('payments')
+            .update({ status: 'failed' })
+            .eq('user_id', user.id)
+            .eq('status', 'pending');
+        } catch (updateError) {
+          console.error('Error updating failed payment:', updateError);
+        }
+      }
+
       toast({
         title: "Payment Failed",
         description: "There was an error processing your payment. Please try again.",
@@ -101,8 +132,54 @@ export const usePayment = () => {
     return { success: false };
   };
 
+  const renewSubscription = async () => {
+    if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to renew your subscription",
+        variant: "destructive"
+      });
+      return { success: false };
+    }
+
+    setLoading(true);
+    try {
+      console.log('Renewing subscription for user:', user.id);
+
+      // Use the database function to renew subscription
+      const { data: renewalResult, error: renewalError } = await supabase
+        .rpc('renew_premium_subscription', { p_user_id: user.id });
+
+      if (renewalError) {
+        console.error('Subscription renewal error:', renewalError);
+        throw renewalError;
+      }
+
+      console.log('Subscription renewed successfully:', renewalResult);
+
+      toast({
+        title: "Subscription Renewed!",
+        description: "Your premium subscription has been extended for another month.",
+      });
+
+      return { success: true };
+    } catch (error) {
+      console.error('Renewal error:', error);
+      toast({
+        title: "Renewal Failed",
+        description: "There was an error renewing your subscription. Please contact support.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+
+    return { success: false };
+  };
+
   return {
     processPayment,
+    renewSubscription,
     loading
   };
 };
