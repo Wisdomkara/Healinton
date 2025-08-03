@@ -32,8 +32,38 @@ export const usePremium = (): PremiumStatus => {
       }
 
       try {
-        // Use .select() instead of .maybeSingle() to handle multiple rows
-        const { data, error } = await supabase
+        console.log('Checking premium status for user:', user.id);
+        
+        // First check the new subscriptions table
+        const { data: subscriptionData, error: subscriptionError } = await supabase
+          .from('subscriptions')
+          .select('plan_type, end_date, status')
+          .eq('user_id', user.id)
+          .eq('status', 'active')
+          .order('created_at', { ascending: false })
+          .limit(1);
+
+        if (subscriptionError) {
+          console.error('Error checking subscription status:', subscriptionError);
+        } else if (subscriptionData && subscriptionData.length > 0) {
+          const subscription = subscriptionData[0];
+          const now = new Date();
+          const isExpired = subscription.end_date && new Date(subscription.end_date) < now;
+          
+          if (!isExpired) {
+            console.log('Found active subscription:', subscription);
+            setPremiumStatus({
+              isPremium: true,
+              subscriptionType: subscription.plan_type,
+              expiresAt: subscription.end_date,
+              loading: false,
+            });
+            return;
+          }
+        }
+
+        // Fallback to check legacy premium_users table
+        const { data: premiumData, error: premiumError } = await supabase
           .from('premium_users')
           .select('subscription_type, expires_at, is_active')
           .eq('user_id', user.id)
@@ -41,8 +71,8 @@ export const usePremium = (): PremiumStatus => {
           .order('created_at', { ascending: false })
           .limit(1);
 
-        if (error) {
-          console.error('Error checking premium status:', error);
+        if (premiumError) {
+          console.error('Error checking premium status:', premiumError);
           setPremiumStatus({
             isPremium: false,
             subscriptionType: null,
@@ -52,9 +82,11 @@ export const usePremium = (): PremiumStatus => {
           return;
         }
 
-        const latestRecord = data && data.length > 0 ? data[0] : null;
+        const latestRecord = premiumData && premiumData.length > 0 ? premiumData[0] : null;
         const now = new Date();
         const isExpired = latestRecord?.expires_at && new Date(latestRecord.expires_at) < now;
+        
+        console.log('Premium check result:', { latestRecord, isExpired });
         
         setPremiumStatus({
           isPremium: !!latestRecord && !isExpired,
