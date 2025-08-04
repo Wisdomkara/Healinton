@@ -661,22 +661,7 @@ export type Database = {
       }
     }
     Views: {
-      premium_users_admin_view: {
-        Row: {
-          added_by: string | null
-          country: string | null
-          days_remaining: number | null
-          email: string | null
-          end_date: string | null
-          full_name: string | null
-          notes: string | null
-          plan_type: string | null
-          status: string | null
-          subscription_type: string | null
-          user_created_at: string | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
       add_premium_user_manual: {
@@ -687,6 +672,23 @@ export type Database = {
           p_notes?: string
         }
         Returns: boolean
+      }
+      get_premium_users_admin_data: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          user_id: string
+          full_name: string
+          email: string
+          country: string
+          plan_type: string
+          status: string
+          end_date: string
+          days_remaining: number
+          subscription_type: string
+          added_by: string
+          notes: string
+          user_created_at: string
+        }[]
       }
       get_user_subscription: {
         Args: { check_user_id: string }

@@ -13,78 +13,109 @@ serve(async (req) => {
 
   try {
     const { message } = await req.json()
+    
+    if (!message) {
+      return new Response(
+        JSON.stringify({ error: 'Message is required' }),
+        { 
+          status: 400, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      )
+    }
 
-    // Using Hugging Face's free inference API
+    // Get API key from environment variables
+    const apiKey = Deno.env.get('HUGGING_FACE_API_KEY')
+    
+    if (!apiKey) {
+      console.error('HUGGING_FACE_API_KEY environment variable is not set')
+      return new Response(
+        JSON.stringify({ error: 'Service temporarily unavailable' }),
+        { 
+          status: 500, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      )
+    }
+
+    console.log('Sending message to Hugging Face API:', message.substring(0, 100) + '...')
+
     const response = await fetch(
-      'https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium',
+      "https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium",
       {
         headers: {
-          'Authorization': 'Bearer hf_GQHJKlMNoPQRSTUVWXYZabcdefghijklmn',
-          'Content-Type': 'application/json',
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
         },
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify({
-          inputs: `Health question: ${message}`,
+          inputs: `Health Assistant: I'm here to help with your health questions. Please note that I cannot provide medical diagnoses or replace professional medical advice. Always consult with a healthcare provider for medical concerns.
+
+User: ${message}
+Health Assistant:`,
           parameters: {
-            max_length: 150,
+            max_length: 200,
             temperature: 0.7,
             do_sample: true,
+            top_p: 0.9,
+            return_full_text: false
           }
         }),
       }
     )
 
     if (!response.ok) {
-      // Fallback to a simple health response generator
-      const healthResponses = [
-        "For health concerns, I recommend consulting with your healthcare provider for personalized advice.",
-        "Maintaining a balanced diet and regular exercise are fundamental to good health.",
-        "If you're experiencing symptoms, please keep track of them and discuss with your doctor.",
-        "Remember to take medications as prescribed and follow up with your healthcare team regularly.",
-        "Stress management through relaxation techniques can benefit your overall well-being.",
-        "Stay hydrated and get adequate sleep to support your body's natural healing processes."
-      ];
-      
-      const randomResponse = healthResponses[Math.floor(Math.random() * healthResponses.length)];
-      
-      return new Response(
-        JSON.stringify({ 
-          response: randomResponse,
-          source: 'fallback'
-        }),
-        {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        },
-      )
+      const errorText = await response.text()
+      console.error('Hugging Face API error:', response.status, errorText)
+      throw new Error(`API request failed: ${response.status}`)
     }
 
-    const data = await response.json()
-    let aiResponse = data.generated_text || data[0]?.generated_text || "I'm here to help with your health questions. Could you provide more details?"
+    const result = await response.json()
+    console.log('Hugging Face API response:', result)
 
+    if (!result || !Array.isArray(result) || result.length === 0) {
+      throw new Error('Invalid response format from API')
+    }
+
+    let aiResponse = result[0]?.generated_text || "I'm here to help with your health questions!"
+    
     // Clean up the response
-    aiResponse = aiResponse.replace(/Health question: .+?\n?/, '').trim()
+    aiResponse = aiResponse.replace(/^Health Assistant:\s*/, '').trim()
+    
+    if (!aiResponse) {
+      aiResponse = "I'm here to help with your health questions! Could you please rephrase your question?"
+    }
+
+    // Add health disclaimer if the response seems to be medical advice
+    const medicalTerms = ['diagnose', 'treatment', 'medicine', 'prescription', 'symptoms', 'disease', 'condition']
+    const containsMedicalTerms = medicalTerms.some(term => 
+      aiResponse.toLowerCase().includes(term) || message.toLowerCase().includes(term)
+    )
+
+    if (containsMedicalTerms && !aiResponse.toLowerCase().includes('consult')) {
+      aiResponse += "\n\n*Please remember to consult with a qualified healthcare provider for proper medical advice and treatment.*"
+    }
 
     return new Response(
       JSON.stringify({ 
         response: aiResponse,
-        source: 'ai'
+        timestamp: new Date().toISOString()
       }),
-      {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      },
+      { 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      }
     )
-
   } catch (error) {
-    console.error('AI Chat Error:', error)
+    console.error('Error in ai-chat function:', error)
     return new Response(
       JSON.stringify({ 
-        response: "I'm having trouble processing your request right now. For urgent health matters, please contact your healthcare provider directly.",
-        source: 'error'
+        error: 'Sorry, I encountered an issue processing your request. Please try again.',
+        details: error.message
       }),
-      {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 500,
-      },
+      { 
+        status: 500, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      }
     )
   }
 })

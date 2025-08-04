@@ -1,91 +1,180 @@
 
 import React, { useState } from 'react';
-import { Card } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { Clock } from 'lucide-react';
+import { z } from 'zod';
+import { validateFormData, nameSchema, textAreaSchema } from '@/utils/validation';
+
+// Validation schema for reminders
+const reminderSchema = z.object({
+  title: nameSchema,
+  description: textAreaSchema.optional(),
+  reminder_date: z.string().refine((date) => {
+    const selectedDate = new Date(date);
+    const now = new Date();
+    return selectedDate > now;
+  }, 'Reminder date must be in the future')
+});
 
 const ReminderForm = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    reminderDate: ''
+    reminder_date: ''
   });
-  const [loading, setLoading] = useState(false);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
-
-    setLoading(true);
-    const { error } = await supabase
-      .from('reminders')
-      .insert({
-        user_id: user.id,
-        title: formData.title,
-        description: formData.description,
-        reminder_date: formData.reminderDate
-      });
-
-    if (error) {
+    
+    if (!user) {
       toast({
-        title: "Error",
-        description: "Failed to set reminder",
+        title: "Authentication required",
+        description: "Please log in to create reminders.",
         variant: "destructive"
       });
-    } else {
-      toast({
-        title: "Reminder Set",
-        description: "Your reminder has been created successfully"
-      });
-      setFormData({ title: '', description: '', reminderDate: '' });
+      return;
     }
-    setLoading(false);
+
+    setLoading(true);
+
+    try {
+      // Validate the form data
+      const validation = validateFormData(reminderSchema, formData);
+      if (!validation.success) {
+        toast({
+          title: "Invalid input",
+          description: validation.error,
+          variant: "destructive"
+        });
+        return;
+      }
+
+      const { error } = await supabase
+        .from('reminders')
+        .insert({
+          user_id: user.id,
+          title: validation.data.title,
+          description: validation.data.description || null,
+          reminder_date: validation.data.reminder_date
+        });
+
+      if (error) {
+        console.error('Error creating reminder:', error);
+        toast({
+          title: "Error",
+          description: "Failed to create reminder. Please try again.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      toast({
+        title: "Success!",
+        description: "Reminder created successfully.",
+      });
+
+      // Reset form
+      setFormData({
+        title: '',
+        description: '',
+        reminder_date: ''
+      });
+
+    } catch (error) {
+      console.error('Error creating reminder:', error);
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Get minimum datetime (current time + 1 minute)
+  const getMinDateTime = () => {
+    const now = new Date();
+    now.setMinutes(now.getMinutes() + 1);
+    return now.toISOString().slice(0, 16);
   };
 
   return (
-    <Card className="p-6">
-      <h3 className="text-lg font-semibold mb-4">Set Reminder</h3>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <Label htmlFor="title">Reminder Title</Label>
-          <Input
-            id="title"
-            value={formData.title}
-            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-            placeholder="Take medication, Doctor visit, etc."
-            required
-          />
-        </div>
-        <div>
-          <Label htmlFor="description">Description</Label>
-          <Textarea
-            id="description"
-            value={formData.description}
-            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-            placeholder="Additional details..."
-          />
-        </div>
-        <div>
-          <Label htmlFor="reminderDate">Date & Time</Label>
-          <Input
-            id="reminderDate"
-            type="datetime-local"
-            value={formData.reminderDate}
-            onChange={(e) => setFormData({ ...formData, reminderDate: e.target.value })}
-            required
-          />
-        </div>
-        <Button type="submit" disabled={loading} className="w-full">
-          {loading ? 'Setting...' : 'Set Reminder'}
-        </Button>
-      </form>
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Clock className="h-5 w-5" />
+          Create Reminder
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="title">Title *</Label>
+            <Input
+              id="title"
+              name="title"
+              type="text"
+              placeholder="Take medication"
+              value={formData.title}
+              onChange={handleInputChange}
+              required
+              maxLength={100}
+              className="w-full"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="description">Description</Label>
+            <Textarea
+              id="description"
+              name="description"
+              placeholder="Additional details about this reminder..."
+              value={formData.description}
+              onChange={handleInputChange}
+              maxLength={1000}
+              className="w-full"
+              rows={3}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="reminder_date">Date & Time *</Label>
+            <Input
+              id="reminder_date"
+              name="reminder_date"
+              type="datetime-local"
+              value={formData.reminder_date}
+              onChange={handleInputChange}
+              min={getMinDateTime()}
+              required
+              className="w-full"
+            />
+          </div>
+
+          <Button type="submit" disabled={loading} className="w-full">
+            {loading ? 'Creating...' : 'Create Reminder'}
+          </Button>
+        </form>
+      </CardContent>
     </Card>
   );
 };

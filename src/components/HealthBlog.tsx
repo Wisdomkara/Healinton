@@ -1,160 +1,169 @@
 
 import React, { useState, useEffect } from 'react';
-import { Card } from '@/components/ui/card';
+import { Link } from 'react-router-dom';
+import { Calendar, User, ArrowRight, Search, Filter } from 'lucide-react';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
-import { Search, Calendar, User } from 'lucide-react';
+import DOMPurify from 'dompurify';
 
 interface BlogPost {
   id: string;
   title: string;
   content: string;
-  summary: string;
-  author: string;
-  published_at: string;
-  category: string;
+  summary: string | null;
+  author: string | null;
+  category: string | null;
+  published_at: string | null;
 }
 
 const HealthBlog = () => {
   const [posts, setPosts] = useState<BlogPost[]>([]);
-  const [filteredPosts, setFilteredPosts] = useState<BlogPost[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
   const [loading, setLoading] = useState(true);
-
-  const categories = ['all', 'hypertension', 'diabetes', 'heart_health', 'obesity', 'cholesterol', 'asthma', 'arthritis'];
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
   useEffect(() => {
-    fetchBlogPosts();
+    fetchPosts();
   }, []);
 
-  useEffect(() => {
-    filterPosts();
-  }, [posts, searchTerm, selectedCategory]);
+  const fetchPosts = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('blog_posts')
+        .select('*')
+        .order('published_at', { ascending: false });
 
-  const fetchBlogPosts = async () => {
-    const { data, error } = await supabase
-      .from('blog_posts')
-      .select('*')
-      .order('published_at', { ascending: false });
-
-    if (!error && data) {
-      setPosts(data);
+      if (error) throw error;
+      setPosts(data || []);
+    } catch (error) {
+      console.error('Error fetching blog posts:', error);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
-  const filterPosts = () => {
-    let filtered = posts;
+  const filteredPosts = posts.filter(post => {
+    const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         post.summary?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = selectedCategory === 'all' || post.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
 
-    if (selectedCategory !== 'all') {
-      filtered = filtered.filter(post => post.category === selectedCategory);
-    }
+  const categories = ['all', ...new Set(posts.map(post => post.category).filter(Boolean))];
 
-    if (searchTerm) {
-      filtered = filtered.filter(post => 
-        post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        post.content.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    setFilteredPosts(filtered);
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
+  // Sanitize HTML content to prevent XSS
+  const sanitizeHTML = (html: string) => {
+    return DOMPurify.sanitize(html, {
+      ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li'],
+      ALLOWED_ATTR: []
     });
   };
 
   if (loading) {
     return (
-      <div className="space-y-6">
-        <div className="animate-pulse">
-          <div className="h-4 bg-gray-200 rounded w-1/4 mb-4"></div>
-          <div className="space-y-3">
-            <div className="h-4 bg-gray-200 rounded"></div>
-            <div className="h-4 bg-gray-200 rounded w-5/6"></div>
-          </div>
+      <div className="container mx-auto px-4 py-8">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <Card key={i} className="animate-pulse">
+              <CardHeader>
+                <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <div className="h-3 bg-gray-200 rounded"></div>
+                  <div className="h-3 bg-gray-200 rounded w-5/6"></div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Health Blog</h2>
-        
-        <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input
-              placeholder="Search articles..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 w-full sm:w-64"
-            />
-          </div>
-          
+    <div className="container mx-auto px-4 py-8">
+      <div className="text-center mb-12">
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">Health Blog</h1>
+        <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          Stay informed with the latest health insights, tips, and medical advances from our expert team
+        </p>
+      </div>
+
+      {/* Search and Filter */}
+      <div className="flex flex-col md:flex-row gap-4 mb-8">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+          <Input
+            type="text"
+            placeholder="Search articles..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+        <div className="flex items-center gap-2">
+          <Filter className="h-4 w-4 text-gray-500" />
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+            className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            {categories.map(category => (
+            {categories.map((category) => (
               <option key={category} value={category}>
-                {category === 'all' ? 'All Categories' : category.replace('_', ' ').toUpperCase()}
+                {category === 'all' ? 'All Categories' : category.charAt(0).toUpperCase() + category.slice(1)}
               </option>
             ))}
           </select>
         </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {filteredPosts.map((post) => (
-          <Card key={post.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-            <div className="p-6">
-              <div className="flex items-center gap-2 mb-3">
-                <Badge variant="secondary" className="bg-green-100 text-green-800">
-                  {post.category.replace('_', ' ').toUpperCase()}
-                </Badge>
-              </div>
-              
-              <h3 className="font-semibold text-lg mb-2 text-gray-900 dark:text-white line-clamp-2">
-                {post.title}
-              </h3>
-              
-              <p className="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-3">
-                {post.summary}
-              </p>
-              
-              <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-                <div className="flex items-center gap-1">
-                  <User className="h-3 w-3" />
-                  <span>{post.author}</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Calendar className="h-3 w-3" />
-                  <span>{formatDate(post.published_at)}</span>
-                </div>
-              </div>
-              
-              <Button variant="outline" size="sm" className="w-full mt-4">
-                Read More
-              </Button>
-            </div>
-          </Card>
-        ))}
-      </div>
-
-      {filteredPosts.length === 0 && (
+      {filteredPosts.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-gray-500 dark:text-gray-400">No articles found matching your criteria.</p>
+          <p className="text-gray-500 text-lg">No articles found matching your criteria.</p>
+        </div>
+      ) : (
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {filteredPosts.map((post) => (
+            <Card key={post.id} className="hover:shadow-lg transition-shadow duration-200">
+              <CardHeader>
+                <div className="flex items-start justify-between mb-2">
+                  <Badge variant="secondary" className="text-xs">
+                    {post.category?.charAt(0).toUpperCase() + post.category?.slice(1) || 'Health'}
+                  </Badge>
+                  <div className="flex items-center text-xs text-gray-500">
+                    <Calendar className="h-3 w-3 mr-1" />
+                    {post.published_at ? new Date(post.published_at).toLocaleDateString() : 'Recent'}
+                  </div>
+                </div>
+                <h2 className="text-xl font-semibold text-gray-900 line-clamp-2">
+                  {post.title}
+                </h2>
+                <div className="flex items-center text-sm text-gray-600">
+                  <User className="h-4 w-4 mr-1" />
+                  {post.author || 'Carevital Team'}
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div 
+                  className="text-gray-600 line-clamp-3 mb-4"
+                  dangerouslySetInnerHTML={{ 
+                    __html: sanitizeHTML(post.summary || post.content.substring(0, 150) + '...') 
+                  }}
+                />
+                <Link to={`/blog/${post.id}`}>
+                  <Button variant="outline" size="sm" className="w-full group">
+                    Read More
+                    <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       )}
     </div>
