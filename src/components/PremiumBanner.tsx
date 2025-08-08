@@ -54,13 +54,9 @@ const PremiumBanner = () => {
         <Link to="/premium">
           <Button 
             className="w-full bg-white text-primary-600 hover:bg-gray-100 font-semibold py-3 transition-all duration-300"
-          >
-<<<<<<< HEAD
-           Get Premium Now For as low as $5
-=======
-            Upgrade to Premium - Only $5/month
->>>>>>> 4c7f197cceffe0c2a7fab5bb19b56e9452d0a42d
-          </Button>
+>
+  Upgrade to Premium - Only $5/month
+</Button>
         </Link>
       </div>
     </Card>
