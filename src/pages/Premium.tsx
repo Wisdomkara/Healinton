@@ -64,7 +64,7 @@ const Premium = () => {
   const plans = [
     {
       name: 'Basic',
-      price: '$3.99',
+      price: '$0',
       period: '/month',
       description: 'Perfect for getting started with health management',
       features: [
@@ -80,7 +80,7 @@ const Premium = () => {
     },
     {
       name: 'Premium',
-      price: '$10.99',
+      price: '$5',
       period: '/month',
       description: 'Complete health management solution with AI insights',
       features: [

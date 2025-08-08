@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Crown } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { usePremium } from '@/hooks/usePremium';
+import { Pill,BarChart,Hospital,Key, Cross } from "lucide-react";
 
 const PremiumBanner = () => {
   const { user } = useAuth();
@@ -31,20 +32,21 @@ const PremiumBanner = () => {
         </div>
         
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-          <div className="text-center">
-            <div className="text-2xl mb-1">💊</div>
+          <div className="flex  flex-col items-center text-center">
+            
+             <Pill className="mb-2 text-primary-100 " size={30} strokeWidth={1.5} />
             <p className="text-xs text-primary-100">Medication Reminders</p>
           </div>
-          <div className="text-center">
-            <div className="text-2xl mb-1">📊</div>
+          <div className=" flex flex-col items-center text-center">
+            <BarChart size={40} className="text-primary-100" />
             <p className="text-xs text-primary-100">Advanced Analytics</p>
           </div>
-          <div className="text-center">
-            <div className="text-2xl mb-1">🏥</div>
+          <div className="flex flex-col items-center text-center">
+            <Hospital size={40} className="text-primary-100" />
             <p className="text-xs text-primary-100">Hospital Integration</p>
           </div>
-          <div className="text-center">
-            <div className="text-2xl mb-1">👨‍⚕️</div>
+          <div className=" flex flex-col items-center text-center">
+            <Key size={40} className="text-primary-100" />
             <p className="text-xs text-primary-100">Telehealth Access</p>
           </div>
         </div>
@@ -53,7 +55,7 @@ const PremiumBanner = () => {
           <Button 
             className="w-full bg-white text-primary-600 hover:bg-gray-100 font-semibold py-3 transition-all duration-300"
           >
-            Get Premium FREE till August 2025 - Sponsored
+           Get Premium Now For as low as $5
           </Button>
         </Link>
       </div>
