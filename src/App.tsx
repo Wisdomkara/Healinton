@@ -1,3 +1,5 @@
+
+import React, { useState } from 'react';
 import { Analytics } from '@vercel/analytics/next';
 import { Toaster } from '@/components/ui/toaster';
 import { Toaster as Sonner } from '@/components/ui/sonner';
@@ -22,38 +24,49 @@ import Accessibility from './pages/Accessibility';
 import DrugsPage from './pages/DrugsPage';
 import NotFound from './pages/NotFound';
 
-const queryClient = new QueryClient();
+const App = () => {
+  // Create QueryClient inside the component to avoid SSR issues
+  const [queryClient] = useState(() => new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 5 * 60 * 1000, // 5 minutes
+        retry: 1,
+        refetchOnWindowFocus: false,
+      },
+    },
+  }));
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Layout />}>
-              <Route index element={<Index />} />
-              <Route path="auth" element={<Auth />} />
-              <Route path="blog" element={<Blog />} />
-              <Route path="blog/:id" element={<BlogPost />} />
-              <Route path="premium" element={<Premium />} />
-              <Route path="about" element={<AboutUs />} />
-              <Route path="faq" element={<FAQ />} />
-              <Route path="terms" element={<TermsOfService />} />
-              <Route path="privacy" element={<PrivacyPolicy />} />
-              <Route path="health-insurance" element={<HealthInsurance />} />
-              <Route path="community" element={<Community />} />
-              <Route path="accessibility" element={<Accessibility />} />
-              <Route path="drugs" element={<DrugsPage />} />
-              <Route path="*" element={<NotFound />} />
-            </Route>
-            <Route path="/dashboard" element={<Dashboard />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </AuthProvider>
-  </QueryClientProvider>
-);
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Layout />}>
+                <Route index element={<Index />} />
+                <Route path="auth" element={<Auth />} />
+                <Route path="blog" element={<Blog />} />
+                <Route path="blog/:id" element={<BlogPost />} />
+                <Route path="premium" element={<Premium />} />
+                <Route path="about" element={<AboutUs />} />
+                <Route path="faq" element={<FAQ />} />
+                <Route path="terms" element={<TermsOfService />} />
+                <Route path="privacy" element={<PrivacyPolicy />} />
+                <Route path="health-insurance" element={<HealthInsurance />} />
+                <Route path="community" element={<Community />} />
+                <Route path="accessibility" element={<Accessibility />} />
+                <Route path="drugs" element={<DrugsPage />} />
+                <Route path="*" element={<NotFound />} />
+              </Route>
+              <Route path="/dashboard" element={<Dashboard />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </AuthProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;

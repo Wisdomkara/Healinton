@@ -26,8 +26,8 @@ const PremiumBanner = () => {
             <Crown className="h-6 w-6 text-white" />
           </div>
           <div>
-            <h3 className="text-lg font-bold">Go Premium</h3>
-            <p className="text-primary-100 text-sm">Get the best of healthcare from your device</p>
+            <h3 className="text-lg font-bold">Go Premium - Just $5/month</h3>
+            <p className="text-primary-100 text-sm">Unlock advanced health features and AI insights</p>
           </div>
         </div>
         
@@ -55,7 +55,11 @@ const PremiumBanner = () => {
           <Button 
             className="w-full bg-white text-primary-600 hover:bg-gray-100 font-semibold py-3 transition-all duration-300"
           >
+<<<<<<< HEAD
            Get Premium Now For as low as $5
+=======
+            Upgrade to Premium - Only $5/month
+>>>>>>> 4c7f197cceffe0c2a7fab5bb19b56e9452d0a42d
           </Button>
         </Link>
       </div>

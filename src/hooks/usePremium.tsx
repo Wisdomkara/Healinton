@@ -8,6 +8,8 @@ interface PremiumStatus {
   subscriptionType: string | null;
   expiresAt: string | null;
   loading: boolean;
+  daysRemaining: number | null;
+  status: string | null;
 }
 
 export const usePremium = (): PremiumStatus => {
@@ -17,6 +19,8 @@ export const usePremium = (): PremiumStatus => {
     subscriptionType: null,
     expiresAt: null,
     loading: true,
+    daysRemaining: null,
+    status: null,
   });
 
   useEffect(() => {
@@ -27,41 +31,56 @@ export const usePremium = (): PremiumStatus => {
           subscriptionType: null,
           expiresAt: null,
           loading: false,
+          daysRemaining: null,
+          status: null,
         });
         return;
       }
 
       try {
-        // Use .select() instead of .maybeSingle() to handle multiple rows
-        const { data, error } = await supabase
-          .from('premium_users')
-          .select('subscription_type, expires_at, is_active')
-          .eq('user_id', user.id)
-          .eq('is_active', true)
-          .order('created_at', { ascending: false })
-          .limit(1);
+        console.log('Checking premium status for user:', user.id);
+        
+        // Use the database function to get subscription status
+        const { data: subscriptionData, error: subscriptionError } = await supabase
+          .rpc('get_user_subscription', { check_user_id: user.id });
 
-        if (error) {
-          console.error('Error checking premium status:', error);
+        if (subscriptionError) {
+          console.error('Error checking subscription status:', subscriptionError);
           setPremiumStatus({
             isPremium: false,
             subscriptionType: null,
             expiresAt: null,
             loading: false,
+            daysRemaining: null,
+            status: 'error',
           });
           return;
         }
 
-        const latestRecord = data && data.length > 0 ? data[0] : null;
-        const now = new Date();
-        const isExpired = latestRecord?.expires_at && new Date(latestRecord.expires_at) < now;
-        
-        setPremiumStatus({
-          isPremium: !!latestRecord && !isExpired,
-          subscriptionType: latestRecord?.subscription_type || null,
-          expiresAt: latestRecord?.expires_at || null,
-          loading: false,
-        });
+        console.log('Subscription status result:', subscriptionData);
+
+        if (subscriptionData && subscriptionData.length > 0) {
+          const subscription = subscriptionData[0];
+          
+          setPremiumStatus({
+            isPremium: subscription.is_premium,
+            subscriptionType: subscription.plan_type,
+            expiresAt: subscription.end_date,
+            loading: false,
+            daysRemaining: subscription.days_remaining,
+            status: subscription.status,
+          });
+        } else {
+          // Fallback to free plan
+          setPremiumStatus({
+            isPremium: false,
+            subscriptionType: 'free',
+            expiresAt: null,
+            loading: false,
+            daysRemaining: null,
+            status: 'active',
+          });
+        }
       } catch (error) {
         console.error('Error checking premium status:', error);
         setPremiumStatus({
@@ -69,11 +88,18 @@ export const usePremium = (): PremiumStatus => {
           subscriptionType: null,
           expiresAt: null,
           loading: false,
+          daysRemaining: null,
+          status: 'error',
         });
       }
     };
 
     checkPremiumStatus();
+
+    // Set up a periodic check for subscription updates (every 5 minutes)
+    const interval = setInterval(checkPremiumStatus, 5 * 60 * 1000);
+
+    return () => clearInterval(interval);
   }, [user]);
 
   return premiumStatus;
