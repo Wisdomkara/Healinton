@@ -16,8 +16,13 @@ const DashboardHeader = ({ onMenuClick, userName }: DashboardHeaderProps) => {
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
-    await signOut();
-    navigate('/');
+    try {
+      await signOut();
+      // Redirect to auth page after successful sign out
+      navigate('/auth');
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
   };
 
   return (

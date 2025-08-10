@@ -10,7 +10,7 @@ const AboutUs = () => {
   const team = [
     {
       name: "Favor Loolo",
-      role: "Chief Medical Officer",
+      role: "Chief Medical Officer", 
       image: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&h=400&fit=crop&crop=face",
       description: "Health care Specialist",
       expertise: "Internal Medicine • Diabetes Care"
@@ -18,7 +18,7 @@ const AboutUs = () => {
     {
       name: "Wisdom Kara",
       role: "Head of Technology",
-      image: "/wisdom.jpeg",
+      image: "/wisdom.jpeg", 
       description: "Kanel Technologies Engineer, healthcare tech expert",
       expertise: "Healthcare IT • AI/ML • Security"
     },
@@ -33,7 +33,7 @@ const AboutUs = () => {
       name: "Sunday Idoko",
       role: "Chief Operations Officer",
       image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face",
-      description: "Living with Type 2 diabetes for 10+ years",
+      description: "Logistic professional",
       expertise: "Healthcare Operations • Patient Experience"
     }
   ];
@@ -47,7 +47,7 @@ const AboutUs = () => {
     },
     {
       icon: <Shield className="h-10 w-10 text-blue-500" />,
-      title: "Privacy & Security",
+      title: "Privacy & Security", 
       description: "Your health data is protected with enterprise-grade security and encryption, meeting all healthcare privacy standards.",
       highlight: "HIPAA compliant • SOC 2 certified"
     },
@@ -173,23 +173,23 @@ const AboutUs = () => {
               </div>
 
               <Link to="/">
-  <Button
-    size="lg"
-    className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all"
-  >
-    Start Your Journey
-  </Button>
-</Link>
+                <Button
+                  size="lg"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all"
+                >
+                  Start Your Journey
+                </Button>
+              </Link>
 
-<Link to="/">
-  <Button
-    size="lg"
-    variant="outline"
-    className="border-2 border-gray-300 hover:border-blue-600 hover:text-blue-600 px-8 py-4 rounded-xl font-semibold transition-all"
-  >
-    Learn More
-  </Button>
-</Link>
+              <Link to="/">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="border-2 border-gray-300 hover:border-blue-600 hover:text-blue-600 px-8 py-4 rounded-xl font-semibold transition-all"
+                >
+                  Learn More
+                </Button>
+              </Link>
 
             </div>
             <div className="relative">

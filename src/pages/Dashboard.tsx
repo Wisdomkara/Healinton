@@ -24,7 +24,11 @@ const Dashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('overview');
 
-  const userName = user?.user_metadata?.first_name || 'User';
+  // Get user's first name from metadata or email
+  const userName = user?.user_metadata?.first_name || 
+                   user?.user_metadata?.firstName || 
+                   user?.email?.split('@')[0] || 
+                   'User';
 
   const renderContent = () => {
     switch (activeSection) {
@@ -118,6 +122,15 @@ const Dashboard = () => {
         <main className="flex-1 overflow-auto">
           <div className="p-4 lg:p-8">
             <div className="max-w-7xl mx-auto">
+              {/* Welcome message for desktop */}
+              <div className="hidden lg:block mb-6">
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                  Welcome back, {userName}!
+                </h1>
+                <p className="text-gray-600 dark:text-gray-400">
+                  Here's your health dashboard overview
+                </p>
+              </div>
               {renderContent()}
             </div>
           </div>

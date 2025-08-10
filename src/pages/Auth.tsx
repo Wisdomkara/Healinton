@@ -32,6 +32,43 @@ const Auth = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
+  const illnessOptions = [
+    'diabetes',
+    'hypertension',
+    'heart_disease',
+    'asthma',
+    'arthritis',
+    'chronic_kidney_disease',
+    'chronic_obstructive_pulmonary_disease',
+    'depression',
+    'anxiety',
+    'bipolar_disorder',
+    'migraine',
+    'epilepsy',
+    'multiple_sclerosis',
+    'parkinsons_disease',
+    'alzheimers_disease',
+    'cancer',
+    'stroke',
+    'thyroid_disorders',
+    'inflammatory_bowel_disease',
+    'celiac_disease',
+    'fibromyalgia',
+    'chronic_fatigue_syndrome',
+    'lupus',
+    'rheumatoid_arthritis',
+    'osteoporosis',
+    'gout',
+    'sleep_apnea',
+    'acid_reflux',
+    'irritable_bowel_syndrome',
+    'high_cholesterol',
+    'obesity',
+    'anemia',
+    'glaucoma',
+    'other'
+  ];
+
   useEffect(() => {
     // Check if user is already authenticated
     if (user) {
@@ -347,12 +384,11 @@ const Auth = () => {
                     className="w-full px-3 py-2 border border-input bg-background rounded-md"
                   >
                     <option value="">Select a condition</option>
-                    <option value="diabetes">Diabetes</option>
-                    <option value="hypertension">Hypertension</option>
-                    <option value="heart_disease">Heart Disease</option>
-                    <option value="asthma">Asthma</option>
-                    <option value="arthritis">Arthritis</option>
-                    <option value="other">Other</option>
+                    {illnessOptions.map((illness) => (
+                      <option key={illness} value={illness}>
+                        {illness.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </>

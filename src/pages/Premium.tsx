@@ -1,27 +1,27 @@
-
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { usePremium } from '@/hooks/usePremium';
 import { Crown, Check, Star, TrendingUp, Heart, Shield, Users, Phone } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import PaymentModal from '@/components/PaymentModal';
 
 const Premium = () => {
   const { user } = useAuth();
   const { isPremium, loading } = usePremium();
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubscribe = async (planType: string) => {
     if (!user) {
-      window.location.href = '/auth';
+      navigate('/auth');
       return;
     }
 
-    if (planType === 'free') {
-      alert('You already have access to all free features!');
-      window.location.href = '/dashboard';
+    if (planType === 'basic') {
+      // Basic plan is free - redirect to dashboard
+      navigate('/dashboard');
       return;
     }
 
@@ -32,7 +32,7 @@ const Premium = () => {
 
   const handlePaymentSuccess = () => {
     alert('Welcome to Premium! You now have access to all premium features.');
-    window.location.href = '/dashboard';
+    navigate('/dashboard');
   };
 
   if (loading) {
@@ -42,8 +42,8 @@ const Premium = () => {
   const plans = [
     {
       name: 'Basic',
-      price: '$3.99',
-      period: '/month',
+      price: 'Free',
+      period: '',
       description: 'Perfect for getting started with health management',
       features: [
         'Basic health tracking',
@@ -64,7 +64,7 @@ const Premium = () => {
       period: '/month',
       description: 'Complete health management solution with AI insights',
       features: [
-        'Everything in Free',
+        'Everything in Basic',
         'Advanced health analytics',
         'Personalized meal plans',
         'Hospital integration',
@@ -187,7 +187,7 @@ const Premium = () => {
                   isPremium && plan.name === 'Premium' ? 'opacity-50 cursor-not-allowed' : ''
                 }`}
               >
-                {isPremium && plan.name === 'Premium' ? 'Current Plan' : `Choose ${plan.name}`}
+                {isPremium && plan.name === 'Premium' ? 'Current Plan' : plan.name === 'Basic' ? 'Get Started Free' : `Choose ${plan.name}`}
               </Button>
             </Card>
           ))}
@@ -228,7 +228,7 @@ const Premium = () => {
               </p>
               <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
                 <Button
-                  onClick={() => handleSubscribe('free')}
+                  onClick={() => handleSubscribe('basic')}
                   size="lg"
                   className="bg-white text-green-600 hover:bg-gray-100 font-semibold px-8 py-4"
                 >
