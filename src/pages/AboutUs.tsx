@@ -1,93 +1,91 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Heart, Users, Award, Target, Shield, Stethoscope, Star, ArrowLeft } from 'lucide-react'
+import { Heart, Users, Award, Target, Shield, Stethoscope, Star, ArrowLeft } from 'lucide-react';
 import { CheckCircle } from 'lucide-react';
 import { Link } from "react-router-dom";
-
-
 const AboutUs = () => {
-  const team = [
-    {
-      name: "Favor Loolo",
-      role: "Chief Medical Officer", 
-      image: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&h=400&fit=crop&crop=face",
-      description: "Health care Specialist",
-      expertise: "Internal Medicine • Diabetes Care"
-    },
-    {
-      name: "Wisdom Kara",
-      role: "Head of Technology",
-      image: "/wisdom.jpeg", 
-      description: "Kanel Technologies Engineer, healthcare tech expert",
-      expertise: "Healthcare IT • AI/ML • Security"
-    },
-    {
-      name: "Dr. Emily Rodriguez",
-      role: "Nutrition Specialist",
-      image: "https://images.unsplash.com/photo-1594824694996-f4f6c2d2a9e5?w=400&h=400&fit=crop&crop=face",
-      description: "Registered dietitian with diabetes specialization",
-      expertise: "Clinical Nutrition • Metabolic Health"
-    },
-    {
-      name: "Sunday Idoko",
-      role: "Chief Operations Officer",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face",
-      description: "Logistic professional",
-      expertise: "Healthcare Operations • Patient Experience"
-    }
-  ];
-
-  const values = [
-    {
-      icon: <Heart className="h-10 w-10 text-rose-500" />,
-      title: "Patient-Centered Care",
-      description: "Every feature we build is designed with real patient needs in mind, ensuring practical solutions for everyday health management.",
-      highlight: "Real solutions for real people"
-    },
-    {
-      icon: <Shield className="h-10 w-10 text-blue-500" />,
-      title: "Privacy & Security", 
-      description: "Your health data is protected with enterprise-grade security and encryption, meeting all healthcare privacy standards.",
-      highlight: "HIPAA compliant • SOC 2 certified"
-    },
-    {
-      icon: <Users className="h-10 w-10 text-purple-500" />,
-      title: "Community Support",
-      description: "We believe in the power of community. Our platform connects you with others on similar health journeys.",
-      highlight: "Peer support • Expert guidance"
-    },
-    {
-      icon: <Target className="h-10 w-10 text-emerald-500" />,
-      title: "Evidence-Based",
-      description: "All our recommendations are backed by the latest medical research and clinical guidelines.",
-      highlight: "Clinically validated • Research-driven"
-    }
-  ];
-
-  const stats = [
-    { number: "25,000+", label: "Active Users", sublabel: "Growing monthly" },
-    { number: "47%", label: "Reduction in ER Visits", sublabel: "Proven outcomes" },
-    { number: "96%", label: "User Satisfaction", sublabel: "5-star rating" },
-    { number: "24/7", label: "Support Available", sublabel: "Always here" }
-  ];
-
-  const achievements = [
-    { icon: <Award className="h-6 w-6" />, text: "Healthcare Innovation Award 2024" },
-    { icon: <Star className="h-6 w-6" />, text: "Top-rated Health App" },
-    { icon: <Shield className="h-6 w-6" />, text: "HIPAA Compliant Platform" },
-    { icon: <CheckCircle className="h-6 w-6" />, text: "Clinically Validated Results" }
-  ];
-
-  return (
-    <div className="min-h-screen bg-white">
+  const team = [{
+    name: "Favor Loolo",
+    role: "Chief Medical Officer",
+    image: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&h=400&fit=crop&crop=face",
+    description: "Health care Specialist",
+    expertise: "Internal Medicine • Diabetes Care"
+  }, {
+    name: "Wisdom Kara",
+    role: "Head of Technology",
+    image: "/wisdom.jpeg",
+    description: "Kanel Technologies Engineer, healthcare tech expert",
+    expertise: "Healthcare IT • AI/ML • Security"
+  }, {
+    name: "Dr. Emily Rodriguez",
+    role: "Nutrition Specialist",
+    image: "https://images.unsplash.com/photo-1594824694996-f4f6c2d2a9e5?w=400&h=400&fit=crop&crop=face",
+    description: "Registered dietitian with diabetes specialization",
+    expertise: "Clinical Nutrition • Metabolic Health"
+  }, {
+    name: "Sunday Idoko",
+    role: "Chief Operations Officer",
+    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face",
+    description: "Logistic professional",
+    expertise: "Healthcare Operations • Patient Experience"
+  }];
+  const values = [{
+    icon: <Heart className="h-10 w-10 text-rose-500" />,
+    title: "Patient-Centered Care",
+    description: "Every feature we build is designed with real patient needs in mind, ensuring practical solutions for everyday health management.",
+    highlight: "Real solutions for real people"
+  }, {
+    icon: <Shield className="h-10 w-10 text-blue-500" />,
+    title: "Privacy & Security",
+    description: "Your health data is protected with enterprise-grade security and encryption, meeting all healthcare privacy standards.",
+    highlight: "HIPAA compliant • SOC 2 certified"
+  }, {
+    icon: <Users className="h-10 w-10 text-purple-500" />,
+    title: "Community Support",
+    description: "We believe in the power of community. Our platform connects you with others on similar health journeys.",
+    highlight: "Peer support • Expert guidance"
+  }, {
+    icon: <Target className="h-10 w-10 text-emerald-500" />,
+    title: "Evidence-Based",
+    description: "All our recommendations are backed by the latest medical research and clinical guidelines.",
+    highlight: "Clinically validated • Research-driven"
+  }];
+  const stats = [{
+    number: "25,000+",
+    label: "Active Users",
+    sublabel: "Growing monthly"
+  }, {
+    number: "47%",
+    label: "Reduction in ER Visits",
+    sublabel: "Proven outcomes"
+  }, {
+    number: "96%",
+    label: "User Satisfaction",
+    sublabel: "5-star rating"
+  }, {
+    number: "24/7",
+    label: "Support Available",
+    sublabel: "Always here"
+  }];
+  const achievements = [{
+    icon: <Award className="h-6 w-6" />,
+    text: "Healthcare Innovation Award 2024"
+  }, {
+    icon: <Star className="h-6 w-6" />,
+    text: "Top-rated Health App"
+  }, {
+    icon: <Shield className="h-6 w-6" />,
+    text: "HIPAA Compliant Platform"
+  }, {
+    icon: <CheckCircle className="h-6 w-6" />,
+    text: "Clinically Validated Results"
+  }];
+  return <div className="min-h-screen bg-white">
       {/* Navigation Header */}
       <div className="bg-white/95 backdrop-blur-sm border-b border-gray-100 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 py-4">
-          <button
-            onClick={() => window.history.back()}
-            className="inline-flex items-center text-gray-600 hover:text-gray-900 transition-colors group"
-          >
+          <button onClick={() => window.history.back()} className="inline-flex items-center text-gray-600 hover:text-gray-900 transition-colors group">
             <ArrowLeft className="h-5 w-5 mr-2 group-hover:-translate-x-1 transition-transform" />
             Back to Home
           </button>
@@ -97,11 +95,7 @@ const AboutUs = () => {
       {/* Hero Section */}
       <section className="relative overflow-hidden py-24 lg:py-32">
         <div className="absolute inset-0">
-          <img
-            src="/health.jpg"
-            alt="Healthcare"
-            className="w-full h-full object-cover"
-          />
+          <img src="/health.jpg" alt="Healthcare" className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-b from-blue-900/70 via-blue-800/50 to-blue-900/70"></div>
         </div>
         
@@ -119,12 +113,10 @@ const AboutUs = () => {
             
             {/* Achievement badges */}
             <div className="flex flex-wrap justify-center gap-6 mb-12">
-              {achievements.map((achievement, index) => (
-                <div key={index} className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm border border-white/20">
+              {achievements.map((achievement, index) => <div key={index} className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm border border-white/20">
                   <span className="text-blue-200">{achievement.icon}</span>
                   <span className="text-sm font-medium text-white">{achievement.text}</span>
-                </div>
-              ))}
+                </div>)}
             </div>
           </div>
         </div>
@@ -134,15 +126,13 @@ const AboutUs = () => {
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-            {stats.map((stat, index) => (
-              <div key={index} className="text-center group">
+            {stats.map((stat, index) => <div key={index} className="text-center group">
                 <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-8 group-hover:shadow-lg transition-all duration-300">
                   <div className="text-4xl lg:text-5xl font-bold text-gray-900 mb-2">{stat.number}</div>
                   <div className="text-lg font-semibold text-gray-700 mb-1">{stat.label}</div>
                   <div className="text-sm text-gray-500">{stat.sublabel}</div>
                 </div>
-              </div>
-            ))}
+              </div>)}
           </div>
         </div>
       </section>
@@ -173,20 +163,13 @@ const AboutUs = () => {
               </div>
 
               <Link to="/">
-                <Button
-                  size="lg"
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all"
-                >
+                <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all">
                   Start Your Journey
                 </Button>
               </Link>
 
               <Link to="/">
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="border-2 border-gray-300 hover:border-blue-600 hover:text-blue-600 px-8 py-4 rounded-xl font-semibold transition-all"
-                >
+                <Button size="lg" variant="outline" className="border-2 border-gray-300 hover:border-blue-600 hover:text-blue-600 px-8 py-4 rounded-xl font-semibold transition-all">
                   Learn More
                 </Button>
               </Link>
@@ -194,11 +177,7 @@ const AboutUs = () => {
             </div>
             <div className="relative">
               <div className="relative group">
-                <img
-                  src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=600&h=400&fit=crop"
-                  alt="Healthcare team collaboration"
-                  className="rounded-2xl shadow-2xl group-hover:shadow-3xl transition-all duration-500"
-                />
+                <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=600&h=400&fit=crop" alt="Healthcare team collaboration" className="rounded-2xl shadow-2xl group-hover:shadow-3xl transition-all duration-500" />
                 <div className="absolute inset-0 bg-gradient-to-tr from-blue-600/10 to-indigo-600/10 rounded-2xl"></div>
               </div>
               
@@ -238,8 +217,7 @@ const AboutUs = () => {
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {values.map((value, index) => (
-              <Card key={index} className="group p-8 hover:shadow-xl transition-all duration-500 border-0 bg-gradient-to-br from-gray-50 to-white hover:from-white hover:to-gray-50">
+            {values.map((value, index) => <Card key={index} className="group p-8 hover:shadow-xl transition-all duration-500 border-0 bg-gradient-to-br from-gray-50 to-white hover:from-white hover:to-gray-50">
                 <div className="flex items-start space-x-6">
                   <div className="p-4 bg-white rounded-2xl shadow-sm group-hover:shadow-md transition-all duration-300">
                     {value.icon}
@@ -257,8 +235,7 @@ const AboutUs = () => {
                     </div>
                   </div>
                 </div>
-              </Card>
-            ))}
+              </Card>)}
           </div>
         </div>
       </section>
@@ -280,14 +257,9 @@ const AboutUs = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {team.map((member, index) => (
-              <Card key={index} className="group p-6 text-center hover:shadow-2xl transition-all duration-500 border-0 bg-white">
+            {team.map((member, index) => <Card key={index} className="group p-6 text-center hover:shadow-2xl transition-all duration-500 border-0 bg-white">
                 <div className="relative mb-6">
-                  <img 
-                    src={member.image} 
-                    alt={member.name}
-                    className="w-32 h-32 rounded-2xl mx-auto object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
+                  <img src={member.image} alt={member.name} className="w-32 h-32 rounded-2xl mx-auto object-cover group-hover:scale-105 transition-transform duration-300" />
                   <div className="absolute inset-0 bg-gradient-to-t from-blue-600/10 to-transparent rounded-2xl"></div>
                 </div>
                 
@@ -303,8 +275,7 @@ const AboutUs = () => {
                     {member.expertise}
                   </p>
                 </div>
-              </Card>
-            ))}
+              </Card>)}
           </div>
         </div>
       </section>
@@ -349,8 +320,6 @@ const AboutUs = () => {
           </div>
         </div>
       </section>
-    </div>
-  );
+    </div>;
 };
-
 export default AboutUs;
