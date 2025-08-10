@@ -32,6 +32,43 @@ const Auth = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
+  // Expanded illness types list
+  const illnessTypes = [
+    { value: 'diabetes_type1', label: 'Type 1 Diabetes' },
+    { value: 'diabetes_type2', label: 'Type 2 Diabetes' },
+    { value: 'hypertension', label: 'Hypertension (High Blood Pressure)' },
+    { value: 'heart_disease', label: 'Heart Disease' },
+    { value: 'asthma', label: 'Asthma' },
+    { value: 'copd', label: 'COPD (Chronic Obstructive Pulmonary Disease)' },
+    { value: 'arthritis', label: 'Arthritis' },
+    { value: 'osteoporosis', label: 'Osteoporosis' },
+    { value: 'depression', label: 'Depression' },
+    { value: 'anxiety', label: 'Anxiety Disorders' },
+    { value: 'migraine', label: 'Migraine' },
+    { value: 'epilepsy', label: 'Epilepsy' },
+    { value: 'kidney_disease', label: 'Chronic Kidney Disease' },
+    { value: 'liver_disease', label: 'Liver Disease' },
+    { value: 'thyroid', label: 'Thyroid Disorders' },
+    { value: 'cancer', label: 'Cancer' },
+    { value: 'obesity', label: 'Obesity' },
+    { value: 'eating_disorders', label: 'Eating Disorders' },
+    { value: 'fibromyalgia', label: 'Fibromyalgia' },
+    { value: 'ibs', label: 'Irritable Bowel Syndrome (IBS)' },
+    { value: 'crohns', label: "Crohn's Disease" },
+    { value: 'ulcerative_colitis', label: 'Ulcerative Colitis' },
+    { value: 'lupus', label: 'Lupus' },
+    { value: 'multiple_sclerosis', label: 'Multiple Sclerosis' },
+    { value: 'parkinsons', label: "Parkinson's Disease" },
+    { value: 'alzheimers', label: "Alzheimer's Disease" },
+    { value: 'stroke', label: 'Stroke Recovery' },
+    { value: 'sleep_apnea', label: 'Sleep Apnea' },
+    { value: 'chronic_pain', label: 'Chronic Pain' },
+    { value: 'allergies', label: 'Allergies' },
+    { value: 'psoriasis', label: 'Psoriasis' },
+    { value: 'eczema', label: 'Eczema' },
+    { value: 'other', label: 'Other' }
+  ];
+
   useEffect(() => {
     // Check if user is already authenticated
     if (user) {
@@ -347,12 +384,11 @@ const Auth = () => {
                     className="w-full px-3 py-2 border border-input bg-background rounded-md"
                   >
                     <option value="">Select a condition</option>
-                    <option value="diabetes">Diabetes</option>
-                    <option value="hypertension">Hypertension</option>
-                    <option value="heart_disease">Heart Disease</option>
-                    <option value="asthma">Asthma</option>
-                    <option value="arthritis">Arthritis</option>
-                    <option value="other">Other</option>
+                    {illnessTypes.map((illness) => (
+                      <option key={illness.value} value={illness.value}>
+                        {illness.label}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </>

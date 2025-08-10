@@ -19,8 +19,8 @@ const Premium = () => {
       return;
     }
 
-    if (planType === 'free') {
-      alert('You already have access to all free features!');
+    if (planType === 'basic') {
+      // Basic plan is free - redirect to dashboard
       window.location.href = '/dashboard';
       return;
     }
@@ -42,8 +42,8 @@ const Premium = () => {
   const plans = [
     {
       name: 'Basic',
-      price: '$3.99',
-      period: '/month',
+      price: 'Free',
+      period: '',
       description: 'Perfect for getting started with health management',
       features: [
         'Basic health tracking',
@@ -64,7 +64,7 @@ const Premium = () => {
       period: '/month',
       description: 'Complete health management solution with AI insights',
       features: [
-        'Everything in Free',
+        'Everything in Basic',
         'Advanced health analytics',
         'Personalized meal plans',
         'Hospital integration',
@@ -187,7 +187,12 @@ const Premium = () => {
                   isPremium && plan.name === 'Premium' ? 'opacity-50 cursor-not-allowed' : ''
                 }`}
               >
-                {isPremium && plan.name === 'Premium' ? 'Current Plan' : `Choose ${plan.name}`}
+                {isPremium && plan.name === 'Premium' 
+                  ? 'Current Plan' 
+                  : plan.name === 'Basic' 
+                    ? 'Get Started Free' 
+                    : `Choose ${plan.name}`
+                }
               </Button>
             </Card>
           ))}

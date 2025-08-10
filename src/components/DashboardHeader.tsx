@@ -17,7 +17,7 @@ const DashboardHeader = ({ onMenuClick, userName }: DashboardHeaderProps) => {
 
   const handleSignOut = async () => {
     await signOut();
-    navigate('/');
+    navigate('/auth');
   };
 
   return (

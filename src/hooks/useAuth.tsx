@@ -66,7 +66,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (error) {
         console.error('Signup error:', error);
       } else {
-        console.log('Signup successful');
+        console.log('Signup successful - verification email sent');
       }
       
       return { error };

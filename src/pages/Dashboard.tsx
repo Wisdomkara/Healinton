@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { Navigate } from 'react-router-dom';
 import Sidebar from '@/components/Sidebar';
 import DashboardHeader from '@/components/DashboardHeader';
 import DashboardOverview from '@/components/DashboardOverview';
@@ -20,11 +21,25 @@ import RateUs from '@/components/RateUs';
 import ThemeToggle from '@/components/ThemeToggle';
 
 const Dashboard = () => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('overview');
 
-  const userName = user?.user_metadata?.first_name || 'User';
+  // Show loading spinner while checking auth
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-lg">Loading...</div>
+      </div>
+    );
+  }
+
+  // Redirect to auth if not logged in
+  if (!user) {
+    return <Navigate to="/auth" replace />;
+  }
+
+  const userName = user?.user_metadata?.first_name || user?.email?.split('@')[0] || 'User';
 
   const renderContent = () => {
     switch (activeSection) {
