@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { usePremium } from '@/hooks/usePremium';
 import { Navigate } from 'react-router-dom';
@@ -11,12 +11,46 @@ import PremiumDashboard from '@/components/PremiumDashboard';
 import PremiumBanner from '@/components/PremiumBanner';
 import IllnessSettings from '@/components/IllnessSettings';
 import SubscriptionStatus from '@/components/SubscriptionStatus';
+import HealthMetricsForm from '@/components/HealthMetricsForm';
+import SymptomLogger from '@/components/SymptomLogger';
+import MealTracker from '@/components/MealTracker';
+import EnhancedMealTracker from '@/components/EnhancedMealTracker';
+import ShoppingList from '@/components/ShoppingList';
+import DrugStore from '@/components/DrugStore';
+import AIChat from '@/components/AIChat';
+import HealthBlog from '@/components/HealthBlog';
+import ReminderForm from '@/components/ReminderForm';
+import NotificationCenter from '@/components/NotificationCenter';
+import Settings from '@/components/Settings';
+import RateUs from '@/components/RateUs';
 
 const Dashboard = () => {
   const { user, loading: authLoading } = useAuth();
   const { isPremium, loading: premiumLoading } = usePremium();
   const [activeSection, setActiveSection] = useState('overview');
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    // Add scroll animations
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate-fade-in');
+        }
+      });
+    }, observerOptions);
+
+    // Observe all cards and sections
+    const animatedElements = document.querySelectorAll('.animate-on-scroll');
+    animatedElements.forEach((el) => observer.observe(el));
+
+    return () => observer.disconnect();
+  }, [activeSection]);
 
   if (authLoading) {
     return (
@@ -57,24 +91,136 @@ const Dashboard = () => {
       case 'overview':
         return (
           <div className="space-y-6">
-            {!isPremium && <PremiumBanner />}
+            {!isPremium && <div className="animate-on-scroll"><PremiumBanner /></div>}
             
             <div className="grid md:grid-cols-2 gap-6">
-              <IllnessSettings />
-              {isPremium && <SubscriptionStatus />}
+              <div className="animate-on-scroll"><IllnessSettings /></div>
+              {isPremium && <div className="animate-on-scroll"><SubscriptionStatus /></div>}
             </div>
             
-            {isPremium ? <PremiumDashboard /> : <DashboardOverview />}
+            <div className="animate-on-scroll">
+              {isPremium ? <PremiumDashboard /> : <DashboardOverview />}
+            </div>
+          </div>
+        );
+      case 'health-metrics':
+        return (
+          <div className="animate-on-scroll">
+            <HealthMetricsForm />
+          </div>
+        );
+      case 'symptoms':
+        return (
+          <div className="animate-on-scroll">
+            <SymptomLogger />
+          </div>
+        );
+      case 'meal-tracker':
+        return (
+          <div className="animate-on-scroll">
+            {isPremium ? <EnhancedMealTracker /> : <MealTracker />}
+          </div>
+        );
+      case 'appointments':
+        return (
+          <div className="text-center py-12 animate-on-scroll">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+              Appointments
+            </h2>
+            <p className="text-gray-600 dark:text-gray-300">
+              Appointment booking feature coming soon!
+            </p>
+          </div>
+        );
+      case 'notifications':
+        return (
+          <div className="animate-on-scroll">
+            <NotificationCenter />
+          </div>
+        );
+      case 'reminders':
+        return (
+          <div className="animate-on-scroll">
+            <ReminderForm />
+          </div>
+        );
+      case 'shopping':
+        return (
+          <div className="animate-on-scroll">
+            <ShoppingList />
+          </div>
+        );
+      case 'drugs':
+        return (
+          <div className="animate-on-scroll">
+            <DrugStore />
+          </div>
+        );
+      case 'hospital-info':
+        return (
+          <div className="text-center py-12 animate-on-scroll">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+              My Hospitals
+            </h2>
+            <p className="text-gray-600 dark:text-gray-300">
+              Hospital management feature coming soon!
+            </p>
+          </div>
+        );
+      case 'chat':
+        return (
+          <div className="animate-on-scroll">
+            <AIChat />
+          </div>
+        );
+      case 'blog':
+        return (
+          <div className="animate-on-scroll">
+            <HealthBlog />
+          </div>
+        );
+      case 'health-insurance':
+        return (
+          <div className="text-center py-12 animate-on-scroll">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+              Health Insurance
+            </h2>
+            <p className="text-gray-600 dark:text-gray-300">
+              Insurance management feature coming soon!
+            </p>
+          </div>
+        );
+      case 'rate-us':
+        return (
+          <div className="animate-on-scroll">
+            <RateUs />
+          </div>
+        );
+      case 'about':
+        return (
+          <div className="text-center py-12 animate-on-scroll">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+              About Healinton
+            </h2>
+            <p className="text-gray-600 dark:text-gray-300">
+              Learn more about our healthcare platform and mission.
+            </p>
+          </div>
+        );
+      case 'settings':
+        return (
+          <div className="animate-on-scroll">
+            <Settings />
           </div>
         );
       default:
         return (
-          <div className="text-center py-12">
+          <div className="text-center py-12 animate-on-scroll">
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
               {activeSection.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}
             </h2>
             <p className="text-gray-600 dark:text-gray-300">
-              This section is coming soon!
+              This section is being developed!
             </p>
           </div>
         );
@@ -87,7 +233,7 @@ const Dashboard = () => {
         {/* Mobile Sidebar Overlay */}
         {sidebarOpen && (
           <div 
-            className="fixed inset-0 z-40 bg-black/50 lg:hidden"
+            className="fixed inset-0 z-40 bg-black/50 lg:hidden transition-opacity duration-300"
             onClick={() => setSidebarOpen(false)}
           />
         )}
