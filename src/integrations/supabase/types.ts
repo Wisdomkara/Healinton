@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.12 (cd3cf9e)"
@@ -341,6 +341,42 @@ export type Database = {
         }
         Relationships: []
       }
+      premium_form_submissions: {
+        Row: {
+          country: string
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          phone_number: string
+          submitted_at: string
+          surname: string
+          user_id: string | null
+        }
+        Insert: {
+          country: string
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          phone_number: string
+          submitted_at?: string
+          surname: string
+          user_id?: string | null
+        }
+        Update: {
+          country?: string
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          phone_number?: string
+          submitted_at?: string
+          surname?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       premium_users: {
         Row: {
           added_by: string | null
@@ -666,38 +702,38 @@ export type Database = {
     Functions: {
       add_premium_user_manual: {
         Args: {
-          p_user_email: string
-          p_duration_months?: number
           p_added_by?: string
+          p_duration_months?: number
           p_notes?: string
+          p_user_email: string
         }
         Returns: boolean
       }
       get_premium_users_admin_data: {
         Args: Record<PropertyKey, never>
         Returns: {
-          user_id: string
-          full_name: string
-          email: string
+          added_by: string
           country: string
+          days_remaining: number
+          email: string
+          end_date: string
+          full_name: string
+          notes: string
           plan_type: string
           status: string
-          end_date: string
-          days_remaining: number
           subscription_type: string
-          added_by: string
-          notes: string
           user_created_at: string
+          user_id: string
         }[]
       }
       get_user_subscription: {
         Args: { check_user_id: string }
         Returns: {
+          days_remaining: number
+          end_date: string
           is_premium: boolean
           plan_type: string
           status: string
-          end_date: string
-          days_remaining: number
         }[]
       }
       is_user_premium: {

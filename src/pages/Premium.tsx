@@ -5,12 +5,12 @@ import { useAuth } from '@/hooks/useAuth';
 import { usePremium } from '@/hooks/usePremium';
 import { Crown, Check, Star, TrendingUp, Heart, Shield, Users, Phone } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-import PaymentModal from '@/components/PaymentModal';
+import PremiumFormModal from '@/components/PremiumFormModal';
 
 const Premium = () => {
   const { user } = useAuth();
   const { isPremium, loading } = usePremium();
-  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [showPremiumForm, setShowPremiumForm] = useState(false);
   const navigate = useNavigate();
 
   const handleSubscribe = async (planType: string) => {
@@ -26,12 +26,11 @@ const Premium = () => {
     }
 
     if (planType === 'premium') {
-      setShowPaymentModal(true);
+      setShowPremiumForm(true);
     }
   };
 
-  const handlePaymentSuccess = () => {
-    alert('Welcome to Premium! You now have access to all premium features.');
+  const handlePremiumSuccess = () => {
     navigate('/dashboard');
   };
 
@@ -60,8 +59,9 @@ const Premium = () => {
     },
     {
       name: 'Premium',
-      price: '$5',
-      period: '/month',
+      price: 'FREE',
+      period: ' until Nov 30th',
+      originalPrice: '$5/month after',
       description: 'Complete health management solution with AI insights',
       features: [
         'Everything in Basic',
@@ -164,10 +164,15 @@ const Premium = () => {
               
               <div className="text-center mb-8">
                 <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
-                <div className="flex items-baseline justify-center mb-4">
-                  <span className="text-4xl font-bold">{plan.price}</span>
+                <div className="flex items-baseline justify-center mb-2">
+                  <span className="text-4xl font-bold text-green-600">{plan.price}</span>
                   <span className="text-gray-500 dark:text-gray-400">{plan.period}</span>
                 </div>
+                {plan.originalPrice && (
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                    Then {plan.originalPrice}
+                  </p>
+                )}
                 <p className="text-gray-600 dark:text-gray-300">{plan.description}</p>
               </div>
 
@@ -187,7 +192,7 @@ const Premium = () => {
                   isPremium && plan.name === 'Premium' ? 'opacity-50 cursor-not-allowed' : ''
                 }`}
               >
-                {isPremium && plan.name === 'Premium' ? 'Current Plan' : plan.name === 'Basic' ? 'Get Started Free' : `Choose ${plan.name}`}
+                {isPremium && plan.name === 'Premium' ? 'Current Plan' : plan.name === 'Basic' ? 'Get Started Free' : `Get ${plan.name} - FREE`}
               </Button>
             </Card>
           ))}
@@ -224,7 +229,7 @@ const Premium = () => {
             <div className="relative z-10">
               <h2 className="text-3xl font-bold mb-4">Ready to Transform Your Health?</h2>
               <p className="text-xl mb-8 opacity-90">
-                Start free or get premium for just $5/month!
+                Get premium access FREE until November 30th!
               </p>
               <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
                 <Button
@@ -239,11 +244,11 @@ const Premium = () => {
                   size="lg"
                   className="bg-white/10 text-white hover:bg-white/20 font-semibold px-8 py-4 border border-white/30"
                 >
-                  Go Premium - $5/month
+                  Get Premium - FREE until Nov 30th
                 </Button>
               </div>
               <p className="text-sm mt-4 opacity-75">
-                No hidden fees. Cancel premium anytime.
+                No payment required until December 1st. Cancel anytime.
               </p>
             </div>
           </div>
@@ -251,7 +256,7 @@ const Premium = () => {
 
         {isPremium && (
           <div className="text-center bg-gradient-to-r from-green-600 to-green-700 rounded-2xl p-12 text-white">
-            <Crown className="h-16 w-16 mx-auto mb-4" />
+            <Crown className="h-16 w-16 mx-auto mb-4 text-yellow-300" />
             <h2 className="text-3xl font-bold mb-4">You're Premium!</h2>
             <p className="text-xl mb-8 opacity-90">
               Enjoy all the advanced features and premium benefits.
@@ -265,10 +270,10 @@ const Premium = () => {
         )}
       </div>
 
-      <PaymentModal 
-        isOpen={showPaymentModal}
-        onClose={() => setShowPaymentModal(false)}
-        onSuccess={handlePaymentSuccess}
+      <PremiumFormModal 
+        isOpen={showPremiumForm}
+        onClose={() => setShowPremiumForm(false)}
+        onSuccess={handlePremiumSuccess}
       />
     </div>
   );

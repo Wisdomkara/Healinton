@@ -23,10 +23,10 @@ const PremiumBanner = () => {
       <div className="relative p-6">
         <div className="flex items-center space-x-3 mb-3">
           <div className="p-2 bg-white/20 rounded-lg">
-            <Crown className="h-6 w-6 text-white" />
+            <Crown className="h-6 w-6 text-gray-300" />
           </div>
           <div>
-            <h3 className="text-lg font-bold">Go Premium - Just $5/month</h3>
+            <h3 className="text-lg font-bold">Get Premium - FREE until November 30th!</h3>
             <p className="text-primary-100 text-sm">Unlock advanced health features and AI insights</p>
           </div>
         </div>
@@ -55,7 +55,7 @@ const PremiumBanner = () => {
           <Button 
             className="w-full bg-white text-primary-600 hover:bg-gray-100 font-semibold py-3 transition-all duration-300"
 >
-  Upgrade to Premium - Only $5/month
+  Get Premium - FREE until November 30th
 </Button>
         </Link>
       </div>
