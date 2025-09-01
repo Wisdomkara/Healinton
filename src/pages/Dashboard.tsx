@@ -4,6 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { usePremium } from '@/hooks/usePremium';
 import { Navigate } from 'react-router-dom';
 import { SidebarProvider } from '@/components/ui/sidebar';
+import { supabase } from '@/integrations/supabase/client';
 import DashboardHeader from '@/components/DashboardHeader';
 import Sidebar from '@/components/Sidebar';
 import DashboardOverview from '@/components/DashboardOverview';
@@ -29,6 +30,33 @@ const Dashboard = () => {
   const { isPremium, loading: premiumLoading } = usePremium();
   const [activeSection, setActiveSection] = useState('overview');
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [userProfile, setUserProfile] = useState<any>(null);
+
+  useEffect(() => {
+    if (user) {
+      fetchUserProfile();
+    }
+  }, [user]);
+
+  const fetchUserProfile = async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (error && error.code !== 'PGRST116') {
+        console.error('Error fetching user profile:', error);
+      } else {
+        setUserProfile(data);
+      }
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+    }
+  };
 
   useEffect(() => {
     // Add scroll animations
@@ -118,7 +146,11 @@ const Dashboard = () => {
       case 'meal-tracker':
         return (
           <div className="animate-on-scroll">
-            {isPremium ? <EnhancedMealTracker /> : <MealTracker />}
+            {isPremium ? (
+              <EnhancedMealTracker />
+            ) : (
+              <MealTracker userProfile={userProfile} />
+            )}
           </div>
         );
       case 'appointments':
