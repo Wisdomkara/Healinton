@@ -40,10 +40,20 @@ const Dashboard = () => {
     );
   }
 
+  const handleMenuClick = () => {
+    // This can be used for mobile sidebar toggle if needed
+    console.log('Menu clicked');
+  };
+
+  const userName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User';
+
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8 space-y-8">
-        <DashboardHeader />
+        <DashboardHeader 
+          onMenuClick={handleMenuClick}
+          userName={userName}
+        />
         
         <div className="grid gap-6">
           {!isPremium && <PremiumBanner />}
