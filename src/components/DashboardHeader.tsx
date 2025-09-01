@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Menu, LogOut } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
+import { usePremium } from '@/hooks/usePremium';
 import ThemeToggle from '@/components/ThemeToggle';
 
 interface DashboardHeaderProps {
@@ -13,12 +14,12 @@ interface DashboardHeaderProps {
 
 const DashboardHeader = ({ onMenuClick, userName }: DashboardHeaderProps) => {
   const { signOut } = useAuth();
+  const { isPremium } = usePremium();
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
     try {
       await signOut();
-      // Redirect to auth page after successful sign out
       navigate('/auth');
     } catch (error) {
       console.error('Error signing out:', error);
@@ -33,16 +34,21 @@ const DashboardHeader = ({ onMenuClick, userName }: DashboardHeaderProps) => {
             variant="ghost"
             size="sm"
             onClick={onMenuClick}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md lg:hidden"
           >
             <Menu className="h-5 w-5 text-gray-600 dark:text-gray-400" />
           </Button>
           <div>
-            <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
+            <h1 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
               Hello, {userName}!
+              {isPremium && (
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gradient-to-r from-yellow-400 to-yellow-600 text-white">
+                  Premium
+                </span>
+              )}
             </h1>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Welcome to your dashboard
+              Welcome to your {isPremium ? 'premium' : ''} dashboard
             </p>
           </div>
         </div>
