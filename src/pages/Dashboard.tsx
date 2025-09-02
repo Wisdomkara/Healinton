@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { usePremium } from '@/hooks/usePremium';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { supabase } from '@/integrations/supabase/client';
 import DashboardHeader from '@/components/DashboardHeader';
@@ -16,6 +15,7 @@ import HealthMetricsForm from '@/components/HealthMetricsForm';
 import SymptomLogger from '@/components/SymptomLogger';
 import MealTracker from '@/components/MealTracker';
 import EnhancedMealTracker from '@/components/EnhancedMealTracker';
+import MealPlanDisplay from '@/components/MealPlanDisplay';
 import ShoppingList from '@/components/ShoppingList';
 import DrugStore from '@/components/DrugStore';
 import AIChat from '@/components/AIChat';
@@ -24,6 +24,7 @@ import ReminderForm from '@/components/ReminderForm';
 import NotificationCenter from '@/components/NotificationCenter';
 import Settings from '@/components/Settings';
 import RateUs from '@/components/RateUs';
+import HospitalBooking from '@/components/HospitalBooking';
 
 const Dashboard = () => {
   const { user, loading: authLoading } = useAuth();
@@ -31,6 +32,7 @@ const Dashboard = () => {
   const [activeSection, setActiveSection] = useState('overview');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [userProfile, setUserProfile] = useState<any>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (user) {
@@ -82,8 +84,8 @@ const Dashboard = () => {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-600"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-blue-50">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-green-600"></div>
       </div>
     );
   }
@@ -94,10 +96,10 @@ const Dashboard = () => {
 
   if (premiumLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-blue-50">
         <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-gray-200 rounded w-1/3"></div>
-          <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+          <div className="h-8 bg-green-200 rounded w-1/3"></div>
+          <div className="h-4 bg-green-200 rounded w-1/2"></div>
         </div>
       </div>
     );
@@ -108,8 +110,16 @@ const Dashboard = () => {
   };
 
   const handleSectionChange = (section: string) => {
+    // Check if user is trying to access premium-only features without premium
+    const premiumOnlyFeatures = ['appointments'];
+    
+    if (premiumOnlyFeatures.includes(section) && !isPremium) {
+      navigate('/premium');
+      return;
+    }
+
     setActiveSection(section);
-    setSidebarOpen(false); // Close sidebar on mobile after selection
+    setSidebarOpen(false);
   };
 
   const userName = user?.user_metadata?.first_name || user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User';
@@ -128,6 +138,11 @@ const Dashboard = () => {
             
             <div className="animate-on-scroll">
               {isPremium ? <PremiumDashboard /> : <DashboardOverview />}
+            </div>
+
+            {/* Always show diet information for all users */}
+            <div className="animate-on-scroll">
+              <MealPlanDisplay />
             </div>
           </div>
         );
@@ -154,14 +169,18 @@ const Dashboard = () => {
           </div>
         );
       case 'appointments':
+        // Premium users get full access, basic users are redirected above
         return (
-          <div className="text-center py-12 animate-on-scroll">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-              Appointments
-            </h2>
-            <p className="text-gray-600 dark:text-gray-300">
-              Appointment booking feature coming soon!
-            </p>
+          <div className="animate-on-scroll">
+            <div className="bg-gradient-to-r from-green-50 to-blue-50 p-6 rounded-lg">
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                Book Your Appointment
+              </h2>
+              <p className="text-gray-600 mb-4">
+                Schedule appointments with your healthcare providers easily.
+              </p>
+              <HospitalBooking />
+            </div>
           </div>
         );
       case 'notifications':
@@ -189,14 +208,35 @@ const Dashboard = () => {
           </div>
         );
       case 'hospital-info':
+        // Premium users get full access, basic users see upgrade prompt
         return (
-          <div className="text-center py-12 animate-on-scroll">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-              My Hospitals
-            </h2>
-            <p className="text-gray-600 dark:text-gray-300">
-              Hospital management feature coming soon!
-            </p>
+          <div className="animate-on-scroll">
+            {isPremium ? (
+              <div className="bg-gradient-to-r from-green-50 to-blue-50 p-6 rounded-lg">
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                  My Hospitals
+                </h2>
+                <p className="text-gray-600 mb-4">
+                  Manage your hospital preferences and view booking history.
+                </p>
+                <HospitalBooking />
+              </div>
+            ) : (
+              <div className="text-center py-12 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg">
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                  Hospital Management - Premium Feature
+                </h2>
+                <p className="text-gray-600 mb-6">
+                  Upgrade to Premium to access hospital management features including direct booking and record synchronization.
+                </p>
+                <button
+                  onClick={() => navigate('/premium')}
+                  className="bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-3 rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-300"
+                >
+                  Upgrade to Premium
+                </button>
+              </div>
+            )}
           </div>
         );
       case 'chat':
@@ -213,13 +253,14 @@ const Dashboard = () => {
         );
       case 'health-insurance':
         return (
-          <div className="text-center py-12 animate-on-scroll">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+          <div className="text-center py-12 animate-on-scroll bg-gradient-to-r from-green-50 to-blue-50 rounded-lg">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">
               Health Insurance
             </h2>
-            <p className="text-gray-600 dark:text-gray-300">
-              Insurance management feature coming soon!
+            <p className="text-gray-600 mb-6">
+              Insurance management feature coming soon! We're working on integrating with major insurance providers.
             </p>
+            <div className="animate-pulse bg-green-200 h-4 w-1/3 mx-auto rounded"></div>
           </div>
         );
       case 'rate-us':
@@ -230,12 +271,13 @@ const Dashboard = () => {
         );
       case 'about':
         return (
-          <div className="text-center py-12 animate-on-scroll">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+          <div className="text-center py-12 animate-on-scroll bg-gradient-to-r from-green-50 to-blue-50 rounded-lg">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">
               About Healinton
             </h2>
-            <p className="text-gray-600 dark:text-gray-300">
-              Learn more about our healthcare platform and mission.
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Healinton is your comprehensive healthcare management platform, designed to help you track your health journey, 
+              manage medications, connect with healthcare providers, and maintain optimal wellness.
             </p>
           </div>
         );
@@ -247,12 +289,12 @@ const Dashboard = () => {
         );
       default:
         return (
-          <div className="text-center py-12 animate-on-scroll">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+          <div className="text-center py-12 animate-on-scroll bg-gradient-to-r from-green-50 to-blue-50 rounded-lg">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">
               {activeSection.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}
             </h2>
-            <p className="text-gray-600 dark:text-gray-300">
-              This section is being developed!
+            <p className="text-gray-600">
+              This section is being developed! Stay tuned for updates.
             </p>
           </div>
         );
@@ -261,7 +303,7 @@ const Dashboard = () => {
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-background">
+      <div className="min-h-screen flex w-full bg-gradient-to-br from-green-50 via-white to-blue-50">
         {/* Mobile Sidebar Overlay */}
         {sidebarOpen && (
           <div 
@@ -291,7 +333,7 @@ const Dashboard = () => {
           />
           
           <main className="flex-1 p-6 lg:p-8 overflow-auto">
-            <div className="max-w-7xl mx-auto">
+            <div className="max-w-7xl mx-auto space-y-6">
               {renderContent()}
             </div>
           </main>

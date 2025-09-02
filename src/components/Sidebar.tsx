@@ -25,7 +25,8 @@ import {
   Pill,
   Building2,
   Activity,
-  LogOut
+  LogOut,
+  Sparkles
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -60,22 +61,6 @@ const Sidebar = ({ isOpen = true, onClose, onSectionChange, activeSection = 'ove
   ];
 
   const handleNavClick = (section: string, itemIsPremium: boolean) => {
-    // Only redirect to premium if user is not premium and feature requires premium
-    if (itemIsPremium && !isPremium) {
-      window.location.href = '/premium';
-      return;
-    }
-
-    if (section === 'health-insurance') {
-      window.location.href = '/health-insurance';
-      return;
-    }
-
-    if (section === 'about') {
-      window.location.href = '/about';
-      return;
-    }
-
     if (onSectionChange) {
       onSectionChange(section);
     }
@@ -86,33 +71,48 @@ const Sidebar = ({ isOpen = true, onClose, onSectionChange, activeSection = 'ove
   };
 
   return (
-    <div className="flex flex-col h-full bg-white dark:bg-gray-800 shadow-lg border-r border-gray-200 dark:border-gray-700">
+    <div className="flex flex-col h-full bg-gradient-to-b from-green-50 to-white shadow-lg border-r border-green-200">
       {/* Header */}
-      <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+      <div className="flex items-center justify-between p-6 border-b border-green-200 bg-gradient-to-r from-green-100 to-green-50">
         <div className="flex items-center space-x-2">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+          <h2 className="text-xl font-bold text-green-800">
             Healinton Hub
           </h2>
-          {isPremium && <Crown className="h-5 w-5 text-yellow-500" />}
+          {isPremium && <Crown className="h-5 w-5 text-yellow-500 animate-pulse" />}
         </div>
         {onClose && (
           <Button
             variant="ghost"
             size="sm"
             onClick={onClose}
-            className="lg:hidden hover:bg-gray-100 dark:hover:bg-gray-700"
+            className="lg:hidden hover:bg-green-100"
           >
             <X className="h-4 w-4" />
           </Button>
         )}
       </div>
 
+      {/* Premium Upgrade Banner for Basic Users */}
+      {!isPremium && (
+        <div className="p-4 border-b border-green-200">
+          <div className="bg-gradient-to-r from-green-500 to-green-600 text-white p-3 rounded-lg text-center">
+            <Sparkles className="h-5 w-5 mx-auto mb-2 animate-pulse" />
+            <p className="text-sm font-semibold mb-2">Upgrade to Premium!</p>
+            <Link to="/premium">
+              <Button size="sm" className="bg-white text-green-600 hover:bg-gray-100 text-xs">
+                Get Premium - FREE until Nov 30th
+              </Button>
+            </Link>
+          </div>
+        </div>
+      )}
+
       {/* Back to Home Button */}
-      <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+      <div className="p-4 border-b border-green-200">
         <Link to="/">
           <Button
             variant="outline"
-            className="w-full justify-start text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 border-blue-200 dark:border-blue-800 transition-all duration-200"
+            className="w-full justify-start text-green-700 hover:bg-green-50 hover:text-green-800 border-green-200 transition-all duration-200"
           >
             <ArrowLeft className="h-4 w-4 mr-3" />
             <span className="flex-1 text-left">Back to Home</span>
@@ -134,15 +134,15 @@ const Sidebar = ({ isOpen = true, onClose, onSectionChange, activeSection = 'ove
                 variant={isActive ? "default" : "ghost"}
                 className={`w-full justify-start h-10 transition-all duration-200 ${
                   isActive 
-                    ? 'bg-green-600 text-white hover:bg-green-700 shadow-sm transform scale-105' 
-                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-green-600 dark:hover:text-green-400 hover:scale-105'
+                    ? 'bg-gradient-to-r from-green-600 to-green-700 text-white hover:from-green-700 hover:to-green-800 shadow-md transform scale-105' 
+                    : 'text-gray-700 hover:bg-green-50 hover:text-green-700 hover:scale-105'
                 }`}
                 onClick={() => handleNavClick(item.section, item.isPremium)}
               >
                 <Icon className="h-4 w-4 mr-3 flex-shrink-0" />
                 <span className="flex-1 text-left truncate">{item.label}</span>
                 {showPremiumBadge && (
-                  <Crown className="h-3 w-3 text-yellow-500 ml-1 flex-shrink-0" />
+                  <Crown className="h-3 w-3 text-yellow-500 ml-1 flex-shrink-0 animate-pulse" />
                 )}
                 {item.badge && (
                   <Badge variant="destructive" className="text-xs ml-1 flex-shrink-0 animate-pulse">
@@ -156,27 +156,27 @@ const Sidebar = ({ isOpen = true, onClose, onSectionChange, activeSection = 'ove
       </nav>
 
       {/* User info and sign out */}
-      <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+      <div className="p-4 border-t border-green-200 bg-green-50">
         <div className="flex items-center space-x-3 mb-3">
-          <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center animate-pulse">
+          <div className="w-8 h-8 bg-gradient-to-r from-green-600 to-green-700 rounded-full flex items-center justify-center">
             <span className="text-white text-sm font-medium">
               {user?.user_metadata?.first_name?.charAt(0) || user?.email?.charAt(0) || 'U'}
             </span>
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+            <p className="text-sm font-medium text-gray-900 truncate">
               {user?.user_metadata?.first_name || user?.email?.split('@')[0] || 'User'}
             </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400 truncate flex items-center">
+            <p className="text-xs text-gray-500 truncate flex items-center">
               {user?.email}
-              {isPremium && <Crown className="h-3 w-3 text-yellow-500 ml-1" />}
+              {isPremium && <Crown className="h-3 w-3 text-yellow-500 ml-1 animate-pulse" />}
             </p>
           </div>
         </div>
         <Button
           variant="ghost"
           onClick={handleSignOut}
-          className="w-full justify-start text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200"
+          className="w-full justify-start text-gray-600 hover:text-gray-900 hover:bg-green-100 transition-all duration-200"
         >
           <LogOut className="h-4 w-4 mr-3" />
           Sign Out
