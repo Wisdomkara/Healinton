@@ -51,7 +51,7 @@ const Sidebar = ({ isOpen = true, onClose, onSectionChange, activeSection = 'ove
     { icon: Utensils, label: 'Meal Tracker', section: 'meal-tracker', isPremium: false },
     { icon: ShoppingCart, label: 'Shopping List', section: 'shopping', isPremium: false },
     { icon: Pill, label: 'Drug Store', section: 'drugs', isPremium: false },
-    { icon: Building2, label: 'My Hospitals', section: 'hospital-info', isPremium: false },
+    { icon: Building2, label: 'My Hospitals', section: 'hospital-info', isPremium: true },
     { icon: MessageSquare, label: 'AI Chat', section: 'chat', isPremium: false },
     { icon: FileText, label: 'Health Blog', section: 'blog', isPremium: false },
     { icon: Shield, label: 'Health Insurance', section: 'health-insurance', isPremium: false },
@@ -92,7 +92,7 @@ const Sidebar = ({ isOpen = true, onClose, onSectionChange, activeSection = 'ove
         )}
       </div>
 
-      {/* Premium Upgrade Banner for Basic Users */}
+      {/* Premium Upgrade Banner - Only for Basic Users */}
       {!isPremium && (
         <div className="p-4 border-b border-green-200">
           <div className="bg-gradient-to-r from-green-500 to-green-600 text-white p-3 rounded-lg text-center">
@@ -103,6 +103,17 @@ const Sidebar = ({ isOpen = true, onClose, onSectionChange, activeSection = 'ove
                 Get Premium - FREE until Nov 30th
               </Button>
             </Link>
+          </div>
+        </div>
+      )}
+
+      {/* Premium Status Display - Only for Premium Users */}
+      {isPremium && (
+        <div className="p-4 border-b border-green-200">
+          <div className="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white p-3 rounded-lg text-center">
+            <Crown className="h-5 w-5 mx-auto mb-2 animate-pulse" />
+            <p className="text-sm font-semibold">Premium Active</p>
+            <p className="text-xs text-yellow-100">All features unlocked</p>
           </div>
         </div>
       )}

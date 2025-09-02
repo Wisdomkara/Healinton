@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { usePremium } from '@/hooks/usePremium';
@@ -110,14 +111,6 @@ const Dashboard = () => {
   };
 
   const handleSectionChange = (section: string) => {
-    // Check if user is trying to access premium-only features without premium
-    const premiumOnlyFeatures = ['appointments'];
-    
-    if (premiumOnlyFeatures.includes(section) && !isPremium) {
-      navigate('/premium');
-      return;
-    }
-
     setActiveSection(section);
     setSidebarOpen(false);
   };
@@ -128,16 +121,17 @@ const Dashboard = () => {
     switch (activeSection) {
       case 'overview':
         return (
-          <div className="space-y-6">
+          <div className="space-y-4">
+            {/* Only show premium banner for basic users */}
             {!isPremium && <div className="animate-on-scroll"><PremiumBanner /></div>}
             
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="grid md:grid-cols-2 gap-4">
               <div className="animate-on-scroll"><IllnessSettings /></div>
               {isPremium && <div className="animate-on-scroll"><SubscriptionStatus /></div>}
             </div>
             
             <div className="animate-on-scroll">
-              {isPremium ? <PremiumDashboard /> : <DashboardOverview />}
+              {isPremium ? <PremiumDashboard /> : <DashboardOverview onSectionChange={handleSectionChange} />}
             </div>
 
             {/* Always show diet information for all users */}
@@ -169,18 +163,34 @@ const Dashboard = () => {
           </div>
         );
       case 'appointments':
-        // Premium users get full access, basic users are redirected above
         return (
           <div className="animate-on-scroll">
-            <div className="bg-gradient-to-r from-green-50 to-blue-50 p-6 rounded-lg">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                Book Your Appointment
-              </h2>
-              <p className="text-gray-600 mb-4">
-                Schedule appointments with your healthcare providers easily.
-              </p>
-              <HospitalBooking />
-            </div>
+            {isPremium ? (
+              <div className="bg-gradient-to-r from-green-50 to-blue-50 p-6 rounded-lg">
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                  Book Your Appointment
+                </h2>
+                <p className="text-gray-600 mb-4">
+                  Schedule appointments with your healthcare providers easily.
+                </p>
+                <HospitalBooking />
+              </div>
+            ) : (
+              <div className="text-center py-12 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg">
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                  Appointments - Premium Feature
+                </h2>
+                <p className="text-gray-600 mb-6">
+                  Upgrade to Premium to access appointment booking and scheduling features.
+                </p>
+                <button
+                  onClick={() => navigate('/premium')}
+                  className="bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-3 rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-300"
+                >
+                  Upgrade to Premium
+                </button>
+              </div>
+            )}
           </div>
         );
       case 'notifications':
@@ -208,7 +218,6 @@ const Dashboard = () => {
           </div>
         );
       case 'hospital-info':
-        // Premium users get full access, basic users see upgrade prompt
         return (
           <div className="animate-on-scroll">
             {isPremium ? (
@@ -332,8 +341,8 @@ const Dashboard = () => {
             userName={userName}
           />
           
-          <main className="flex-1 p-6 lg:p-8 overflow-auto">
-            <div className="max-w-7xl mx-auto space-y-6">
+          <main className="flex-1 p-4 lg:p-6 overflow-auto">
+            <div className="max-w-7xl mx-auto space-y-4">
               {renderContent()}
             </div>
           </main>
