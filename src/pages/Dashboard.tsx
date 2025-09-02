@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { usePremium } from '@/hooks/usePremium';
@@ -22,6 +21,7 @@ const Dashboard = () => {
   const { user, loading: authLoading } = useAuth();
   const { isPremium, loading: premiumLoading } = usePremium();
   const [profile, setProfile] = useState<any>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -44,6 +44,20 @@ const Dashboard = () => {
     } catch (error) {
       console.error('Error fetching profile:', error);
     }
+  };
+
+  const handleMenuClick = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
+  const getUserName = () => {
+    if (profile?.first_name) {
+      return profile.first_name;
+    }
+    if (user?.user_metadata?.first_name) {
+      return user.user_metadata.first_name;
+    }
+    return 'Friend';
   };
 
   if (authLoading || premiumLoading) {
@@ -105,70 +119,123 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-      <div className="container mx-auto px-4 py-6 space-y-6">
-        <DashboardHeader />
-
+      <DashboardHeader 
+        onMenuClick={handleMenuClick}
+        userName={getUserName()}
+      />
+      
+      <div className="container mx-auto px-4 py-6 space-y-4">
         {/* Welcome Section with Premium Upgrade */}
         <div className="text-center space-y-4">
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
-            Welcome back, {profile?.first_name || 'Friend'}! 👋
+            Welcome back, {getUserName()}! 👋
           </h1>
           <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
             Take control of your health journey with personalized insights and recommendations
           </p>
           
           {/* Premium Upgrade Banner for Basic Users */}
-          <Card className="p-4 bg-gradient-to-r from-yellow-100 to-orange-100 dark:from-yellow-900/20 dark:to-orange-900/20 border-yellow-300">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <Crown className="h-6 w-6 text-yellow-600" />
-                <div className="text-left">
-                  <p className="font-semibold text-yellow-800 dark:text-yellow-200">Upgrade to Premium</p>
-                  <p className="text-sm text-yellow-700 dark:text-yellow-300">Unlock advanced features, AI insights, and priority support</p>
+          {!isPremium && (
+            <Card className="p-4 bg-gradient-to-r from-green-100 to-emerald-100 dark:from-green-900/20 dark:to-emerald-900/20 border-green-300">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <Crown className="h-6 w-6 text-green-600" />
+                  <div className="text-left">
+                    <p className="font-semibold text-green-800 dark:text-green-200">Upgrade to Premium</p>
+                    <p className="text-sm text-green-700 dark:text-green-300">Unlock advanced features, AI insights, and priority support</p>
+                  </div>
                 </div>
+                <Link to="/premium">
+                  <Button className="bg-green-600 hover:bg-green-700 text-white">
+                    <Crown className="h-4 w-4 mr-2" />
+                    Upgrade Now
+                  </Button>
+                </Link>
               </div>
-              <Link to="/premium">
-                <Button className="bg-yellow-600 hover:bg-yellow-700 text-white">
-                  <Crown className="h-4 w-4 mr-2" />
-                  Upgrade Now
-                </Button>
-              </Link>
-            </div>
-          </Card>
+            </Card>
+          )}
         </div>
 
         {/* Quick Actions */}
-        <Card className="p-6">
+        <Card className="p-4">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Quick Actions</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {quickActions.map((action, index) => (
-              <Link key={index} to={action.action} className="block">
-                <Button
-                  variant="outline"
-                  className="h-auto p-4 flex flex-col items-center gap-2 w-full hover:shadow-md transition-all relative"
-                >
-                  {action.premium && (
-                    <Badge className="absolute -top-2 -right-2 bg-yellow-500 text-white">
-                      <Crown className="h-3 w-3" />
-                    </Badge>
-                  )}
-                  <div className={`p-2 rounded-lg ${action.color} text-white`}>
-                    {action.icon}
-                  </div>
-                  <div className="text-center">
-                    <p className="font-semibold text-sm">{action.title}</p>
-                    <p className="text-xs text-gray-500">{action.description}</p>
-                  </div>
-                </Button>
-              </Link>
-            ))}
+            <Link to={isPremium ? "/appointments" : "/premium"} className="block">
+              <Button
+                variant="outline"
+                className="h-auto p-4 flex flex-col items-center gap-2 w-full hover:shadow-md transition-all relative"
+              >
+                {!isPremium && (
+                  <Badge className="absolute -top-2 -right-2 bg-green-500 text-white">
+                    <Crown className="h-3 w-3" />
+                  </Badge>
+                )}
+                <div className="p-2 rounded-lg bg-blue-500 text-white">
+                  <Calendar className="h-5 w-5" />
+                </div>
+                <div className="text-center">
+                  <p className="font-semibold text-sm">Book Appointment</p>
+                  <p className="text-xs text-gray-500">Schedule with healthcare providers</p>
+                </div>
+              </Button>
+            </Link>
+
+            <Link to="/drugs" className="block">
+              <Button
+                variant="outline"
+                className="h-auto p-4 flex flex-col items-center gap-2 w-full hover:shadow-md transition-all"
+              >
+                <div className="p-2 rounded-lg bg-green-500 text-white">
+                  <Pill className="h-5 w-5" />
+                </div>
+                <div className="text-center">
+                  <p className="font-semibold text-sm">Drug Store</p>
+                  <p className="text-xs text-gray-500">Order medications online</p>
+                </div>
+              </Button>
+            </Link>
+
+            <Link to={isPremium ? "/analytics" : "/premium"} className="block">
+              <Button
+                variant="outline"
+                className="h-auto p-4 flex flex-col items-center gap-2 w-full hover:shadow-md transition-all relative"
+              >
+                {!isPremium && (
+                  <Badge className="absolute -top-2 -right-2 bg-green-500 text-white">
+                    <Crown className="h-3 w-3" />
+                  </Badge>
+                )}
+                <div className="p-2 rounded-lg bg-purple-500 text-white">
+                  <TrendingUp className="h-5 w-5" />
+                </div>
+                <div className="text-center">
+                  <p className="font-semibold text-sm">Health Analytics</p>
+                  <p className="text-xs text-gray-500">Track your progress</p>
+                </div>
+              </Button>
+            </Link>
+
+            <Link to="/blog" className="block">
+              <Button
+                variant="outline"
+                className="h-auto p-4 flex flex-col items-center gap-2 w-full hover:shadow-md transition-all"
+              >
+                <div className="p-2 rounded-lg bg-orange-500 text-white">
+                  <BookOpen className="h-5 w-5" />
+                </div>
+                <div className="text-center">
+                  <p className="font-semibold text-sm">Health Blog</p>
+                  <p className="text-xs text-gray-500">Read health articles</p>
+                </div>
+              </Button>
+            </Link>
           </div>
         </Card>
 
         {/* Main Dashboard Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           {/* Left Column */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-4">
             {/* Health Stats */}
             <HealthStatsWidget />
             
@@ -180,7 +247,7 @@ const Dashboard = () => {
           </div>
 
           {/* Right Column */}
-          <div className="space-y-6">
+          <div className="space-y-4">
             {/* AI Assistant */}
             <AIAssistantWidget />
             
@@ -208,8 +275,8 @@ const Dashboard = () => {
         </div>
 
         {/* Bottom Section - Features Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card className="p-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Card className="p-4">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 flex items-center">
               <Calendar className="h-5 w-5 text-green-600 mr-2" />
               Appointment Management
@@ -217,15 +284,23 @@ const Dashboard = () => {
             <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
               Book and manage appointments with healthcare providers seamlessly.
             </p>
-            <Link to="/premium">
-              <Button size="sm" className="bg-green-600 hover:bg-green-700">
-                <Crown className="h-4 w-4 mr-2" />
-                Upgrade for Access
-              </Button>
-            </Link>
+            {isPremium ? (
+              <Link to="/appointments">
+                <Button size="sm" className="bg-green-600 hover:bg-green-700">
+                  Book Appointment
+                </Button>
+              </Link>
+            ) : (
+              <Link to="/premium">
+                <Button size="sm" className="bg-green-600 hover:bg-green-700">
+                  <Crown className="h-4 w-4 mr-2" />
+                  Upgrade for Access
+                </Button>
+              </Link>
+            )}
           </Card>
 
-          <Card className="p-6">
+          <Card className="p-4">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 flex items-center">
               <Pill className="h-5 w-5 text-blue-600 mr-2" />
               Medication Management
