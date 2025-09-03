@@ -42,13 +42,15 @@ const Sidebar = ({ isOpen = true, onClose, onSectionChange, activeSection = 'ove
 
   const navItems = [
     { icon: Home, label: 'Dashboard', section: 'overview', isPremium: false },
-    { icon: Heart, label: 'Health Metrics', section: 'health-metrics', isPremium: true },
-    { icon: Stethoscope, label: 'Symptoms', section: 'symptoms', isPremium: true },
-    { icon: Calendar, label: 'Appointments', section: 'appointments', isPremium: true },
+    { icon: Heart, label: 'Health Metrics', section: 'health-metrics', isPremium: false },
+    { icon: Stethoscope, label: 'Symptoms', section: 'symptoms', isPremium: false },
+    { icon: Calendar, label: 'Appointments', section: 'appointments', isPremium: false },
     { icon: Bell, label: 'Notifications', section: 'notifications', badge: 3, isPremium: false },
-    { icon: Bell, label: 'Reminders', section: 'reminders', isPremium: true },
-    { icon: Utensils, label: 'Meal Tracker', section: 'meal-tracker', isPremium: true },
-    { icon: ShoppingCart, label: 'Shopping List', section: 'shopping', isPremium: true },
+    { icon: Bell, label: 'Reminders', section: 'reminders', isPremium: false },
+    { icon: Utensils, label: 'Meal Tracker', section: 'meal-tracker', isPremium: false },
+    { icon: Calendar, label: 'Weekly Calendar', section: 'weekly-calendar', isPremium: false },
+    { icon: Crown, label: 'Admin Premium', section: 'admin-premium', isPremium: false },
+    { icon: ShoppingCart, label: 'Shopping List', section: 'shopping', isPremium: false },
     { icon: Pill, label: 'Drug Store', section: 'drugs', isPremium: false },
     { icon: Building2, label: 'My Hospitals', section: 'hospital-info', isPremium: false },
     { icon: MessageSquare, label: 'AI Chat', section: 'chat', isPremium: false },
@@ -60,11 +62,8 @@ const Sidebar = ({ isOpen = true, onClose, onSectionChange, activeSection = 'ove
   ];
 
   const handleNavClick = (section: string, itemIsPremium: boolean) => {
-    if (itemIsPremium && !isPremium) {
-      window.location.href = '/premium';
-      return;
-    }
-
+    // All features are free until November 30, 2025, so no premium checks needed
+    
     if (section === 'health-insurance') {
       window.location.href = '/health-insurance';
       return;
@@ -135,9 +134,7 @@ const Sidebar = ({ isOpen = true, onClose, onSectionChange, activeSection = 'ove
               >
                 <Icon className="h-4 w-4 mr-3 flex-shrink-0" />
                 <span className="flex-1 text-left truncate">{item.label}</span>
-                {item.isPremium && (
-                  <Crown className="h-3 w-3 text-yellow-500 ml-1 flex-shrink-0" />
-                )}
+                {/* Remove premium crown since everything is free until Nov 30, 2025 */}
                 {item.badge && (
                   <Badge variant="destructive" className="text-xs ml-1 flex-shrink-0">
                     {item.badge}

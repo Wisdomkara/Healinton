@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.12 (cd3cf9e)"
@@ -262,7 +262,15 @@ export type Database = {
           meal_time?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "meal_completions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       meal_tracking: {
         Row: {
@@ -341,6 +349,42 @@ export type Database = {
         }
         Relationships: []
       }
+      premium_form_submissions: {
+        Row: {
+          country: string
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          phone_number: string
+          submitted_at: string
+          surname: string
+          user_id: string | null
+        }
+        Insert: {
+          country: string
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          phone_number: string
+          submitted_at?: string
+          surname: string
+          user_id?: string | null
+        }
+        Update: {
+          country?: string
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          phone_number?: string
+          submitted_at?: string
+          surname?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       premium_users: {
         Row: {
           added_by: string | null
@@ -370,6 +414,42 @@ export type Database = {
           is_active?: boolean
           notes?: string | null
           subscription_type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      premium_users_admin: {
+        Row: {
+          added_at: string
+          added_by: string | null
+          email: string
+          expires_at: string | null
+          full_name: string | null
+          id: string
+          is_active: boolean
+          notes: string | null
+          user_id: string
+        }
+        Insert: {
+          added_at?: string
+          added_by?: string | null
+          email: string
+          expires_at?: string | null
+          full_name?: string | null
+          id?: string
+          is_active?: boolean
+          notes?: string | null
+          user_id: string
+        }
+        Update: {
+          added_at?: string
+          added_by?: string | null
+          email?: string
+          expires_at?: string | null
+          full_name?: string | null
+          id?: string
+          is_active?: boolean
+          notes?: string | null
           user_id?: string
         }
         Relationships: []
@@ -659,6 +739,42 @@ export type Database = {
           },
         ]
       }
+      weekly_meal_plans: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          day_of_week: number
+          id: string
+          is_completed: boolean | null
+          meal_name: string
+          meal_type: string
+          user_id: string
+          week_start_date: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          day_of_week: number
+          id?: string
+          is_completed?: boolean | null
+          meal_name: string
+          meal_type: string
+          user_id: string
+          week_start_date: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          day_of_week?: number
+          id?: string
+          is_completed?: boolean | null
+          meal_name?: string
+          meal_type?: string
+          user_id?: string
+          week_start_date?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -666,38 +782,56 @@ export type Database = {
     Functions: {
       add_premium_user_manual: {
         Args: {
-          p_user_email: string
-          p_duration_months?: number
           p_added_by?: string
+          p_duration_months?: number
           p_notes?: string
+          p_user_email: string
         }
         Returns: boolean
+      }
+      check_and_update_subscription_status: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      generate_weekly_meal_plan: {
+        Args: { p_user_id: string }
+        Returns: undefined
       }
       get_premium_users_admin_data: {
         Args: Record<PropertyKey, never>
         Returns: {
-          user_id: string
-          full_name: string
-          email: string
+          added_by: string
           country: string
+          days_remaining: number
+          email: string
+          end_date: string
+          full_name: string
+          notes: string
           plan_type: string
           status: string
-          end_date: string
-          days_remaining: number
           subscription_type: string
-          added_by: string
-          notes: string
           user_created_at: string
+          user_id: string
         }[]
       }
       get_user_subscription: {
         Args: { check_user_id: string }
         Returns: {
+          days_remaining: number
+          end_date: string
           is_premium: boolean
           plan_type: string
           status: string
-          end_date: string
+        }[]
+      }
+      get_user_subscription_free: {
+        Args: { check_user_id: string }
+        Returns: {
           days_remaining: number
+          end_date: string
+          is_premium: boolean
+          plan_type: string
+          status: string
         }[]
       }
       is_user_premium: {

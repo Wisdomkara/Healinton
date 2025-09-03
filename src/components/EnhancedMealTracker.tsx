@@ -81,6 +81,32 @@ const EnhancedMealTracker = () => {
         [mealTime]: isCompleted
       }));
 
+      // Update analytics for health metrics when meal is completed
+      if (isCompleted) {
+        await supabase
+          .from('user_analytics')
+          .upsert({
+            user_id: user.id,
+            date: currentDate,
+            metric_type: 'meal_completed',
+            value: 1
+          }, {
+            onConflict: 'user_id,date,metric_type'
+          });
+
+        // Also update health metrics indirectly (meal completion affects health)  
+        await supabase
+          .from('health_metrics')
+          .upsert({
+            user_id: user.id,
+            recorded_at: new Date().toISOString(),
+            weight: null, // Will be updated separately if needed
+            blood_pressure_systolic: null,
+            blood_pressure_diastolic: null,
+            blood_sugar: null
+          });
+      }
+
       toast({
         title: isCompleted ? 'Meal Completed!' : 'Meal Unchecked',
         description: `${mealTime.charAt(0).toUpperCase() + mealTime.slice(1)} has been ${isCompleted ? 'marked as completed' : 'unchecked'}.`,

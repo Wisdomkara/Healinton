@@ -10,6 +10,8 @@ import EnhancedHospitalBooking from '@/components/EnhancedHospitalBooking';
 import NotificationSettings from '@/components/NotificationSettings';
 import ReminderForm from '@/components/ReminderForm';
 import EnhancedMealTracker from '@/components/EnhancedMealTracker';
+import WeeklyMealCalendar from '@/components/WeeklyMealCalendar';
+import AdminPremiumManager from '@/components/AdminPremiumManager';
 import ShoppingList from '@/components/ShoppingList';
 import AIChat from '@/components/AIChat';
 import HealthBlog from '@/components/HealthBlog';
@@ -44,6 +46,10 @@ const Dashboard = () => {
         return <ReminderForm />;
       case 'meal-tracker':
         return <EnhancedMealTracker />;
+      case 'weekly-calendar':
+        return <WeeklyMealCalendar />;
+      case 'admin-premium':
+        return <AdminPremiumManager />;
       case 'shopping':
         return <ShoppingList />;
       case 'drugs':
