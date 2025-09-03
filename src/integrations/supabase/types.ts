@@ -717,6 +717,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      check_and_update_subscription_status: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       get_premium_users_admin_data: {
         Args: Record<PropertyKey, never>
         Returns: {
