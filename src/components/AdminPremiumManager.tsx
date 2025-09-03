@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Crown, Plus, User, Calendar, Check, X } from 'lucide-react';
+import { Crown, Plus, User, Calendar, Check, X, Shield } from 'lucide-react';
 
 interface PremiumUser {
   id: string;
@@ -27,6 +27,7 @@ const AdminPremiumManager = () => {
   const [premiumUsers, setPremiumUsers] = useState<PremiumUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     full_name: '',
@@ -34,8 +35,20 @@ const AdminPremiumManager = () => {
   });
 
   useEffect(() => {
+    checkAdminStatus();
     fetchPremiumUsers();
   }, []);
+
+  const checkAdminStatus = async () => {
+    try {
+      const { data, error } = await supabase.rpc('is_admin');
+      if (error) throw error;
+      setIsAdmin(data || false);
+    } catch (error) {
+      console.error('Error checking admin status:', error);
+      setIsAdmin(false);
+    }
+  };
 
   const fetchPremiumUsers = async () => {
     try {
@@ -141,6 +154,20 @@ const AdminPremiumManager = () => {
       <div className="flex justify-center items-center p-8">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
+    );
+  }
+
+  if (!isAdmin) {
+    return (
+      <Card className="p-8 text-center">
+        <Shield className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+          Admin Access Required
+        </h3>
+        <p className="text-gray-500 dark:text-gray-400">
+          You need administrator privileges to access the premium users manager.
+        </p>
+      </Card>
     );
   }
 

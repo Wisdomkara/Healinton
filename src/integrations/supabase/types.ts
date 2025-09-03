@@ -464,6 +464,7 @@ export type Database = {
           id: string
           illness_type: string | null
           last_name: string | null
+          role: string | null
           updated_at: string | null
         }
         Insert: {
@@ -475,6 +476,7 @@ export type Database = {
           id: string
           illness_type?: string | null
           last_name?: string | null
+          role?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -486,6 +488,7 @@ export type Database = {
           id?: string
           illness_type?: string | null
           last_name?: string | null
+          role?: string | null
           updated_at?: string | null
         }
         Relationships: []
@@ -793,9 +796,17 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      demote_admin_to_user: {
+        Args: { target_user_email: string }
+        Returns: boolean
+      }
       generate_weekly_meal_plan: {
         Args: { p_user_id: string }
         Returns: undefined
+      }
+      get_current_user_role: {
+        Args: Record<PropertyKey, never>
+        Returns: string
       }
       get_premium_users_admin_data: {
         Args: Record<PropertyKey, never>
@@ -834,8 +845,16 @@ export type Database = {
           status: string
         }[]
       }
+      is_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
       is_user_premium: {
         Args: { check_user_id: string }
+        Returns: boolean
+      }
+      promote_user_to_admin: {
+        Args: { target_user_email: string }
         Returns: boolean
       }
       remove_premium_user_manual: {
