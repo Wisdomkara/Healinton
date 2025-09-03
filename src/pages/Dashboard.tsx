@@ -8,13 +8,13 @@ import HealthStatsWidget from '@/components/HealthStatsWidget';
 import DietInfoPanel from '@/components/DietInfoPanel';
 import MotivationalQuote from '@/components/MotivationalQuote';
 import AIAssistantWidget from '@/components/AIAssistantWidget';
+import WeeklyMealCalendar from '@/components/WeeklyMealCalendar';
 import SubscriptionStatus from '@/components/SubscriptionStatus';
-import AppointmentSummary from '@/components/AppointmentSummary';
-import DrugOrderSummary from '@/components/DrugOrderSummary';
+import Sidebar from '@/components/Sidebar';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Crown, Calendar, Pill, TrendingUp, Users, Bell, BookOpen } from 'lucide-react';
+import { Crown, Calendar, Pill, TrendingUp, Bell, BookOpen } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Dashboard = () => {
@@ -82,41 +82,6 @@ const Dashboard = () => {
     return <PremiumDashboard />;
   }
 
-  const quickActions = [
-    {
-      icon: <Calendar className="h-5 w-5" />,
-      title: 'Book Appointment',
-      description: 'Schedule with healthcare providers',
-      action: '/premium',
-      color: 'bg-blue-500',
-      premium: true
-    },
-    {
-      icon: <Pill className="h-5 w-5" />,
-      title: 'Drug Store',
-      description: 'Order medications online',
-      action: '/drugs',
-      color: 'bg-green-500',
-      premium: false
-    },
-    {
-      icon: <TrendingUp className="h-5 w-5" />,
-      title: 'Health Analytics',
-      description: 'Track your progress',
-      action: '/premium',
-      color: 'bg-purple-500',
-      premium: true
-    },
-    {
-      icon: <BookOpen className="h-5 w-5" />,
-      title: 'Health Blog',
-      description: 'Read health articles',
-      action: '/blog',
-      color: 'bg-orange-500',
-      premium: false
-    }
-  ];
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <DashboardHeader 
@@ -124,7 +89,22 @@ const Dashboard = () => {
         userName={getUserName()}
       />
       
-      <div className="container mx-auto px-4 py-6 space-y-4">
+      {/* Mobile Sidebar Overlay */}
+      {sidebarOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden">
+          <div className="fixed inset-0 bg-black bg-opacity-50" onClick={() => setSidebarOpen(false)} />
+          <div className="fixed left-0 top-0 h-full w-80 bg-white dark:bg-gray-800 shadow-lg">
+            <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+          </div>
+        </div>
+      )}
+
+      {/* Desktop Sidebar */}
+      <div className="hidden lg:block fixed left-0 top-16 h-full w-80 z-40">
+        {sidebarOpen && <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />}
+      </div>
+      
+      <div className={`container mx-auto px-4 py-6 space-y-4 transition-all duration-300 ${sidebarOpen ? 'lg:ml-80' : ''}`}>
         {/* Welcome Section with Premium Upgrade */}
         <div className="text-center space-y-4">
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
@@ -134,8 +114,18 @@ const Dashboard = () => {
             Take control of your health journey with personalized insights and recommendations
           </p>
           
-          {/* Premium Upgrade Banner for Basic Users */}
-          {!isPremium && (
+          {/* Premium Status Display */}
+          {isPremium ? (
+            <Card className="p-4 bg-gradient-to-r from-yellow-100 to-yellow-200 dark:from-yellow-900/20 dark:to-yellow-800/20 border-yellow-300">
+              <div className="flex items-center justify-center space-x-3">
+                <Crown className="h-6 w-6 text-yellow-600 animate-pulse" />
+                <div className="text-center">
+                  <p className="font-semibold text-yellow-800 dark:text-yellow-200">Premium Member</p>
+                  <p className="text-sm text-yellow-700 dark:text-yellow-300">All premium features unlocked</p>
+                </div>
+              </div>
+            </Card>
+          ) : (
             <Card className="p-4 bg-gradient-to-r from-green-100 to-emerald-100 dark:from-green-900/20 dark:to-emerald-900/20 border-green-300">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
@@ -231,6 +221,9 @@ const Dashboard = () => {
             </Link>
           </div>
         </Card>
+
+        {/* Weekly Meal Calendar - Featured Section */}
+        <WeeklyMealCalendar />
 
         {/* Main Dashboard Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
