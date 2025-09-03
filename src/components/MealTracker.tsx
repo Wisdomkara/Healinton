@@ -102,21 +102,40 @@ const MealTracker = ({ userProfile }: MealTrackerProps) => {
         completed: isCompleted 
       });
 
-      const { error } = await supabase
+      // First try to update existing record, then insert if not exists
+      const { data: existingRecord } = await supabase
         .from('meal_tracking')
-        .upsert({
-          user_id: user.id,
-          meal_date: today,
-          meal_time: mealTime,
-          illness_type: illnessType,
-          completed: isCompleted
-        }, {
-          onConflict: 'user_id,meal_date,meal_time'
-        });
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('meal_date', today)
+        .eq('meal_time', mealTime)
+        .maybeSingle();
 
-      if (error) {
-        console.error('Database error:', error);
-        throw error;
+      let result;
+      if (existingRecord) {
+        // Update existing record
+        result = await supabase
+          .from('meal_tracking')
+          .update({ completed: isCompleted })
+          .eq('user_id', user.id)
+          .eq('meal_date', today)
+          .eq('meal_time', mealTime);
+      } else {
+        // Insert new record
+        result = await supabase
+          .from('meal_tracking')
+          .insert({
+            user_id: user.id,
+            meal_date: today,
+            meal_time: mealTime,
+            illness_type: illnessType,
+            completed: isCompleted
+          });
+      }
+
+      if (result.error) {
+        console.error('Database error:', result.error);
+        throw result.error;
       }
 
       // Update analytics
