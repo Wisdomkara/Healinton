@@ -96,8 +96,8 @@ export const usePremium = (): PremiumStatus => {
 
     checkPremiumStatus();
 
-    // Set up a periodic check for subscription updates (every 5 minutes)
-    const interval = setInterval(checkPremiumStatus, 5 * 60 * 1000);
+    // Set up a periodic check for subscription updates (every 2 minutes for more responsive updates)
+    const interval = setInterval(checkPremiumStatus, 2 * 60 * 1000);
 
     return () => clearInterval(interval);
   }, [user]);

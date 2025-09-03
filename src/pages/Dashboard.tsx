@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { usePremium } from '@/hooks/usePremium';
+import { useSubscriptionRefresh } from '@/hooks/useSubscriptionRefresh';
 import { supabase } from '@/integrations/supabase/client';
 import DashboardHeader from '@/components/DashboardHeader';
 import PremiumDashboard from '@/components/PremiumDashboard';
@@ -11,6 +12,7 @@ import AIAssistantWidget from '@/components/AIAssistantWidget';
 import WeeklyMealCalendar from '@/components/WeeklyMealCalendar';
 import SubscriptionStatus from '@/components/SubscriptionStatus';
 import Sidebar from '@/components/Sidebar';
+import PremiumFeatureGuard from '@/components/PremiumFeatureGuard';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -20,6 +22,7 @@ import { Link } from 'react-router-dom';
 const Dashboard = () => {
   const { user, loading: authLoading } = useAuth();
   const { isPremium, loading: premiumLoading } = usePremium();
+  useSubscriptionRefresh(); // Ensure subscription status refreshes after payments
   const [profile, setProfile] = useState<any>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -105,7 +108,7 @@ const Dashboard = () => {
       </div>
       
       <div className={`container mx-auto px-4 py-6 space-y-4 transition-all duration-300 ${sidebarOpen ? 'lg:ml-80' : ''}`}>
-        {/* Welcome Section with Premium Upgrade */}
+        {/* Welcome Section with Premium Status */}
         <div className="text-center space-y-4">
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
             Welcome back, {getUserName()}! 👋
@@ -150,25 +153,42 @@ const Dashboard = () => {
         <Card className="p-4">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Quick Actions</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Link to={isPremium ? "/appointments" : "/premium"} className="block">
-              <Button
-                variant="outline"
-                className="h-auto p-4 flex flex-col items-center gap-2 w-full hover:shadow-md transition-all relative"
-              >
-                {!isPremium && (
-                  <Badge className="absolute -top-2 -right-2 bg-green-500 text-white">
-                    <Crown className="h-3 w-3" />
-                  </Badge>
-                )}
-                <div className="p-2 rounded-lg bg-blue-500 text-white">
-                  <Calendar className="h-5 w-5" />
-                </div>
-                <div className="text-center">
-                  <p className="font-semibold text-sm">Book Appointment</p>
-                  <p className="text-xs text-gray-500">Schedule with healthcare providers</p>
-                </div>
-              </Button>
-            </Link>
+            <PremiumFeatureGuard
+              fallback={
+                <Link to="/premium" className="block">
+                  <Button
+                    variant="outline"
+                    className="h-auto p-4 flex flex-col items-center gap-2 w-full hover:shadow-md transition-all relative"
+                  >
+                    <Badge className="absolute -top-2 -right-2 bg-green-500 text-white">
+                      <Crown className="h-3 w-3" />
+                    </Badge>
+                    <div className="p-2 rounded-lg bg-blue-500 text-white">
+                      <Calendar className="h-5 w-5" />
+                    </div>
+                    <div className="text-center">
+                      <p className="font-semibold text-sm">Book Appointment</p>
+                      <p className="text-xs text-gray-500">Schedule with healthcare providers</p>
+                    </div>
+                  </Button>
+                </Link>
+              }
+            >
+              <Link to="/appointments" className="block">
+                <Button
+                  variant="outline"
+                  className="h-auto p-4 flex flex-col items-center gap-2 w-full hover:shadow-md transition-all"
+                >
+                  <div className="p-2 rounded-lg bg-blue-500 text-white">
+                    <Calendar className="h-5 w-5" />
+                  </div>
+                  <div className="text-center">
+                    <p className="font-semibold text-sm">Book Appointment</p>
+                    <p className="text-xs text-gray-500">Schedule with healthcare providers</p>
+                  </div>
+                </Button>
+              </Link>
+            </PremiumFeatureGuard>
 
             <Link to="/drugs" className="block">
               <Button
@@ -185,25 +205,42 @@ const Dashboard = () => {
               </Button>
             </Link>
 
-            <Link to={isPremium ? "/analytics" : "/premium"} className="block">
-              <Button
-                variant="outline"
-                className="h-auto p-4 flex flex-col items-center gap-2 w-full hover:shadow-md transition-all relative"
-              >
-                {!isPremium && (
-                  <Badge className="absolute -top-2 -right-2 bg-green-500 text-white">
-                    <Crown className="h-3 w-3" />
-                  </Badge>
-                )}
-                <div className="p-2 rounded-lg bg-purple-500 text-white">
-                  <TrendingUp className="h-5 w-5" />
-                </div>
-                <div className="text-center">
-                  <p className="font-semibold text-sm">Health Analytics</p>
-                  <p className="text-xs text-gray-500">Track your progress</p>
-                </div>
-              </Button>
-            </Link>
+            <PremiumFeatureGuard
+              fallback={
+                <Link to="/premium" className="block">
+                  <Button
+                    variant="outline"
+                    className="h-auto p-4 flex flex-col items-center gap-2 w-full hover:shadow-md transition-all relative"
+                  >
+                    <Badge className="absolute -top-2 -right-2 bg-green-500 text-white">
+                      <Crown className="h-3 w-3" />
+                    </Badge>
+                    <div className="p-2 rounded-lg bg-purple-500 text-white">
+                      <TrendingUp className="h-5 w-5" />
+                    </div>
+                    <div className="text-center">
+                      <p className="font-semibold text-sm">Health Analytics</p>
+                      <p className="text-xs text-gray-500">Track your progress</p>
+                    </div>
+                  </Button>
+                </Link>
+              }
+            >
+              <Link to="/analytics" className="block">
+                <Button
+                  variant="outline"
+                  className="h-auto p-4 flex flex-col items-center gap-2 w-full hover:shadow-md transition-all"
+                >
+                  <div className="p-2 rounded-lg bg-purple-500 text-white">
+                    <TrendingUp className="h-5 w-5" />
+                  </div>
+                  <div className="text-center">
+                    <p className="font-semibold text-sm">Health Analytics</p>
+                    <p className="text-xs text-gray-500">Track your progress</p>
+                  </div>
+                </Button>
+              </Link>
+            </PremiumFeatureGuard>
 
             <Link to="/blog" className="block">
               <Button
@@ -244,8 +281,8 @@ const Dashboard = () => {
             {/* AI Assistant */}
             <AIAssistantWidget />
             
-            {/* Subscription Status */}
-            <SubscriptionStatus />
+            {/* Subscription Status - Only show for non-premium users */}
+            {!isPremium && <SubscriptionStatus />}
             
             {/* Recent Activity */}
             <Card className="p-4">
@@ -262,6 +299,12 @@ const Dashboard = () => {
                   <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                   <p className="text-sm text-gray-700 dark:text-gray-300">Profile created successfully</p>
                 </div>
+                {isPremium && (
+                  <div className="flex items-center space-x-3 p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+                    <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                    <p className="text-sm text-yellow-700 dark:text-yellow-300">Premium access activated!</p>
+                  </div>
+                )}
               </div>
             </Card>
           </div>
@@ -269,30 +312,44 @@ const Dashboard = () => {
 
         {/* Bottom Section - Features Overview */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Card className="p-4">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 flex items-center">
-              <Calendar className="h-5 w-5 text-green-600 mr-2" />
-              Appointment Management
-            </h3>
-            <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
-              Book and manage appointments with healthcare providers seamlessly.
-            </p>
-            {isPremium ? (
+          {/* Premium Appointment Management */}
+          <PremiumFeatureGuard
+            featureName="Appointment Management"
+            fallback={
+              <Card className="p-4">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 flex items-center">
+                  <Calendar className="h-5 w-5 text-green-600 mr-2" />
+                  Appointment Management
+                </h3>
+                <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
+                  Book and manage appointments with healthcare providers seamlessly.
+                </p>
+                <Link to="/premium">
+                  <Button size="sm" className="bg-green-600 hover:bg-green-700">
+                    <Crown className="h-4 w-4 mr-2" />
+                    Upgrade for Access
+                  </Button>
+                </Link>
+              </Card>
+            }
+          >
+            <Card className="p-4">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 flex items-center">
+                <Calendar className="h-5 w-5 text-green-600 mr-2" />
+                Appointment Management
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
+                Book and manage appointments with healthcare providers seamlessly.
+              </p>
               <Link to="/appointments">
                 <Button size="sm" className="bg-green-600 hover:bg-green-700">
                   Book Appointment
                 </Button>
               </Link>
-            ) : (
-              <Link to="/premium">
-                <Button size="sm" className="bg-green-600 hover:bg-green-700">
-                  <Crown className="h-4 w-4 mr-2" />
-                  Upgrade for Access
-                </Button>
-              </Link>
-            )}
-          </Card>
+            </Card>
+          </PremiumFeatureGuard>
 
+          {/* Medication Management - Available for all users */}
           <Card className="p-4">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 flex items-center">
               <Pill className="h-5 w-5 text-blue-600 mr-2" />

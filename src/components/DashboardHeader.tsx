@@ -34,7 +34,7 @@ const DashboardHeader = ({ onMenuClick, userName }: DashboardHeaderProps) => {
             variant="ghost"
             size="sm"
             onClick={onMenuClick}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md lg:hidden"
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
           >
             <Menu className="h-5 w-5 text-gray-600 dark:text-gray-400" />
           </Button>
