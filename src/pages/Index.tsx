@@ -150,7 +150,7 @@ const Index = () => {
         {/* Hero Section */}
         <section className="pt-20 pb-16 px-4 sm:px-6 lg:px-8 relative">
           {/* Hero background with uploaded image */}
-          <div className="absolute inset-0  dark:opacity-3">
+          <div className="absolute inset-0 opacity-15 dark:opacity-8">
             <img 
               src="/lovable-uploads/28fa4c6a-e383-4c64-905c-130b84bf1e79.png" 
               alt="Healthcare background" 
@@ -163,7 +163,7 @@ const Index = () => {
             <div className="text-center mb-16">
               <div className="inline-flex items-center px-4 py-2 bg-green-100/90 dark:bg-green-900/90 rounded-full text-green-800 dark:text-green-200 text-sm font-medium mb-6 backdrop-blur-sm border border-green-200/50 dark:border-green-700/50">
                 <CheckCircle className="h-4 w-4 mr-2" />
-                Trusted by 30,000+ people managing chronic conditions
+                Trusted by 10,000+ people managing chronic conditions
               </div>
               
               <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-gray-900 dark:text-white mb-6 leading-tight drop-shadow-sm">
@@ -331,7 +331,7 @@ const Index = () => {
               </Link>
             </div>
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-4">
-              Get premuim service for just $5
+              No credit card required • Free till August 31st, 2025
             </p>
           </div>
         </section>

@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Menu, LogOut } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
-import { usePremium } from '@/hooks/usePremium';
 import ThemeToggle from '@/components/ThemeToggle';
 
 interface DashboardHeaderProps {
@@ -14,16 +13,11 @@ interface DashboardHeaderProps {
 
 const DashboardHeader = ({ onMenuClick, userName }: DashboardHeaderProps) => {
   const { signOut } = useAuth();
-  const { isPremium } = usePremium();
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
-    try {
-      await signOut();
-      navigate('/auth');
-    } catch (error) {
-      console.error('Error signing out:', error);
-    }
+    await signOut();
+    navigate('/');
   };
 
   return (
@@ -39,16 +33,11 @@ const DashboardHeader = ({ onMenuClick, userName }: DashboardHeaderProps) => {
             <Menu className="h-5 w-5 text-gray-600 dark:text-gray-400" />
           </Button>
           <div>
-            <h1 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+            <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
               Hello, {userName}!
-              {isPremium && (
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gradient-to-r from-yellow-400 to-yellow-600 text-white">
-                  Premium
-                </span>
-              )}
             </h1>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Welcome to your {isPremium ? 'premium' : ''} dashboard
+              Welcome to your dashboard
             </p>
           </div>
         </div>

@@ -13,7 +13,7 @@ const Loader = () => {
           </div>
         </div>
         <div className="text-center">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Healinton Healthcare</h2>
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Loading Healinton</h2>
           <p className="text-gray-600 dark:text-gray-300">Please wait...</p>
         </div>
       </div>

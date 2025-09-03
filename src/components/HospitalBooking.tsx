@@ -20,27 +20,8 @@ const hospitals = [
   'Obafemi Awolowo University Teaching Hospital',
   'University of Nigeria Teaching Hospital',
   'Federal Medical Centre Owerri',
-  'Specialist Hospital Sokoto',
-  'Lagos University Teaching Hospital',
-  'University of Benin Teaching Hospital',
-  'Jos University Teaching Hospital',
-  'University of Calabar Teaching Hospital',
-  'University of Port Harcourt Teaching Hospital',
-  'Usmanu Danfodiyo University Teaching Hospital',
-  'Lagos State University Teaching Hospital Ikeja',
-  'Niger Delta University Teaching Hospital',
-  'Lagoon Hospital',
-  'St. Nicholas Hospital',
-  'Primus International Super Speciality Hospital',
-  'Reddington Hospital',
-  'Eko Hospital',
-  'First Consultants Medical Centre',
-  'Nisa Premier Hospital',
-  'Cedarcrest Hospitals',
-  'Evercare Hospital',
-  'The Limi Hospital'
+  'Specialist Hospital Sokoto'
 ];
-
 
 const HospitalBooking = () => {
   const { user } = useAuth();

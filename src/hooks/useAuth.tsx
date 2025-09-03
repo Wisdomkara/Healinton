@@ -36,13 +36,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     getInitialSession();
 
-    // Listen for auth changes - Supabase handles secure session management internally
+    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         console.log('Auth state changed:', event, session);
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
+        
+        // Store session in localStorage for persistence
+        if (session) {
+          localStorage.setItem('healinton_session', JSON.stringify(session));
+        } else {
+          localStorage.removeItem('healinton_session');
+        }
       }
     );
 
@@ -66,7 +73,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (error) {
         console.error('Signup error:', error);
       } else {
-        console.log('Signup successful - verification email sent');
+        console.log('Signup successful');
       }
       
       return { error };
@@ -107,6 +114,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
     try {
       await supabase.auth.signOut();
+      localStorage.removeItem('healinton_session');
       console.log('Signout successful');
     } catch (error) {
       console.error('Signout error:', error);

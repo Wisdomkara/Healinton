@@ -17,7 +17,7 @@ const Accessibility = () => {
           <Eye className="h-12 w-12 text-green-600 mx-auto mb-4" />
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">Accessibility Statement</h1>
           <p className="text-lg text-gray-600 dark:text-gray-300">
-            Healinton  is committed to ensuring digital accessibility for all users
+            Carevital is committed to ensuring digital accessibility for all users
           </p>
         </div>
 
@@ -26,7 +26,7 @@ const Accessibility = () => {
             <section>
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Our Commitment</h2>
               <p className="text-gray-700 dark:text-gray-300 mb-4">
-                We are committed to ensuring that Healinton is accessible to all users, including those with disabilities. 
+                We are committed to ensuring that Carevital is accessible to all users, including those with disabilities. 
                 We continuously work to improve the user experience for everyone and apply relevant accessibility standards.
               </p>
             </section>
@@ -89,7 +89,7 @@ const Accessibility = () => {
             <section>
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Standards Compliance</h2>
               <p className="text-gray-700 dark:text-gray-300 mb-4">
-                Healinton aims to conform to the Web Content Accessibility Guidelines (WCAG) 2.1 Level AA standards. 
+                Carevital aims to conform to the Web Content Accessibility Guidelines (WCAG) 2.1 Level AA standards. 
                 These guidelines explain how to make web content more accessible to people with disabilities.
               </p>
             </section>
@@ -97,7 +97,7 @@ const Accessibility = () => {
             <section>
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Assistive Technology</h2>
               <p className="text-gray-700 dark:text-gray-300 mb-4">
-                Healinton is designed to be compatible with the following assistive technologies:
+                Carevital is designed to be compatible with the following assistive technologies:
               </p>
               <ul className="space-y-2 text-gray-700 dark:text-gray-300">
                 <li>• Screen readers (JAWS, NVDA, VoiceOver)</li>
@@ -110,19 +110,19 @@ const Accessibility = () => {
             <section>
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Feedback and Contact</h2>
               <p className="text-gray-700 dark:text-gray-300 mb-4">
-                We welcome your feedback on the accessibility of Healinton. Please let us know if you encounter 
+                We welcome your feedback on the accessibility of Carevital. Please let us know if you encounter 
                 accessibility barriers or have suggestions for improvement:
               </p>
               <div className="space-y-2 text-gray-700 dark:text-gray-300">
-                <p>Email: HEalinton@gmail.com</p>
-                <p>Phone: +2347084153584</p>
+                <p>Email: accessibility@carevital.com</p>
+                <p>Phone: +1-800-CAREVITAL</p>
                 <p>We aim to respond to accessibility feedback within 5 business days.</p>
               </div>
             </section>
 
             <div className="pt-6 border-t border-gray-200 dark:border-gray-700">
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                Last updated: January 17, 2025
+                Last updated: December 28, 2024
               </p>
             </div>
           </div>

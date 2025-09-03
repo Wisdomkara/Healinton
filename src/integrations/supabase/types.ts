@@ -7,10 +7,10 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
+  // Allows to automatically instanciate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "12.2.12 (cd3cf9e)"
+    PostgrestVersion: "12.2.3 (519615d)"
   }
   public: {
     Tables: {
@@ -262,15 +262,7 @@ export type Database = {
           meal_time?: string
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "meal_completions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       meal_tracking: {
         Row: {
@@ -309,81 +301,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      payments: {
-        Row: {
-          amount: number
-          created_at: string | null
-          currency: string | null
-          id: string
-          payment_date: string | null
-          payment_method: string | null
-          status: string | null
-          transaction_id: string | null
-          updated_at: string | null
-          user_id: string
-        }
-        Insert: {
-          amount: number
-          created_at?: string | null
-          currency?: string | null
-          id?: string
-          payment_date?: string | null
-          payment_method?: string | null
-          status?: string | null
-          transaction_id?: string | null
-          updated_at?: string | null
-          user_id: string
-        }
-        Update: {
-          amount?: number
-          created_at?: string | null
-          currency?: string | null
-          id?: string
-          payment_date?: string | null
-          payment_method?: string | null
-          status?: string | null
-          transaction_id?: string | null
-          updated_at?: string | null
-          user_id?: string
-        }
-        Relationships: []
-      }
-      premium_form_submissions: {
-        Row: {
-          country: string
-          created_at: string
-          email: string
-          full_name: string
-          id: string
-          phone_number: string
-          submitted_at: string
-          surname: string
-          user_id: string | null
-        }
-        Insert: {
-          country: string
-          created_at?: string
-          email: string
-          full_name: string
-          id?: string
-          phone_number: string
-          submitted_at?: string
-          surname: string
-          user_id?: string | null
-        }
-        Update: {
-          country?: string
-          created_at?: string
-          email?: string
-          full_name?: string
-          id?: string
-          phone_number?: string
-          submitted_at?: string
-          surname?: string
-          user_id?: string | null
-        }
-        Relationships: []
       }
       premium_users: {
         Row: {
@@ -542,53 +459,6 @@ export type Database = {
           },
         ]
       }
-      subscriptions: {
-        Row: {
-          auto_renew: boolean | null
-          created_at: string | null
-          end_date: string | null
-          id: string
-          payment_id: string | null
-          plan_type: string | null
-          start_date: string | null
-          status: string | null
-          updated_at: string | null
-          user_id: string
-        }
-        Insert: {
-          auto_renew?: boolean | null
-          created_at?: string | null
-          end_date?: string | null
-          id?: string
-          payment_id?: string | null
-          plan_type?: string | null
-          start_date?: string | null
-          status?: string | null
-          updated_at?: string | null
-          user_id: string
-        }
-        Update: {
-          auto_renew?: boolean | null
-          created_at?: string | null
-          end_date?: string | null
-          id?: string
-          payment_id?: string | null
-          plan_type?: string | null
-          start_date?: string | null
-          status?: string | null
-          updated_at?: string | null
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "subscriptions_payment_id_fkey"
-            columns: ["payment_id"]
-            isOneToOne: false
-            referencedRelation: "payments"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       symptoms: {
         Row: {
           additional_notes: string | null
@@ -708,61 +578,9 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      add_premium_user_manual: {
-        Args: {
-          p_added_by?: string
-          p_duration_months?: number
-          p_notes?: string
-          p_user_email: string
-        }
-        Returns: boolean
-      }
-      check_and_update_subscription_status: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      get_premium_users_admin_data: {
-        Args: Record<PropertyKey, never>
-        Returns: {
-          added_by: string
-          country: string
-          days_remaining: number
-          email: string
-          end_date: string
-          full_name: string
-          notes: string
-          plan_type: string
-          status: string
-          subscription_type: string
-          user_created_at: string
-          user_id: string
-        }[]
-      }
-      get_user_subscription: {
-        Args: { check_user_id: string }
-        Returns: {
-          days_remaining: number
-          end_date: string
-          is_premium: boolean
-          plan_type: string
-          status: string
-        }[]
-      }
       is_user_premium: {
         Args: { check_user_id: string }
         Returns: boolean
-      }
-      remove_premium_user_manual: {
-        Args: { p_user_email: string }
-        Returns: boolean
-      }
-      renew_premium_subscription: {
-        Args: { p_user_id: string }
-        Returns: boolean
-      }
-      update_expired_subscriptions: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
       }
     }
     Enums: {
