@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useEnsureProfile } from '@/hooks/useEnsureProfile';
 import { Activity } from 'lucide-react';
 import { z } from 'zod';
 import { validateFormData } from '@/utils/validation';
@@ -20,6 +21,7 @@ const healthMetricsSchema = z.object({
 });
 
 const HealthMetricsForm = () => {
+  useEnsureProfile(); // Ensure user profile exists
   const { user } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);

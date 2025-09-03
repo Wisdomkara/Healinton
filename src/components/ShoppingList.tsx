@@ -7,9 +7,11 @@ import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import { useEnsureProfile } from '@/hooks/useEnsureProfile';
 import { ShoppingCart, Trash2, Package, Clock } from 'lucide-react';
 
 const ShoppingList = () => {
+  useEnsureProfile(); // Ensure user profile exists
   const { user } = useAuth();
   const { toast } = useToast();
   const [items, setItems] = useState<any[]>([]);

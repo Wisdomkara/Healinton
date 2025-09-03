@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useEnsureProfile } from '@/hooks/useEnsureProfile';
 import { CheckCircle, Circle, Calendar, TrendingUp } from 'lucide-react';
 
 interface MealPlan {
@@ -17,6 +18,7 @@ interface MealPlan {
 }
 
 const WeeklyMealCalendar = () => {
+  useEnsureProfile(); // Ensure user profile exists
   const { user } = useAuth();
   const { toast } = useToast();
   const [mealPlans, setMealPlans] = useState<MealPlan[]>([]);
