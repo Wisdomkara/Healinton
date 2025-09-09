@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useEnsureProfile } from '@/hooks/useEnsureProfile';
 import { CheckCircle, Circle, Utensils } from 'lucide-react';
 
 const budgetMealPlans = {
@@ -22,6 +23,7 @@ const budgetMealPlans = {
 };
 
 const EnhancedMealTracker = () => {
+  useEnsureProfile(); // Ensure user profile exists
   const { user } = useAuth();
   const { toast } = useToast();
   const [selectedBudget, setSelectedBudget] = useState<'low-budget' | 'high-budget'>('low-budget');
@@ -57,66 +59,100 @@ const EnhancedMealTracker = () => {
   };
 
   const toggleMealCompletion = async (mealTime: string) => {
-    if (!user) return;
+    if (!user) {
+      toast({
+        title: 'Error',
+        description: 'Please log in to track meals.',
+        variant: 'destructive'
+      });
+      return;
+    }
 
     const isCompleted = !completedMeals[mealTime];
 
     try {
-      const { error } = await supabase
+      console.log('Updating meal completion:', { 
+        user_id: user.id, 
+        budget_type: selectedBudget, 
+        meal_date: currentDate, 
+        meal_time: mealTime, 
+        completed: isCompleted 
+      });
+
+      // First try to update existing record, then insert if not exists
+      const { data: existingRecord } = await supabase
         .from('meal_completions')
-        .upsert({
-          user_id: user.id,
-          budget_type: selectedBudget,
-          meal_date: currentDate,
-          meal_time: mealTime,
-          completed: isCompleted
-        }, {
-          onConflict: 'user_id,budget_type,meal_date,meal_time'
-        });
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('budget_type', selectedBudget)
+        .eq('meal_date', currentDate)
+        .eq('meal_time', mealTime)
+        .maybeSingle();
 
-      if (error) throw error;
+      let result;
+      if (existingRecord) {
+        // Update existing record
+        result = await supabase
+          .from('meal_completions')
+          .update({ completed: isCompleted })
+          .eq('user_id', user.id)
+          .eq('budget_type', selectedBudget)
+          .eq('meal_date', currentDate)
+          .eq('meal_time', mealTime);
+      } else {
+        // Insert new record
+        result = await supabase
+          .from('meal_completions')
+          .insert({
+            user_id: user.id,
+            budget_type: selectedBudget,
+            meal_date: currentDate,
+            meal_time: mealTime,
+            completed: isCompleted
+          });
+      }
 
+      if (result.error) {
+        console.error('Database error:', result.error);
+        throw result.error;
+      }
+
+      // Update local state
       setCompletedMeals(prev => ({
         ...prev,
         [mealTime]: isCompleted
       }));
 
-      // Update analytics for health metrics when meal is completed
-      if (isCompleted) {
-        await supabase
-          .from('user_analytics')
-          .upsert({
-            user_id: user.id,
-            date: currentDate,
-            metric_type: 'meal_completed',
-            value: 1
-          }, {
-            onConflict: 'user_id,date,metric_type'
-          });
+      // Update analytics - calculate completion rate
+      const newCompletedMeals = {
+        ...completedMeals,
+        [mealTime]: isCompleted
+      };
+      const completionRate = Math.round((Object.values(newCompletedMeals).filter(Boolean).length / 3) * 100);
 
-        // Also update health metrics indirectly (meal completion affects health)  
-        await supabase
-          .from('health_metrics')
-          .upsert({
-            user_id: user.id,
-            recorded_at: new Date().toISOString(),
-            weight: null, // Will be updated separately if needed
-            blood_pressure_systolic: null,
-            blood_pressure_diastolic: null,
-            blood_sugar: null
-          });
-      }
+      await supabase
+        .from('user_analytics')
+        .upsert({
+          user_id: user.id,
+          date: currentDate,
+          metric_type: 'meal_compliance',
+          value: completionRate
+        }, {
+          onConflict: 'user_id,date,metric_type'
+        });
 
       toast({
         title: isCompleted ? 'Meal Completed!' : 'Meal Unchecked',
-        description: `${mealTime.charAt(0).toUpperCase() + mealTime.slice(1)} has been ${isCompleted ? 'marked as completed' : 'unchecked'}.`,
+        description: isCompleted 
+          ? `Great job! ${mealTime.charAt(0).toUpperCase() + mealTime.slice(1)} marked as completed.`
+          : `${mealTime.charAt(0).toUpperCase() + mealTime.slice(1)} unmarked from your progress.`,
       });
 
     } catch (error) {
       console.error('Error updating meal completion:', error);
       toast({
         title: 'Error',
-        description: 'Failed to update meal status.',
+        description: 'Failed to update meal status. Please try again.',
         variant: 'destructive'
       });
     }
