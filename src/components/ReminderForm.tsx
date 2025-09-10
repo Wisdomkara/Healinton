@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useEnsureProfile } from '@/hooks/useEnsureProfile';
 import { Clock } from 'lucide-react';
 import { z } from 'zod';
 import { validateFormData, nameSchema, textAreaSchema } from '@/utils/validation';
@@ -24,6 +25,7 @@ const reminderSchema = z.object({
 });
 
 const ReminderForm = () => {
+  useEnsureProfile(); // Ensure user profile exists
   const { user } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);

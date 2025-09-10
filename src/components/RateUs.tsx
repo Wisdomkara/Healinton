@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 import { Star, Send, Heart } from 'lucide-react';
 
 const RateUs = () => {
@@ -39,36 +40,61 @@ const RateUs = () => {
       return;
     }
 
+    if (!user) {
+      toast({
+        title: 'Authentication Required',
+        description: 'Please log in to submit a rating.',
+        variant: 'destructive'
+      });
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
-      // Prepare the rating data
-      const ratingData = {
-        rating,
-        feedback,
-        userName: userName || 'Anonymous',
-        userEmail: userEmail || 'Not provided',
-        userId: user?.id || 'Anonymous',
-        submittedAt: new Date().toISOString(),
-        is5Star: rating === 5
-      };
-
-      // If it's a 5-star rating, send email
-      if (rating === 5) {
-        const response = await fetch('/api/send-rating-email', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            to: 'karawisdom38@gmail.com',
-            subject: '⭐ New 5-Star Rating Received!',
-            ratingData
-          })
+      // Save rating to Supabase database
+      const { error } = await supabase
+        .from('ratings')
+        .insert({
+          user_id: user.id,
+          user_name: userName || `${user.user_metadata?.first_name} ${user.user_metadata?.last_name}`.trim() || 'Anonymous',
+          user_email: userEmail || user.email,
+          rating,
+          feedback: feedback || null
         });
 
-        if (!response.ok) {
-          console.error('Failed to send email notification');
+      if (error) {
+        console.error('Error saving rating:', error);
+        throw error;
+      }
+
+      // If it's a 5-star rating, send email notification
+      if (rating === 5) {
+        try {
+          const response = await fetch('/api/send-rating-email', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              to: 'karawisdom38@gmail.com',
+              subject: '⭐ New 5-Star Rating Received!',
+              ratingData: {
+                rating,
+                feedback,
+                userName: userName || `${user.user_metadata?.first_name} ${user.user_metadata?.last_name}`.trim() || 'Anonymous',
+                userEmail: userEmail || user.email,
+                submittedAt: new Date().toISOString()
+              }
+            })
+          });
+
+          if (!response.ok) {
+            console.error('Failed to send email notification');
+          }
+        } catch (emailError) {
+          console.error('Failed to send email notification:', emailError);
+          // Continue with the rating submission even if email fails
         }
       }
 
@@ -81,6 +107,7 @@ const RateUs = () => {
 
       // Reset form
       setRating(0);
+      setHoveredRating(0);
       setFeedback('');
       setUserName('');
       setUserEmail('');

@@ -128,13 +128,6 @@ export type Database = {
             referencedRelation: "drug_categories"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "drug_orders_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
         ]
       }
       health_metrics: {
@@ -144,7 +137,7 @@ export type Database = {
           blood_sugar: number | null
           id: string
           recorded_at: string | null
-          user_id: string | null
+          user_id: string
           weight: number | null
         }
         Insert: {
@@ -153,7 +146,7 @@ export type Database = {
           blood_sugar?: number | null
           id?: string
           recorded_at?: string | null
-          user_id?: string | null
+          user_id: string
           weight?: number | null
         }
         Update: {
@@ -162,18 +155,10 @@ export type Database = {
           blood_sugar?: number | null
           id?: string
           recorded_at?: string | null
-          user_id?: string | null
+          user_id?: string
           weight?: number | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "health_metrics_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       hospital_bookings: {
         Row: {
@@ -190,7 +175,7 @@ export type Database = {
           reason: string | null
           reference_number: string | null
           status: string | null
-          user_id: string | null
+          user_id: string
         }
         Insert: {
           address?: string | null
@@ -206,7 +191,7 @@ export type Database = {
           reason?: string | null
           reference_number?: string | null
           status?: string | null
-          user_id?: string | null
+          user_id: string
         }
         Update: {
           address?: string | null
@@ -222,17 +207,9 @@ export type Database = {
           reason?: string | null
           reference_number?: string | null
           status?: string | null
-          user_id?: string | null
+          user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "hospital_bookings_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       meal_completions: {
         Row: {
@@ -262,7 +239,15 @@ export type Database = {
           meal_time?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "meal_completions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       meal_tracking: {
         Row: {
@@ -410,6 +395,42 @@ export type Database = {
         }
         Relationships: []
       }
+      premium_users_admin: {
+        Row: {
+          added_at: string
+          added_by: string | null
+          email: string
+          expires_at: string | null
+          full_name: string | null
+          id: string
+          is_active: boolean
+          notes: string | null
+          user_id: string
+        }
+        Insert: {
+          added_at?: string
+          added_by?: string | null
+          email: string
+          expires_at?: string | null
+          full_name?: string | null
+          id?: string
+          is_active?: boolean
+          notes?: string | null
+          user_id: string
+        }
+        Update: {
+          added_at?: string
+          added_by?: string | null
+          email?: string
+          expires_at?: string | null
+          full_name?: string | null
+          id?: string
+          is_active?: boolean
+          notes?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           country: string | null
@@ -420,6 +441,7 @@ export type Database = {
           id: string
           illness_type: string | null
           last_name: string | null
+          role: string | null
           updated_at: string | null
         }
         Insert: {
@@ -431,6 +453,7 @@ export type Database = {
           id: string
           illness_type?: string | null
           last_name?: string | null
+          role?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -442,7 +465,38 @@ export type Database = {
           id?: string
           illness_type?: string | null
           last_name?: string | null
+          role?: string | null
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      ratings: {
+        Row: {
+          created_at: string
+          feedback: string | null
+          id: string
+          rating: number
+          user_email: string | null
+          user_id: string
+          user_name: string | null
+        }
+        Insert: {
+          created_at?: string
+          feedback?: string | null
+          id?: string
+          rating: number
+          user_email?: string | null
+          user_id: string
+          user_name?: string | null
+        }
+        Update: {
+          created_at?: string
+          feedback?: string | null
+          id?: string
+          rating?: number
+          user_email?: string | null
+          user_id?: string
+          user_name?: string | null
         }
         Relationships: []
       }
@@ -454,7 +508,7 @@ export type Database = {
           is_completed: boolean | null
           reminder_date: string
           title: string
-          user_id: string | null
+          user_id: string
         }
         Insert: {
           created_at?: string | null
@@ -463,7 +517,7 @@ export type Database = {
           is_completed?: boolean | null
           reminder_date: string
           title: string
-          user_id?: string | null
+          user_id: string
         }
         Update: {
           created_at?: string | null
@@ -472,17 +526,9 @@ export type Database = {
           is_completed?: boolean | null
           reminder_date?: string
           title?: string
-          user_id?: string | null
+          user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "reminders_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       shopping_lists: {
         Row: {
@@ -496,7 +542,7 @@ export type Database = {
           pharmacy_name: string | null
           phone_number: string | null
           reference_number: string | null
-          user_id: string | null
+          user_id: string
         }
         Insert: {
           country?: string | null
@@ -509,7 +555,7 @@ export type Database = {
           pharmacy_name?: string | null
           phone_number?: string | null
           reference_number?: string | null
-          user_id?: string | null
+          user_id: string
         }
         Update: {
           country?: string | null
@@ -522,17 +568,9 @@ export type Database = {
           pharmacy_name?: string | null
           phone_number?: string | null
           reference_number?: string | null
-          user_id?: string | null
+          user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "shopping_lists_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       subscriptions: {
         Row: {
@@ -589,7 +627,7 @@ export type Database = {
           id: string
           severity: number | null
           symptoms: string
-          user_id: string | null
+          user_id: string
         }
         Insert: {
           additional_notes?: string | null
@@ -598,7 +636,7 @@ export type Database = {
           id?: string
           severity?: number | null
           symptoms: string
-          user_id?: string | null
+          user_id: string
         }
         Update: {
           additional_notes?: string | null
@@ -607,17 +645,9 @@ export type Database = {
           id?: string
           severity?: number | null
           symptoms?: string
-          user_id?: string | null
+          user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "symptoms_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       user_analytics: {
         Row: {
@@ -685,15 +715,43 @@ export type Database = {
           phone?: string | null
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "user_hospitals_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
+      }
+      weekly_meal_plans: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          day_of_week: number
+          id: string
+          is_completed: boolean | null
+          meal_name: string
+          meal_type: string
+          user_id: string
+          week_start_date: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          day_of_week: number
+          id?: string
+          is_completed?: boolean | null
+          meal_name: string
+          meal_type: string
+          user_id: string
+          week_start_date: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          day_of_week?: number
+          id?: string
+          is_completed?: boolean | null
+          meal_name?: string
+          meal_type?: string
+          user_id?: string
+          week_start_date?: string
+        }
+        Relationships: []
       }
     }
     Views: {
@@ -708,6 +766,26 @@ export type Database = {
           p_user_email: string
         }
         Returns: boolean
+      }
+      check_and_update_subscription_status: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      demote_admin_to_user: {
+        Args: { target_user_email: string }
+        Returns: boolean
+      }
+      ensure_user_profile: {
+        Args: { user_uuid: string }
+        Returns: undefined
+      }
+      generate_weekly_meal_plan: {
+        Args: { p_user_id: string }
+        Returns: undefined
+      }
+      get_current_user_role: {
+        Args: Record<PropertyKey, never>
+        Returns: string
       }
       get_premium_users_admin_data: {
         Args: Record<PropertyKey, never>
@@ -736,8 +814,26 @@ export type Database = {
           status: string
         }[]
       }
+      get_user_subscription_free: {
+        Args: { check_user_id: string }
+        Returns: {
+          days_remaining: number
+          end_date: string
+          is_premium: boolean
+          plan_type: string
+          status: string
+        }[]
+      }
+      is_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
       is_user_premium: {
         Args: { check_user_id: string }
+        Returns: boolean
+      }
+      promote_user_to_admin: {
+        Args: { target_user_email: string }
         Returns: boolean
       }
       remove_premium_user_manual: {

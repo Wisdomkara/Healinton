@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,12 +5,12 @@ import { useAuth } from '@/hooks/useAuth';
 import { usePremium } from '@/hooks/usePremium';
 import { Crown, Check, Star, TrendingUp, Heart, Shield, Users, Phone } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-import PremiumFormModal from '@/components/PremiumFormModal';
+import PaymentModal from '@/components/PaymentModal';
 
 const Premium = () => {
   const { user } = useAuth();
   const { isPremium, loading } = usePremium();
-  const [showPremiumForm, setShowPremiumForm] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
   const navigate = useNavigate();
 
   const handleSubscribe = async (planType: string) => {
@@ -27,11 +26,12 @@ const Premium = () => {
     }
 
     if (planType === 'premium') {
-      setShowPremiumForm(true);
+      setShowPaymentModal(true);
     }
   };
 
-  const handlePremiumSuccess = () => {
+  const handlePaymentSuccess = () => {
+    alert('Welcome to Premium! You now have access to all premium features.');
     navigate('/dashboard');
   };
 
@@ -61,9 +61,8 @@ const Premium = () => {
     {
       name: 'Premium',
       price: 'FREE',
-      period: ' until Nov 30th',
-      originalPrice: '$5/month after',
-      description: 'Complete health management solution with AI insights',
+      period: 'until Nov 30, 2025',
+      description: 'Complete health management solution with AI insights - Free for everyone!',
       features: [
         'Everything in Basic',
         'Advanced health analytics',
@@ -121,8 +120,16 @@ const Premium = () => {
           <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6">
             Health Plans for Everyone
           </h1>
+          <div className="mb-6 p-4 bg-green-100 dark:bg-green-900/30 rounded-lg inline-block">
+            <p className="text-green-800 dark:text-green-200 font-semibold text-lg">
+              🎉 ALL FEATURES FREE UNTIL NOVEMBER 30, 2025!
+            </p>
+            <p className="text-green-700 dark:text-green-300 text-sm mt-1">
+              Enjoy unlimited access to all premium features at no cost
+            </p>
+          </div>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-            Start with our free plan or upgrade to premium for advanced health tracking, personalized meal plans, expert consultations, and medicine delivery
+            Get access to advanced health tracking, personalized meal plans, expert consultations, and medicine delivery - completely free until November 30, 2025
           </p>
           {isPremium && (
             <div className="mt-4 p-4 bg-green-100 dark:bg-green-900/30 rounded-lg inline-block">
@@ -165,15 +172,10 @@ const Premium = () => {
               
               <div className="text-center mb-8">
                 <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
-                <div className="flex items-baseline justify-center mb-2">
-                  <span className="text-4xl font-bold text-green-600">{plan.price}</span>
+                <div className="flex items-baseline justify-center mb-4">
+                  <span className="text-4xl font-bold">{plan.price}</span>
                   <span className="text-gray-500 dark:text-gray-400">{plan.period}</span>
                 </div>
-                {plan.originalPrice && (
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                    Then {plan.originalPrice}
-                  </p>
-                )}
                 <p className="text-gray-600 dark:text-gray-300">{plan.description}</p>
               </div>
 
@@ -193,7 +195,7 @@ const Premium = () => {
                   isPremium && plan.name === 'Premium' ? 'opacity-50 cursor-not-allowed' : ''
                 }`}
               >
-                {isPremium && plan.name === 'Premium' ? 'Current Plan' : plan.name === 'Basic' ? 'Get Started Free' : `Get ${plan.name} - FREE`}
+                {isPremium && plan.name === 'Premium' ? 'Current Plan' : plan.name === 'Basic' ? 'Get Started Free' : `Choose ${plan.name}`}
               </Button>
             </Card>
           ))}
@@ -224,40 +226,31 @@ const Premium = () => {
         </div>
 
         {/* CTA Section */}
-        {!isPremium && (
-          <div className="text-center bg-gradient-to-r from-green-600 to-blue-600 rounded-2xl p-12 text-white relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-green-400/20 via-blue-400/20 to-purple-400/20 animate-pulse"></div>
-            <div className="relative z-10">
-              <h2 className="text-3xl font-bold mb-4">Ready to Transform Your Health?</h2>
-              <p className="text-xl mb-8 opacity-90">
-                Get premium access FREE until November 30th!
-              </p>
-              <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-                <Button
-                  onClick={() => handleSubscribe('basic')}
-                  size="lg"
-                  className="bg-white text-green-600 hover:bg-gray-100 font-semibold px-8 py-4"
-                >
-                  Start Free
-                </Button>
-                <Button
-                  onClick={() => handleSubscribe('premium')}
-                  size="lg"
-                  className="bg-white/10 text-white hover:bg-white/20 font-semibold px-8 py-4 border border-white/30"
-                >
-                  Get Premium - FREE until Nov 30th
-                </Button>
-              </div>
-              <p className="text-sm mt-4 opacity-75">
-                No payment required until December 1st. Cancel anytime.
-              </p>
+        <div className="text-center bg-gradient-to-r from-green-600 to-blue-600 rounded-2xl p-12 text-white relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-green-400/20 via-blue-400/20 to-purple-400/20 animate-pulse"></div>
+          <div className="relative z-10">
+            <h2 className="text-3xl font-bold mb-4">All Premium Features Are FREE!</h2>
+            <p className="text-xl mb-8 opacity-90">
+              Enjoy unlimited access until November 30, 2025 - No payment required!
+            </p>
+            <div className="flex justify-center">
+              <Button
+                onClick={() => navigate('/dashboard')}
+                size="lg"
+                className="bg-white text-green-600 hover:bg-gray-100 font-semibold px-8 py-4"
+              >
+                Access All Features Now
+              </Button>
             </div>
+            <p className="text-sm mt-4 opacity-75">
+              Free access expires November 30, 2025
+            </p>
           </div>
-        )}
+        </div>
 
         {isPremium && (
           <div className="text-center bg-gradient-to-r from-green-600 to-green-700 rounded-2xl p-12 text-white">
-            <Crown className="h-16 w-16 mx-auto mb-4 text-yellow-300" />
+            <Crown className="h-16 w-16 mx-auto mb-4" />
             <h2 className="text-3xl font-bold mb-4">You're Premium!</h2>
             <p className="text-xl mb-8 opacity-90">
               Enjoy all the advanced features and premium benefits.
@@ -271,10 +264,10 @@ const Premium = () => {
         )}
       </div>
 
-      <PremiumFormModal 
-        isOpen={showPremiumForm}
-        onClose={() => setShowPremiumForm(false)}
-        onSuccess={handlePremiumSuccess}
+      <PaymentModal 
+        isOpen={showPaymentModal}
+        onClose={() => setShowPaymentModal(false)}
+        onSuccess={handlePaymentSuccess}
       />
     </div>
   );

@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useEnsureProfile } from '@/hooks/useEnsureProfile';
 import { getMealPlanForIllness } from '@/utils/mealPlans';
 import { CheckCircle, Clock, TrendingUp, Calendar } from 'lucide-react';
 
@@ -13,6 +14,7 @@ interface MealTrackerProps {
 }
 
 const MealTracker = ({ userProfile }: MealTrackerProps) => {
+  useEnsureProfile(); // Ensure user profile exists
   const { user } = useAuth();
   const { toast } = useToast();
   const [mealCompletions, setMealCompletions] = useState<any[]>([]);
@@ -79,24 +81,62 @@ const MealTracker = ({ userProfile }: MealTrackerProps) => {
   };
 
   const handleMealCompletion = async (mealTime: string) => {
-    if (!user || !userProfile?.illness_type) return;
+    if (!user) {
+      toast({
+        title: 'Error',
+        description: 'Please log in to track meals.',
+        variant: 'destructive'
+      });
+      return;
+    }
 
     const isCompleted = !todayCompletions[mealTime];
+    const illnessType = userProfile?.illness_type || 'hypertension';
 
     try {
-      const { error } = await supabase
-        .from('meal_tracking')
-        .upsert({
-          user_id: user.id,
-          meal_date: today,
-          meal_time: mealTime,
-          illness_type: userProfile.illness_type,
-          completed: isCompleted
-        }, {
-          onConflict: 'user_id,meal_date,meal_time'
-        });
+      console.log('Updating meal completion:', { 
+        user_id: user.id, 
+        meal_date: today, 
+        meal_time: mealTime, 
+        illness_type: illnessType, 
+        completed: isCompleted 
+      });
 
-      if (error) throw error;
+      // First try to update existing record, then insert if not exists
+      const { data: existingRecord } = await supabase
+        .from('meal_tracking')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('meal_date', today)
+        .eq('meal_time', mealTime)
+        .maybeSingle();
+
+      let result;
+      if (existingRecord) {
+        // Update existing record
+        result = await supabase
+          .from('meal_tracking')
+          .update({ completed: isCompleted })
+          .eq('user_id', user.id)
+          .eq('meal_date', today)
+          .eq('meal_time', mealTime);
+      } else {
+        // Insert new record
+        result = await supabase
+          .from('meal_tracking')
+          .insert({
+            user_id: user.id,
+            meal_date: today,
+            meal_time: mealTime,
+            illness_type: illnessType,
+            completed: isCompleted
+          });
+      }
+
+      if (result.error) {
+        console.error('Database error:', result.error);
+        throw result.error;
+      }
 
       // Update analytics
       const completionRate = Object.values({

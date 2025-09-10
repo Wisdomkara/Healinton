@@ -9,9 +9,11 @@ import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useEnsureProfile } from '@/hooks/useEnsureProfile';
 import { Pill, Search, ShoppingCart, Star, AlertCircle, CheckCircle2 } from 'lucide-react';
 
 const DrugStore = () => {
+  useEnsureProfile(); // Ensure user profile exists
   const { user } = useAuth();
   const { toast } = useToast();
   const [drugs, setDrugs] = useState<any[]>([]);
@@ -22,7 +24,11 @@ const DrugStore = () => {
   const [selectedDrug, setSelectedDrug] = useState<any>(null);
   const [orderForm, setOrderForm] = useState({
     quantity: 1,
-    notes: ''
+    notes: '',
+    fullName: '',
+    phoneNumber: '',
+    emailAddress: '',
+    deliveryAddress: ''
   });
 
   useEffect(() => {
@@ -67,9 +73,20 @@ const DrugStore = () => {
   const handleOrder = async () => {
     if (!user || !selectedDrug) return;
 
+    // Validate required fields
+    if (!orderForm.fullName || !orderForm.phoneNumber || !orderForm.emailAddress || !orderForm.deliveryAddress) {
+      toast({
+        title: 'Missing Information',
+        description: 'Please fill in all required fields (Name, Phone, Email, and Delivery Address).',
+        variant: 'destructive'
+      });
+      return;
+    }
+
     setIsOrdering(true);
     try {
       const totalAmount = selectedDrug.price * orderForm.quantity;
+      const referenceNumber = `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
       const { error } = await supabase
         .from('drug_orders')
@@ -78,18 +95,30 @@ const DrugStore = () => {
           drug_id: selectedDrug.id,
           quantity: orderForm.quantity,
           total_amount: totalAmount,
-          status: 'pending'
+          status: 'pending',
+          reference_number: referenceNumber,
+          full_name: orderForm.fullName,
+          phone_number: orderForm.phoneNumber,
+          email_address: orderForm.emailAddress,
+          delivery_address: orderForm.deliveryAddress
         });
 
       if (error) throw error;
 
       toast({
         title: 'Order Placed Successfully!',
-        description: `Your order for ${selectedDrug.name} has been placed. We'll contact you soon.`,
+        description: `Your order for ${selectedDrug.name} has been placed. Reference: ${referenceNumber}`,
       });
 
       setSelectedDrug(null);
-      setOrderForm({ quantity: 1, notes: '' });
+      setOrderForm({ 
+        quantity: 1, 
+        notes: '', 
+        fullName: '', 
+        phoneNumber: '', 
+        emailAddress: '', 
+        deliveryAddress: '' 
+      });
 
     } catch (error) {
       console.error('Error placing order:', error);
@@ -227,6 +256,65 @@ const DrugStore = () => {
             </div>
             
             <div className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="fullName">Full Name *</Label>
+                  <Input
+                    id="fullName"
+                    placeholder="Enter your full name"
+                    value={orderForm.fullName}
+                    onChange={(e) => setOrderForm(prev => ({
+                      ...prev,
+                      fullName: e.target.value
+                    }))}
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor="phoneNumber">Phone Number *</Label>
+                  <Input
+                    id="phoneNumber"
+                    placeholder="Enter your phone number"
+                    value={orderForm.phoneNumber}
+                    onChange={(e) => setOrderForm(prev => ({
+                      ...prev,
+                      phoneNumber: e.target.value
+                    }))}
+                    required
+                  />
+                </div>
+              </div>
+              
+              <div>
+                <Label htmlFor="emailAddress">Email Address *</Label>
+                <Input
+                  id="emailAddress"
+                  type="email"
+                  placeholder="Enter your email address"
+                  value={orderForm.emailAddress}
+                  onChange={(e) => setOrderForm(prev => ({
+                    ...prev,
+                    emailAddress: e.target.value
+                  }))}
+                  required
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="deliveryAddress">Delivery Address *</Label>
+                <Textarea
+                  id="deliveryAddress"
+                  placeholder="Enter your complete delivery address"
+                  value={orderForm.deliveryAddress}
+                  onChange={(e) => setOrderForm(prev => ({
+                    ...prev,
+                    deliveryAddress: e.target.value
+                  }))}
+                  required
+                />
+              </div>
+              
               <div>
                 <Label htmlFor="quantity">Quantity</Label>
                 <Input

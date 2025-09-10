@@ -1,354 +1,148 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import { usePremium } from '@/hooks/usePremium';
-import { Navigate, useNavigate } from 'react-router-dom';
-import { SidebarProvider } from '@/components/ui/sidebar';
-import { supabase } from '@/integrations/supabase/client';
-import DashboardHeader from '@/components/DashboardHeader';
 import Sidebar from '@/components/Sidebar';
+import DashboardHeader from '@/components/DashboardHeader';
 import DashboardOverview from '@/components/DashboardOverview';
-import PremiumDashboard from '@/components/PremiumDashboard';
-import PremiumBanner from '@/components/PremiumBanner';
-import IllnessSettings from '@/components/IllnessSettings';
-import SubscriptionStatus from '@/components/SubscriptionStatus';
 import HealthMetricsForm from '@/components/HealthMetricsForm';
 import SymptomLogger from '@/components/SymptomLogger';
-import MealTracker from '@/components/MealTracker';
+import EnhancedHospitalBooking from '@/components/EnhancedHospitalBooking';
+import NotificationSettings from '@/components/NotificationSettings';
+import ReminderForm from '@/components/ReminderForm';
 import EnhancedMealTracker from '@/components/EnhancedMealTracker';
-import MealPlanDisplay from '@/components/MealPlanDisplay';
+import WeeklyMealCalendar from '@/components/WeeklyMealCalendar';
+import AdminPremiumManager from '@/components/AdminPremiumManager';
 import ShoppingList from '@/components/ShoppingList';
-import DrugStore from '@/components/DrugStore';
 import AIChat from '@/components/AIChat';
 import HealthBlog from '@/components/HealthBlog';
-import ReminderForm from '@/components/ReminderForm';
-import NotificationCenter from '@/components/NotificationCenter';
 import Settings from '@/components/Settings';
+import DrugStore from '@/components/DrugStore';
+import HospitalForm from '@/components/HospitalForm';
 import RateUs from '@/components/RateUs';
-import HospitalBooking from '@/components/HospitalBooking';
+import ThemeToggle from '@/components/ThemeToggle';
 
 const Dashboard = () => {
-  const { user, loading: authLoading } = useAuth();
-  const { isPremium, loading: premiumLoading } = usePremium();
-  const [activeSection, setActiveSection] = useState('overview');
+  const { user } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [userProfile, setUserProfile] = useState<any>(null);
-  const navigate = useNavigate();
+  const [activeSection, setActiveSection] = useState('overview');
 
-  useEffect(() => {
-    if (user) {
-      fetchUserProfile();
-    }
-  }, [user]);
-
-  const fetchUserProfile = async () => {
-    if (!user) return;
-
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
-        .single();
-
-      if (error && error.code !== 'PGRST116') {
-        console.error('Error fetching user profile:', error);
-      } else {
-        setUserProfile(data);
-      }
-    } catch (error) {
-      console.error('Error fetching user profile:', error);
-    }
-  };
-
-  useEffect(() => {
-    // Add scroll animations
-    const observerOptions = {
-      threshold: 0.1,
-      rootMargin: '0px 0px -50px 0px'
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('animate-fade-in');
-        }
-      });
-    }, observerOptions);
-
-    // Observe all cards and sections
-    const animatedElements = document.querySelectorAll('.animate-on-scroll');
-    animatedElements.forEach((el) => observer.observe(el));
-
-    return () => observer.disconnect();
-  }, [activeSection]);
-
-  if (authLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-blue-50">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-green-600"></div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return <Navigate to="/auth" replace />;
-  }
-
-  if (premiumLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-blue-50">
-        <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-green-200 rounded w-1/3"></div>
-          <div className="h-4 bg-green-200 rounded w-1/2"></div>
-        </div>
-      </div>
-    );
-  }
-
-  const handleMenuClick = () => {
-    setSidebarOpen(!sidebarOpen);
-  };
-
-  const handleSectionChange = (section: string) => {
-    setActiveSection(section);
-    setSidebarOpen(false);
-  };
-
-  const userName = user?.user_metadata?.first_name || user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User';
+  // Get user's first name from metadata or email
+  const userName = user?.user_metadata?.first_name || 
+                   user?.user_metadata?.firstName || 
+                   user?.email?.split('@')[0] || 
+                   'User';
 
   const renderContent = () => {
     switch (activeSection) {
-      case 'overview':
-        return (
-          <div className="space-y-4">
-            {/* Only show premium banner for basic users */}
-            {!isPremium && <div className="animate-on-scroll"><PremiumBanner /></div>}
-            
-            <div className="grid md:grid-cols-2 gap-4">
-              <div className="animate-on-scroll"><IllnessSettings /></div>
-              {isPremium && <div className="animate-on-scroll"><SubscriptionStatus /></div>}
-            </div>
-            
-            <div className="animate-on-scroll">
-              {isPremium ? <PremiumDashboard /> : <DashboardOverview onSectionChange={handleSectionChange} />}
-            </div>
-
-            {/* Always show diet information for all users */}
-            <div className="animate-on-scroll">
-              <MealPlanDisplay />
-            </div>
-          </div>
-        );
       case 'health-metrics':
-        return (
-          <div className="animate-on-scroll">
-            <HealthMetricsForm />
-          </div>
-        );
+        return <HealthMetricsForm />;
       case 'symptoms':
-        return (
-          <div className="animate-on-scroll">
-            <SymptomLogger />
-          </div>
-        );
-      case 'meal-tracker':
-        return (
-          <div className="animate-on-scroll">
-            {isPremium ? (
-              <EnhancedMealTracker />
-            ) : (
-              <MealTracker userProfile={userProfile} />
-            )}
-          </div>
-        );
+        return <SymptomLogger />;
       case 'appointments':
-        return (
-          <div className="animate-on-scroll">
-            {isPremium ? (
-              <div className="bg-gradient-to-r from-green-50 to-blue-50 p-6 rounded-lg">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                  Book Your Appointment
-                </h2>
-                <p className="text-gray-600 mb-4">
-                  Schedule appointments with your healthcare providers easily.
-                </p>
-                <HospitalBooking />
-              </div>
-            ) : (
-              <div className="text-center py-12 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                  Appointments - Premium Feature
-                </h2>
-                <p className="text-gray-600 mb-6">
-                  Upgrade to Premium to access appointment booking and scheduling features.
-                </p>
-                <button
-                  onClick={() => navigate('/premium')}
-                  className="bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-3 rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-300"
-                >
-                  Upgrade to Premium
-                </button>
-              </div>
-            )}
-          </div>
-        );
+        return <EnhancedHospitalBooking />;
       case 'notifications':
-        return (
-          <div className="animate-on-scroll">
-            <NotificationCenter />
-          </div>
-        );
+        return <NotificationSettings />;
       case 'reminders':
-        return (
-          <div className="animate-on-scroll">
-            <ReminderForm />
-          </div>
-        );
+        return <ReminderForm />;
+      case 'meal-tracker':
+        return <EnhancedMealTracker />;
+      case 'weekly-calendar':
+        return <WeeklyMealCalendar />;
+      case 'admin-premium':
+        return <AdminPremiumManager />;
       case 'shopping':
-        return (
-          <div className="animate-on-scroll">
-            <ShoppingList />
-          </div>
-        );
+        return <ShoppingList />;
       case 'drugs':
-        return (
-          <div className="animate-on-scroll">
-            <DrugStore />
-          </div>
-        );
+        return <DrugStore />;
       case 'hospital-info':
-        return (
-          <div className="animate-on-scroll">
-            {isPremium ? (
-              <div className="bg-gradient-to-r from-green-50 to-blue-50 p-6 rounded-lg">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                  My Hospitals
-                </h2>
-                <p className="text-gray-600 mb-4">
-                  Manage your hospital preferences and view booking history.
-                </p>
-                <HospitalBooking />
-              </div>
-            ) : (
-              <div className="text-center py-12 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                  Hospital Management - Premium Feature
-                </h2>
-                <p className="text-gray-600 mb-6">
-                  Upgrade to Premium to access hospital management features including direct booking and record synchronization.
-                </p>
-                <button
-                  onClick={() => navigate('/premium')}
-                  className="bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-3 rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-300"
-                >
-                  Upgrade to Premium
-                </button>
-              </div>
-            )}
-          </div>
-        );
+        return <HospitalForm />;
       case 'chat':
-        return (
-          <div className="animate-on-scroll">
-            <AIChat />
-          </div>
-        );
+        return <AIChat />;
       case 'blog':
-        return (
-          <div className="animate-on-scroll">
-            <HealthBlog />
-          </div>
-        );
-      case 'health-insurance':
-        return (
-          <div className="text-center py-12 animate-on-scroll bg-gradient-to-r from-green-50 to-blue-50 rounded-lg">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              Health Insurance
-            </h2>
-            <p className="text-gray-600 mb-6">
-              Insurance management feature coming soon! We're working on integrating with major insurance providers.
-            </p>
-            <div className="animate-pulse bg-green-200 h-4 w-1/3 mx-auto rounded"></div>
-          </div>
-        );
+        return <HealthBlog />;
       case 'rate-us':
-        return (
-          <div className="animate-on-scroll">
-            <RateUs />
-          </div>
-        );
-      case 'about':
-        return (
-          <div className="text-center py-12 animate-on-scroll bg-gradient-to-r from-green-50 to-blue-50 rounded-lg">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              About Healinton
-            </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Healinton is your comprehensive healthcare management platform, designed to help you track your health journey, 
-              manage medications, connect with healthcare providers, and maintain optimal wellness.
-            </p>
-          </div>
-        );
+        return <RateUs />;
       case 'settings':
-        return (
-          <div className="animate-on-scroll">
-            <Settings />
-          </div>
-        );
+        return <Settings />;
+      case 'overview':
       default:
-        return (
-          <div className="text-center py-12 animate-on-scroll bg-gradient-to-r from-green-50 to-blue-50 rounded-lg">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              {activeSection.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}
-            </h2>
-            <p className="text-gray-600">
-              This section is being developed! Stay tuned for updates.
-            </p>
-          </div>
-        );
+        return <DashboardOverview />;
     }
   };
 
   return (
-    <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-gradient-to-br from-green-50 via-white to-blue-50">
-        {/* Mobile Sidebar Overlay */}
-        {sidebarOpen && (
-          <div 
-            className="fixed inset-0 z-40 bg-black/50 lg:hidden transition-opacity duration-300"
-            onClick={() => setSidebarOpen(false)}
-          />
-        )}
-        
-        {/* Sidebar */}
-        <div className={`
-          fixed lg:relative inset-y-0 left-0 z-50 w-64 transform transition-transform duration-300 ease-in-out lg:translate-x-0
-          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-        `}>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex">
+      {/* Desktop Sidebar - Fixed */}
+      <div className="hidden lg:flex lg:flex-shrink-0">
+        <div className="flex flex-col w-64">
           <Sidebar 
-            isOpen={sidebarOpen}
-            onClose={() => setSidebarOpen(false)}
-            onSectionChange={handleSectionChange}
+            isOpen={true}
+            onSectionChange={setActiveSection}
             activeSection={activeSection}
           />
         </div>
+      </div>
 
-        {/* Main Content */}
-        <div className="flex-1 flex flex-col min-w-0">
+      {/* Mobile sidebar overlay */}
+      {sidebarOpen && (
+        <>
+          <div 
+            className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+          <div className="fixed inset-y-0 left-0 z-50 w-64 lg:hidden">
+            <Sidebar 
+              isOpen={sidebarOpen}
+              onClose={() => setSidebarOpen(false)}
+              onSectionChange={(section) => {
+                setActiveSection(section);
+                setSidebarOpen(false);
+              }}
+              activeSection={activeSection}
+            />
+          </div>
+        </>
+      )}
+
+      {/* Main content area */}
+      <div className="flex-1 flex flex-col min-w-0">
+        {/* Mobile header with theme toggle */}
+        <div className="lg:hidden">
           <DashboardHeader 
-            onMenuClick={handleMenuClick}
+            onMenuClick={() => setSidebarOpen(true)} 
             userName={userName}
           />
-          
-          <main className="flex-1 p-4 lg:p-6 overflow-auto">
-            <div className="max-w-7xl mx-auto space-y-4">
+        </div>
+
+        {/* Desktop theme toggle - positioned at top right */}
+        <div className="hidden lg:block absolute top-4 right-4 z-30">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-2 shadow-lg border border-gray-200 dark:border-gray-700">
+            <div className="flex items-center space-x-2">
+              <span className="text-sm text-gray-600 dark:text-gray-300">Theme:</span>
+              <ThemeToggle />
+            </div>
+          </div>
+        </div>
+
+        {/* Main content */}
+        <main className="flex-1 overflow-auto">
+          <div className="p-4 lg:p-8">
+            <div className="max-w-7xl mx-auto">
+              {/* Welcome message for desktop */}
+              <div className="hidden lg:block mb-6">
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                  Welcome back, {userName}!
+                </h1>
+                <p className="text-gray-600 dark:text-gray-400">
+                  Here's your health dashboard overview
+                </p>
+              </div>
               {renderContent()}
             </div>
-          </main>
-        </div>
+          </div>
+        </main>
       </div>
-    </SidebarProvider>
+    </div>
   );
 };
 

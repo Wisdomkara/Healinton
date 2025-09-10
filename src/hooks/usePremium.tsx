@@ -40,9 +40,9 @@ export const usePremium = (): PremiumStatus => {
       try {
         console.log('Checking premium status for user:', user.id);
         
-        // Use the database function to get subscription status
+        // Use the new free premium function - everyone is premium until Nov 30, 2025
         const { data: subscriptionData, error: subscriptionError } = await supabase
-          .rpc('get_user_subscription', { check_user_id: user.id });
+          .rpc('get_user_subscription_free', { check_user_id: user.id });
 
         if (subscriptionError) {
           console.error('Error checking subscription status:', subscriptionError);
