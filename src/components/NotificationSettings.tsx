@@ -73,8 +73,8 @@ const NotificationSettings = () => {
       setTimeout(() => {
         new Notification(title, {
           body,
-          icon: '/favicon.ico',
-          badge: '/favicon.ico'
+          icon: '/logo.png',
+          badge: '/logo.png'
         });
       }, delay);
     }
@@ -84,7 +84,7 @@ const NotificationSettings = () => {
     if (permission === 'granted') {
       new Notification('Healinton Test', {
         body: 'This is a test notification from Healinton!',
-        icon: '/favicon.ico'
+        icon: '/logo.png'
       });
     } else {
       requestPermission();
