@@ -54,14 +54,14 @@ const Footer = () => {
                 className="flex items-center space-x-2 text-green-100 hover:text-white transition-colors"
               >
                 <Phone className="h-4 w-4" />
-                <span>+1-800-HEALINTON</span>
+                <span>+2347084153584</span>
               </a>
               <a 
                 href="mailto:medical@healinton.com" 
                 className="flex items-center space-x-2 text-green-100 hover:text-white transition-colors"
               >
                 <Mail className="h-4 w-4" />
-                <span>medical@healinton.com</span>
+                <span>wiskara1@gmail.com</span>
               </a>
               <div className="flex items-center space-x-2 text-green-100">
                 <Clock className="h-4 w-4" />
@@ -79,14 +79,14 @@ const Footer = () => {
                 <span>123 Healthcare Ave, Medical District, NY 10001</span>
               </div>
               <a 
-                href="tel:+1-555-0123" 
+                href="+2347084153584" 
                 className="flex items-center space-x-2 text-green-100 hover:text-white transition-colors"
               >
                 <Phone className="h-4 w-4" />
-                <span>+1-555-0123</span>
+                <span>+2347084153584</span>
               </a>
               <a 
-                href="mailto:support@healinton.com" 
+                href="mailto:wiskara1@gmail.com" 
                 className="flex items-center space-x-2 text-green-100 hover:text-white transition-colors"
               >
                 <Mail className="h-4 w-4" />
