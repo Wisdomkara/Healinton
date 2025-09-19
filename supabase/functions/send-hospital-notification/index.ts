@@ -4,11 +4,89 @@ import { Resend } from "npm:resend@2.0.0";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
+// Rate limiting storage
+const rateLimitMap = new Map<string, { count: number; resetTime: number }>()
+const RATE_LIMIT_WINDOW = 60000 // 1 minute
+const RATE_LIMIT_MAX_REQUESTS = 5 // 5 requests per minute for email sending
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Content-Security-Policy": "default-src 'self'",
+  "X-Content-Type-Options": "nosniff",
+  "X-Frame-Options": "DENY",
+  "X-XSS-Protection": "1; mode=block"
 };
+
+// Rate limiting function
+const checkRateLimit = (identifier: string): boolean => {
+  const now = Date.now()
+  const record = rateLimitMap.get(identifier)
+  
+  if (!record || now > record.resetTime) {
+    rateLimitMap.set(identifier, { count: 1, resetTime: now + RATE_LIMIT_WINDOW })
+    return true
+  }
+  
+  if (record.count >= RATE_LIMIT_MAX_REQUESTS) {
+    return false
+  }
+  
+  record.count++
+  return true
+}
+
+// Input validation and sanitization
+const sanitizeInput = (input: string): string => {
+  if (typeof input !== 'string') return ''
+  
+  return input
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    .replace(/javascript:/gi, '')
+    .replace(/on\w+\s*=/gi, '')
+    .replace(/[<>]/g, '')
+    .trim()
+    .substring(0, 500) // Limit length
+}
+
+const validateEmail = (email: string): boolean => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return emailRegex.test(email) && email.length <= 254
+}
+
+const validateHospitalData = (data: HospitalNotificationRequest): string[] => {
+  const errors: string[] = []
+  
+  if (!data.hospitalEmail || !validateEmail(data.hospitalEmail)) {
+    errors.push('Valid hospital email is required')
+  }
+  
+  if (!data.hospitalName || data.hospitalName.trim().length === 0) {
+    errors.push('Hospital name is required')
+  }
+  
+  if (!data.patientName || data.patientName.trim().length === 0) {
+    errors.push('Patient name is required')
+  }
+  
+  if (!data.patientEmail || !validateEmail(data.patientEmail)) {
+    errors.push('Valid patient email is required')
+  }
+  
+  if (!data.appointmentDate || isNaN(Date.parse(data.appointmentDate))) {
+    errors.push('Valid appointment date is required')
+  }
+  
+  if (!data.reason || data.reason.trim().length === 0) {
+    errors.push('Reason for visit is required')
+  }
+  
+  if (!data.referenceNumber || data.referenceNumber.trim().length === 0) {
+    errors.push('Reference number is required')
+  }
+  
+  return errors
+}
 
 interface HospitalNotificationRequest {
   hospitalEmail: string;
@@ -32,31 +110,32 @@ const handler = async (req: Request): Promise<Response> => {
   try {
     console.log("Starting hospital notification function...");
     
+    // Rate limiting check
+    const clientIP = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown'
+    const authHeader = req.headers.get('authorization')
+    const identifier = authHeader ? `auth:${authHeader.substring(0, 20)}` : `ip:${clientIP}`
+    
+    if (!checkRateLimit(identifier)) {
+      return new Response(
+        JSON.stringify({ error: 'Rate limit exceeded. Please try again later.' }),
+        { 
+          status: 429, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      )
+    }
+    
     const requestBody = await req.json();
-    console.log("Request body received:", requestBody);
+    console.log("Request body received");
 
-    const {
-      hospitalEmail,
-      hospitalName,
-      patientName,
-      patientEmail,
-      patientPhone,
-      appointmentDate,
-      reason,
-      referenceNumber,
-      patientAddress,
-      country
-    }: HospitalNotificationRequest = requestBody;
-
-    console.log("Sending appointment notification to:", hospitalEmail);
-
-    if (!hospitalEmail) {
-      console.log("No hospital email provided, skipping email notification");
+    // Validate and sanitize input data
+    const validationErrors = validateHospitalData(requestBody)
+    if (validationErrors.length > 0) {
       return new Response(JSON.stringify({ 
-        success: true, 
-        message: "No hospital email provided" 
+        error: 'Validation failed',
+        details: validationErrors
       }), {
-        status: 200,
+        status: 400,
         headers: {
           "Content-Type": "application/json",
           ...corsHeaders,
@@ -64,31 +143,46 @@ const handler = async (req: Request): Promise<Response> => {
       });
     }
 
-    const formattedDate = new Date(appointmentDate).toLocaleString();
+    const sanitizedData = {
+      hospitalEmail: sanitizeInput(requestBody.hospitalEmail),
+      hospitalName: sanitizeInput(requestBody.hospitalName),
+      patientName: sanitizeInput(requestBody.patientName),
+      patientEmail: sanitizeInput(requestBody.patientEmail),
+      patientPhone: sanitizeInput(requestBody.patientPhone),
+      appointmentDate: requestBody.appointmentDate,
+      reason: sanitizeInput(requestBody.reason),
+      referenceNumber: sanitizeInput(requestBody.referenceNumber),
+      patientAddress: requestBody.patientAddress ? sanitizeInput(requestBody.patientAddress) : undefined,
+      country: requestBody.country ? sanitizeInput(requestBody.country) : undefined
+    }
+
+    console.log("Sending appointment notification to:", sanitizedData.hospitalEmail);
+
+    const formattedDate = new Date(sanitizedData.appointmentDate).toLocaleString();
 
     const emailResponse = await resend.emails.send({
       from: "CareVital <onboarding@resend.dev>",
-      to: [hospitalEmail],
-      subject: `New Appointment Booking - ${referenceNumber}`,
+      to: [sanitizedData.hospitalEmail],
+      subject: `New Appointment Booking - ${sanitizedData.referenceNumber}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
           <h1 style="color: #16a34a; margin-bottom: 20px;">New Appointment Booking</h1>
           
           <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
             <h2 style="color: #333; margin-top: 0;">Booking Details</h2>
-            <p><strong>Reference Number:</strong> ${referenceNumber}</p>
-            <p><strong>Hospital:</strong> ${hospitalName}</p>
+            <p><strong>Reference Number:</strong> ${sanitizedData.referenceNumber}</p>
+            <p><strong>Hospital:</strong> ${sanitizedData.hospitalName}</p>
             <p><strong>Appointment Date & Time:</strong> ${formattedDate}</p>
-            <p><strong>Reason for Visit:</strong> ${reason}</p>
+            <p><strong>Reason for Visit:</strong> ${sanitizedData.reason}</p>
           </div>
 
           <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
             <h2 style="color: #333; margin-top: 0;">Patient Information</h2>
-            <p><strong>Name:</strong> ${patientName}</p>
-            <p><strong>Email:</strong> ${patientEmail}</p>
-            <p><strong>Phone:</strong> ${patientPhone}</p>
-            ${country ? `<p><strong>Country:</strong> ${country}</p>` : ''}
-            ${patientAddress ? `<p><strong>Address:</strong> ${patientAddress}</p>` : ''}
+            <p><strong>Name:</strong> ${sanitizedData.patientName}</p>
+            <p><strong>Email:</strong> ${sanitizedData.patientEmail}</p>
+            <p><strong>Phone:</strong> ${sanitizedData.patientPhone}</p>
+            ${sanitizedData.country ? `<p><strong>Country:</strong> ${sanitizedData.country}</p>` : ''}
+            ${sanitizedData.patientAddress ? `<p><strong>Address:</strong> ${sanitizedData.patientAddress}</p>` : ''}
           </div>
 
           <div style="background-color: #e7f3ff; padding: 15px; border-radius: 8px; border-left: 4px solid #2563eb;">
@@ -119,11 +213,17 @@ const handler = async (req: Request): Promise<Response> => {
     });
   } catch (error: any) {
     console.error("Error in send-hospital-notification function:", error);
+    
+    // Don't expose internal error details in production
+    const errorMessage = error instanceof Error && 
+      (error.message.includes('Validation') || error.message.includes('Rate limit'))
+      ? error.message 
+      : 'Failed to send notification. Please try again.'
+    
     return new Response(
       JSON.stringify({ 
         success: false, 
-        error: error.message,
-        details: error.stack
+        error: errorMessage
       }),
       {
         status: 500,
