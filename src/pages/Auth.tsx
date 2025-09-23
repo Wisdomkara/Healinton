@@ -739,10 +739,15 @@ const Auth = () => {
     
     if (error) {
       toast({
-        title: "Error",
+        title: "Sign In Failed",
         description: error.message,
         variant: "destructive"
       });
+      
+      // If it's an email verification issue, show helpful UI
+      if (error.message.includes('verification link')) {
+        setIsEmailVerified(true);
+      }
     } else {
       navigate('/dashboard');
     }
