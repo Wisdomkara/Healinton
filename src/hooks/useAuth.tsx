@@ -93,21 +93,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         
         // Provide better error messages for common issues
         if (error.message === 'Invalid login credentials') {
-          // Check if user exists but is unconfirmed
-          const { data } = await supabase.auth.signUp({
-            email,
-            password,
-            options: { data: {} }
-          });
-          
-          if (data?.user && !data.user.email_confirmed_at) {
-            return { 
-              error: { 
-                ...error, 
-                message: 'Please check your email and click the verification link before signing in. If you haven\'t received the email, please check your spam folder.' 
-              } 
-            };
-          }
+          return { 
+            error: { 
+              ...error, 
+              message: 'Invalid email or password. If you just signed up, please check your email and click the verification link first. If you haven\'t received the email, please check your spam folder.' 
+            } 
+          };
         }
       } else {
         console.log('Signin successful');
