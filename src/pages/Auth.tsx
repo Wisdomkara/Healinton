@@ -7,7 +7,10 @@ import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { Eye, EyeOff, CheckCircle, User, Mail, Lock } from 'lucide-react';
+import { Eye, EyeOff, CheckCircle, User, Mail, Lock, ChevronsUpDown, Check } from 'lucide-react';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { cn } from '@/lib/utils';
 
 const Auth = () => {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -15,6 +18,7 @@ const Auth = () => {
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [verificationComplete, setVerificationComplete] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [openIllnessCombobox, setOpenIllnessCombobox] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -771,17 +775,13 @@ const Auth = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             <Button 
-              onClick={() => setVerificationComplete(false)} 
+              onClick={() => {
+                setVerificationComplete(false);
+                setIsSignUp(false);
+              }} 
               className="w-full bg-green-600 hover:bg-green-700"
             >
               Sign In Now
-            </Button>
-            <Button 
-              variant="outline" 
-              onClick={() => navigate('/dashboard')} 
-              className="w-full"
-            >
-              Go to Dashboard
             </Button>
           </CardContent>
         </Card>
@@ -968,19 +968,49 @@ const Auth = () => {
 
                 <div>
                   <Label htmlFor="illnessType">Health Condition (Optional)</Label>
-                  <select
-                    id="illnessType"
-                    value={formData.illnessType}
-                    onChange={(e) => handleInputChange('illnessType', e.target.value)}
-                    className="w-full px-3 py-2 border border-input bg-background rounded-md"
-                  >
-                    <option value="">Select a condition</option>
-                    {illnessOptions.map((illness) => (
-                      <option key={illness} value={illness}>
-                        {illness.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
-                      </option>
-                    ))}
-                  </select>
+                  <Popover open={openIllnessCombobox} onOpenChange={setOpenIllnessCombobox}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        aria-expanded={openIllnessCombobox}
+                        className="w-full justify-between"
+                      >
+                        {formData.illnessType
+                          ? formData.illnessType.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
+                          : "Search or select a condition..."}
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-full p-0" align="start">
+                      <Command>
+                        <CommandInput placeholder="Search health conditions..." />
+                        <CommandList>
+                          <CommandEmpty>No condition found.</CommandEmpty>
+                          <CommandGroup>
+                            {illnessOptions.map((illness) => (
+                              <CommandItem
+                                key={illness}
+                                value={illness}
+                                onSelect={(currentValue) => {
+                                  handleInputChange('illnessType', currentValue === formData.illnessType ? '' : currentValue);
+                                  setOpenIllnessCombobox(false);
+                                }}
+                              >
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-4 w-4",
+                                    formData.illnessType === illness ? "opacity-100" : "opacity-0"
+                                  )}
+                                />
+                                {illness.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
                 </div>
               </>
             )}
