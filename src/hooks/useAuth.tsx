@@ -59,7 +59,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         password,
         options: {
           data: userData,
-          emailRedirectTo: 'https://healinton.vercel.app/auth?type=signup'
+          emailRedirectTo: `${window.location.origin}/auth?type=signup`
         }
       });
       
