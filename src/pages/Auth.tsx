@@ -810,10 +810,19 @@ const Auth = () => {
               <ol className="mt-2 space-y-1 list-decimal list-inside">
                 <li>Check your email inbox (and spam folder)</li>
                 <li>Click the verification link</li>
-                <li>You'll be redirected back with a "Go to Dashboard" button</li>
-                <li>Sign in and start using your account!</li>
+                <li>You'll be redirected back here</li>
+                <li>Sign in with your credentials!</li>
               </ol>
             </div>
+            <Button 
+              onClick={() => {
+                setIsEmailVerified(false);
+                setIsSignUp(false);
+              }} 
+              className="w-full"
+            >
+              Go to Sign In
+            </Button>
             <Button 
               variant="outline" 
               onClick={() => setIsEmailVerified(false)} 
