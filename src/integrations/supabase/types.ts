@@ -77,13 +77,9 @@ export type Database = {
       drug_orders: {
         Row: {
           country: string | null
-          delivery_address: string | null
           drug_id: string
-          email_address: string | null
-          full_name: string | null
           id: string
           order_date: string | null
-          phone_number: string | null
           quantity: number | null
           reference_number: string | null
           status: string | null
@@ -92,13 +88,9 @@ export type Database = {
         }
         Insert: {
           country?: string | null
-          delivery_address?: string | null
           drug_id: string
-          email_address?: string | null
-          full_name?: string | null
           id?: string
           order_date?: string | null
-          phone_number?: string | null
           quantity?: number | null
           reference_number?: string | null
           status?: string | null
@@ -107,13 +99,9 @@ export type Database = {
         }
         Update: {
           country?: string | null
-          delivery_address?: string | null
           drug_id?: string
-          email_address?: string | null
-          full_name?: string | null
           id?: string
           order_date?: string | null
-          phone_number?: string | null
           quantity?: number | null
           reference_number?: string | null
           status?: string | null
@@ -435,36 +423,42 @@ export type Database = {
         Row: {
           country: string | null
           created_at: string | null
+          delivery_address: string | null
           email: string | null
           first_name: string | null
           gender: string | null
           id: string
           illness_type: string | null
           last_name: string | null
+          phone_number: string | null
           role: string | null
           updated_at: string | null
         }
         Insert: {
           country?: string | null
           created_at?: string | null
+          delivery_address?: string | null
           email?: string | null
           first_name?: string | null
           gender?: string | null
           id: string
           illness_type?: string | null
           last_name?: string | null
+          phone_number?: string | null
           role?: string | null
           updated_at?: string | null
         }
         Update: {
           country?: string | null
           created_at?: string | null
+          delivery_address?: string | null
           email?: string | null
           first_name?: string | null
           gender?: string | null
           id?: string
           illness_type?: string | null
           last_name?: string | null
+          phone_number?: string | null
           role?: string | null
           updated_at?: string | null
         }

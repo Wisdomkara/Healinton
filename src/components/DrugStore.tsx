@@ -24,16 +24,32 @@ const DrugStore = () => {
   const [selectedDrug, setSelectedDrug] = useState<any>(null);
   const [orderForm, setOrderForm] = useState({
     quantity: 1,
-    notes: '',
-    fullName: '',
-    phoneNumber: '',
-    emailAddress: '',
-    deliveryAddress: ''
+    notes: ''
   });
+  const [profile, setProfile] = useState<any>(null);
 
   useEffect(() => {
     fetchDrugs();
-  }, []);
+    if (user) {
+      fetchProfile();
+    }
+  }, [user]);
+
+  const fetchProfile = async () => {
+    if (!user) return;
+    
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('first_name, last_name, email, phone_number, delivery_address, country')
+      .eq('id', user.id)
+      .single();
+    
+    if (error) {
+      console.error('Error fetching profile:', error);
+    } else {
+      setProfile(data);
+    }
+  };
 
   useEffect(() => {
     filterDrugs();
@@ -71,13 +87,13 @@ const DrugStore = () => {
   };
 
   const handleOrder = async () => {
-    if (!user || !selectedDrug) return;
+    if (!user || !selectedDrug || !profile) return;
 
-    // Validate required fields
-    if (!orderForm.fullName || !orderForm.phoneNumber || !orderForm.emailAddress || !orderForm.deliveryAddress) {
+    // Validate profile has required fields
+    if (!profile.phone_number || !profile.delivery_address) {
       toast({
-        title: 'Missing Information',
-        description: 'Please fill in all required fields (Name, Phone, Email, and Delivery Address).',
+        title: 'Profile Incomplete',
+        description: 'Please update your profile with phone number and delivery address in Settings.',
         variant: 'destructive'
       });
       return;
@@ -97,10 +113,7 @@ const DrugStore = () => {
           total_amount: totalAmount,
           status: 'pending',
           reference_number: referenceNumber,
-          full_name: orderForm.fullName,
-          phone_number: orderForm.phoneNumber,
-          email_address: orderForm.emailAddress,
-          delivery_address: orderForm.deliveryAddress
+          country: profile.country
         });
 
       if (error) throw error;
@@ -113,11 +126,7 @@ const DrugStore = () => {
       setSelectedDrug(null);
       setOrderForm({ 
         quantity: 1, 
-        notes: '', 
-        fullName: '', 
-        phoneNumber: '', 
-        emailAddress: '', 
-        deliveryAddress: '' 
+        notes: ''
       });
 
     } catch (error) {
@@ -256,63 +265,17 @@ const DrugStore = () => {
             </div>
             
             <div className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="fullName">Full Name *</Label>
-                  <Input
-                    id="fullName"
-                    placeholder="Enter your full name"
-                    value={orderForm.fullName}
-                    onChange={(e) => setOrderForm(prev => ({
-                      ...prev,
-                      fullName: e.target.value
-                    }))}
-                    required
-                  />
-                </div>
-                
-                <div>
-                  <Label htmlFor="phoneNumber">Phone Number *</Label>
-                  <Input
-                    id="phoneNumber"
-                    placeholder="Enter your phone number"
-                    value={orderForm.phoneNumber}
-                    onChange={(e) => setOrderForm(prev => ({
-                      ...prev,
-                      phoneNumber: e.target.value
-                    }))}
-                    required
-                  />
-                </div>
-              </div>
-              
-              <div>
-                <Label htmlFor="emailAddress">Email Address *</Label>
-                <Input
-                  id="emailAddress"
-                  type="email"
-                  placeholder="Enter your email address"
-                  value={orderForm.emailAddress}
-                  onChange={(e) => setOrderForm(prev => ({
-                    ...prev,
-                    emailAddress: e.target.value
-                  }))}
-                  required
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="deliveryAddress">Delivery Address *</Label>
-                <Textarea
-                  id="deliveryAddress"
-                  placeholder="Enter your complete delivery address"
-                  value={orderForm.deliveryAddress}
-                  onChange={(e) => setOrderForm(prev => ({
-                    ...prev,
-                    deliveryAddress: e.target.value
-                  }))}
-                  required
-                />
+              <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg mb-4">
+                <p className="text-sm text-blue-900 dark:text-blue-100">
+                  <strong>Delivery Details:</strong><br/>
+                  {profile?.first_name} {profile?.last_name}<br/>
+                  {profile?.email}<br/>
+                  {profile?.phone_number || 'No phone number'}<br/>
+                  {profile?.delivery_address || 'No delivery address'}
+                </p>
+                <p className="text-xs text-blue-700 dark:text-blue-300 mt-2">
+                  Update your delivery details in Settings if needed.
+                </p>
               </div>
               
               <div>

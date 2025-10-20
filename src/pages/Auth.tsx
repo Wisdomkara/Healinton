@@ -11,6 +11,7 @@ import { Eye, EyeOff, CheckCircle, User, Mail, Lock, ChevronsUpDown, Check } fro
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
+import { supabase } from '@/integrations/supabase/client';
 
 const Auth = () => {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -19,6 +20,8 @@ const Auth = () => {
   const [verificationComplete, setVerificationComplete] = useState(false);
   const [loading, setLoading] = useState(false);
   const [openIllnessCombobox, setOpenIllnessCombobox] = useState(false);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [resetEmailSent, setResetEmailSent] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -759,6 +762,81 @@ const Auth = () => {
     setLoading(false);
   };
 
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!formData.email) {
+      toast({
+        title: "Error",
+        description: "Please enter your email address",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setLoading(true);
+
+    const { error } = await supabase.auth.resetPasswordForEmail(formData.email, {
+      redirectTo: `${window.location.origin}/auth?type=recovery`
+    });
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive"
+      });
+    } else {
+      setResetEmailSent(true);
+      toast({
+        title: "Check Your Email",
+        description: "We've sent you a password reset link. Please check your email.",
+      });
+    }
+
+    setLoading(false);
+  };
+
+  // Show password reset email sent message
+  if (resetEmailSent) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <div className="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+              <Mail className="h-8 w-8 text-blue-600" />
+            </div>
+            <CardTitle className="text-2xl font-bold">Check Your Email</CardTitle>
+            <CardDescription>
+              We've sent a password reset link to <strong>{formData.email}</strong>. 
+              Please check your email and click the link to reset your password.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="text-sm text-gray-600 bg-blue-50 p-3 rounded-lg">
+              <p className="font-medium">What happens next?</p>
+              <ol className="mt-2 space-y-1 list-decimal list-inside">
+                <li>Check your email inbox (and spam folder)</li>
+                <li>Click the password reset link</li>
+                <li>Create a new password</li>
+                <li>Sign in with your new password!</li>
+              </ol>
+            </div>
+            <Button 
+              onClick={() => {
+                setResetEmailSent(false);
+                setIsForgotPassword(false);
+              }} 
+              className="w-full"
+            >
+              Back to Sign In
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   // Show verification success page
   if (verificationComplete) {
     return (
@@ -841,18 +919,21 @@ const Auth = () => {
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">
-            {isSignUp ? 'Create Account' : 'Welcome Back'}
+            {isForgotPassword ? 'Reset Password' : (isSignUp ? 'Create Account' : 'Welcome Back')}
           </CardTitle>
           <CardDescription className="text-center">
-            {isSignUp 
-              ? 'Enter your details to create your account' 
-              : 'Enter your email and password to sign in'
+            {isForgotPassword 
+              ? 'Enter your email to receive a password reset link'
+              : (isSignUp 
+                ? 'Enter your details to create your account' 
+                : 'Enter your email and password to sign in'
+              )
             }
           </CardDescription>
         </CardHeader>
         
         <CardContent>
-          <form onSubmit={isSignUp ? handleSignUp : handleSignIn} className="space-y-4">
+          <form onSubmit={isForgotPassword ? handleForgotPassword : (isSignUp ? handleSignUp : handleSignIn)} className="space-y-4">
             {isSignUp && (
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -902,34 +983,48 @@ const Auth = () => {
               </div>
             </div>
 
-            <div>
-              <Label htmlFor="password">Password</Label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="••••••••"
-                  value={formData.password}
-                  onChange={(e) => handleInputChange('password', e.target.value)}
-                  className="pl-10 pr-10"
-                  required
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4 text-gray-400" />
-                  ) : (
-                    <Eye className="h-4 w-4 text-gray-400" />
-                  )}
-                </Button>
+            {!isForgotPassword && (
+              <div>
+                <Label htmlFor="password">Password</Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    value={formData.password}
+                    onChange={(e) => handleInputChange('password', e.target.value)}
+                    className="pl-10 pr-10"
+                    required
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4 text-gray-400" />
+                    ) : (
+                      <Eye className="h-4 w-4 text-gray-400" />
+                    )}
+                  </Button>
+                </div>
+                {!isSignUp && (
+                  <div className="text-right mt-1">
+                    <Button
+                      type="button"
+                      variant="link"
+                      className="p-0 h-auto text-sm text-blue-600 hover:text-blue-700"
+                      onClick={() => setIsForgotPassword(true)}
+                    >
+                      Forgot password?
+                    </Button>
+                  </div>
+                )}
               </div>
-            </div>
+            )}
 
             {isSignUp && (
               <>
@@ -1025,24 +1120,41 @@ const Auth = () => {
             )}
 
             <Button type="submit" disabled={loading} className="w-full">
-              {loading ? 'Please wait...' : (isSignUp ? 'Create Account' : 'Sign In')}
+              {loading ? 'Please wait...' : (isForgotPassword ? 'Send Reset Link' : (isSignUp ? 'Create Account' : 'Sign In'))}
             </Button>
           </form>
 
           <Separator className="my-4" />
 
-          <div className="text-center">
-            <p className="text-sm text-gray-600">
-              {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
-              <Button
-                variant="link"
-                className="p-0 h-auto font-semibold"
-                onClick={() => setIsSignUp(!isSignUp)}
-              >
-                {isSignUp ? 'Sign In' : 'Sign Up'}
-              </Button>
-            </p>
-          </div>
+          {!isForgotPassword && (
+            <div className="text-center">
+              <p className="text-sm text-gray-600">
+                {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
+                <Button
+                  variant="link"
+                  className="p-0 h-auto font-semibold"
+                  onClick={() => setIsSignUp(!isSignUp)}
+                >
+                  {isSignUp ? 'Sign In' : 'Sign Up'}
+                </Button>
+              </p>
+            </div>
+          )}
+
+          {isForgotPassword && (
+            <div className="text-center">
+              <p className="text-sm text-gray-600">
+                Remember your password?{' '}
+                <Button
+                  variant="link"
+                  className="p-0 h-auto font-semibold"
+                  onClick={() => setIsForgotPassword(false)}
+                >
+                  Back to Sign In
+                </Button>
+              </p>
+            </div>
+          )}
 
           <div className="text-center mt-4">
             <Link to="/">

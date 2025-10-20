@@ -21,7 +21,9 @@ const Settings = () => {
     email: '',
     gender: '',
     country: '',
-    illness_type: ''
+    illness_type: '',
+    phone_number: '',
+    delivery_address: ''
   });
   const [preferences, setPreferences] = useState({
     email_notifications: true,
@@ -53,7 +55,9 @@ const Settings = () => {
         email: data.email || '',
         gender: data.gender || '',
         country: data.country || '',
-        illness_type: data.illness_type || ''
+        illness_type: data.illness_type || '',
+        phone_number: data.phone_number || '',
+        delivery_address: data.delivery_address || ''
       });
     }
   };
@@ -151,6 +155,29 @@ const Settings = () => {
                 <SelectItem value="other">Other</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+
+          <div>
+            <Label htmlFor="phoneNumber">Phone Number</Label>
+            <Input
+              id="phoneNumber"
+              type="tel"
+              value={profile.phone_number}
+              onChange={(e) => handleInputChange('phone_number', e.target.value)}
+              placeholder="+1 234 567 8900"
+              className="mt-1"
+            />
+          </div>
+
+          <div className="md:col-span-2">
+            <Label htmlFor="deliveryAddress">Delivery Address</Label>
+            <Input
+              id="deliveryAddress"
+              value={profile.delivery_address}
+              onChange={(e) => handleInputChange('delivery_address', e.target.value)}
+              placeholder="Enter your complete delivery address"
+              className="mt-1"
+            />
           </div>
         </div>
         
