@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -44,29 +44,65 @@ const hospitals = [
 
 
 const HospitalBooking = () => {
-  useEnsureProfile(); // Ensure user profile exists
+  useEnsureProfile();
   const { user } = useAuth();
   const { toast } = useToast();
   const [formData, setFormData] = useState({
     hospitalName: '',
     appointmentDate: '',
-    reason: '',
-    fullName: '',
-    phoneNumber: '',
-    emailAddress: '',
-    country: '',
-    address: ''
+    reason: ''
   });
   const [loading, setLoading] = useState(false);
+  const [profileLoaded, setProfileLoaded] = useState(false);
+
+  // Fetch user profile to ensure it exists
+  useEffect(() => {
+    const checkProfile = async () => {
+      if (!user) return;
+      
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('first_name, last_name, phone_number, email, country, delivery_address')
+        .eq('id', user.id)
+        .single();
+
+      if (error) {
+        toast({
+          title: "Profile Error",
+          description: "Please complete your profile before booking an appointment.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      if (!data?.first_name || !data?.phone_number || !data?.email) {
+        toast({
+          title: "Incomplete Profile",
+          description: "Please complete your profile information before booking.",
+          variant: "destructive"
+        });
+      } else {
+        setProfileLoaded(true);
+      }
+    };
+
+    checkProfile();
+  }, [user, toast]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
+    if (!user || !profileLoaded) {
+      toast({
+        title: "Profile Required",
+        description: "Please complete your profile before booking.",
+        variant: "destructive"
+      });
+      return;
+    }
 
     setLoading(true);
     
     try {
-      // Generate reference number
       const referenceNumber = `APT-${Date.now().toString().slice(-6)}`;
 
       const { error } = await supabase
@@ -76,10 +112,6 @@ const HospitalBooking = () => {
           hospital_name: formData.hospitalName,
           appointment_date: formData.appointmentDate,
           reason: formData.reason,
-          full_name: formData.fullName,
-          phone_number: formData.phoneNumber,
-          email_address: formData.emailAddress,
-          country: formData.country,
           reference_number: referenceNumber
         });
 
@@ -87,19 +119,13 @@ const HospitalBooking = () => {
 
       toast({
         title: "Appointment Booked Successfully!",
-        description: `Your appointment at ${formData.hospitalName} has been scheduled. Reference: ${referenceNumber}. You will receive a confirmation email shortly.`
+        description: `Your appointment at ${formData.hospitalName} has been scheduled. Reference: ${referenceNumber}.`
       });
 
-      // Reset form
       setFormData({
         hospitalName: '',
         appointmentDate: '',
-        reason: '',
-        fullName: '',
-        phoneNumber: '',
-        emailAddress: '',
-        country: '',
-        address: ''
+        reason: ''
       });
 
     } catch (error) {
@@ -117,64 +143,12 @@ const HospitalBooking = () => {
   return (
     <Card className="p-6">
       <h3 className="text-lg font-semibold mb-4">Book Hospital Appointment</h3>
+      {!profileLoaded && (
+        <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md text-sm text-yellow-800">
+          Please ensure your profile is complete with name, phone number, email, and address before booking.
+        </div>
+      )}
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="fullName">Full Name *</Label>
-            <Input
-              id="fullName"
-              value={formData.fullName}
-              onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-              required
-            />
-          </div>
-          
-          <div>
-            <Label htmlFor="phoneNumber">Phone Number *</Label>
-            <Input
-              id="phoneNumber"
-              type="tel"
-              value={formData.phoneNumber}
-              onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
-              required
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="emailAddress">Email Address *</Label>
-            <Input
-              id="emailAddress"
-              type="email"
-              value={formData.emailAddress}
-              onChange={(e) => setFormData({ ...formData, emailAddress: e.target.value })}
-              required
-            />
-          </div>
-          
-          <div>
-            <Label htmlFor="country">Country *</Label>
-            <Input
-              id="country"
-              value={formData.country}
-              onChange={(e) => setFormData({ ...formData, country: e.target.value })}
-              required
-            />
-          </div>
-        </div>
-
-        <div>
-          <Label htmlFor="address">Home Address *</Label>
-          <Input
-            id="address"
-            value={formData.address}
-            onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-            placeholder="Enter your full address for potential home visits"
-            required
-          />
-        </div>
-
         <div>
           <Label htmlFor="hospital">Select Hospital *</Label>
           <Select value={formData.hospitalName} onValueChange={(value) => setFormData({ ...formData, hospitalName: value })}>
@@ -212,7 +186,7 @@ const HospitalBooking = () => {
           />
         </div>
 
-        <Button type="submit" disabled={loading} className="w-full bg-green-600 hover:bg-green-700">
+        <Button type="submit" disabled={loading || !profileLoaded} className="w-full bg-green-600 hover:bg-green-700">
           {loading ? 'Booking Appointment...' : 'Book Appointment'}
         </Button>
       </form>

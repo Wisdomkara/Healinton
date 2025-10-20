@@ -48,29 +48,65 @@ const EnhancedHospitalBooking = () => {
     hospitalEmail: '',
     appointmentDate: '',
     reason: '',
-    fullName: '',
-    phoneNumber: '',
-    emailAddress: '',
-    country: '',
-    address: ''
+    country: ''
   });
   const [loading, setLoading] = useState(false);
   const [isManualHospital, setIsManualHospital] = useState(false);
+  const [profileData, setProfileData] = useState<any>(null);
 
-  const sendHospitalNotification = async (bookingData: any, referenceNumber: string) => {
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (!user) return;
+      
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('first_name, last_name, phone_number, email, country, delivery_address')
+        .eq('id', user.id)
+        .single();
+
+      if (error) {
+        console.error('Error fetching profile:', error);
+        toast({
+          title: "Profile Error",
+          description: "Please complete your profile before booking.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      if (!data?.first_name || !data?.phone_number || !data?.email) {
+        toast({
+          title: "Incomplete Profile",
+          description: "Please complete your profile information before booking.",
+          variant: "destructive"
+        });
+      } else {
+        setProfileData(data);
+        if (data.country) {
+          setFormData(prev => ({ ...prev, country: data.country }));
+        }
+      }
+    };
+
+    fetchProfile();
+  }, [user, toast]);
+
+  const sendHospitalNotification = async (referenceNumber: string) => {
+    if (!profileData) return;
+
     try {
       const { data, error } = await supabase.functions.invoke('send-hospital-notification', {
         body: {
-          hospitalEmail: bookingData.hospitalEmail,
-          hospitalName: bookingData.hospitalName,
-          patientName: bookingData.fullName,
-          patientEmail: bookingData.emailAddress,
-          patientPhone: bookingData.phoneNumber,
-          appointmentDate: bookingData.appointmentDate,
-          reason: bookingData.reason,
+          hospitalEmail: formData.hospitalEmail,
+          hospitalName: formData.hospitalName,
+          patientName: `${profileData.first_name} ${profileData.last_name}`,
+          patientEmail: profileData.email,
+          patientPhone: profileData.phone_number,
+          appointmentDate: formData.appointmentDate,
+          reason: formData.reason,
           referenceNumber: referenceNumber,
-          patientAddress: bookingData.address,
-          country: bookingData.country
+          patientAddress: profileData.delivery_address || '',
+          country: formData.country
         }
       });
 
@@ -91,9 +127,15 @@ const EnhancedHospitalBooking = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
+    if (!user || !profileData) {
+      toast({
+        title: "Profile Required",
+        description: "Please complete your profile before booking.",
+        variant: "destructive"
+      });
+      return;
+    }
 
-    // Validate hospital email is provided when manual hospital is selected
     if (isManualHospital && !formData.hospitalEmail) {
       toast({
         title: "Hospital Email Required",
@@ -116,19 +158,14 @@ const EnhancedHospitalBooking = () => {
           hospital_email: formData.hospitalEmail,
           appointment_date: formData.appointmentDate,
           reason: formData.reason,
-          full_name: formData.fullName,
-          phone_number: formData.phoneNumber,
-          email_address: formData.emailAddress,
           country: formData.country,
-          address: formData.address,
           reference_number: referenceNumber
         });
 
       if (error) throw error;
 
-      // Send email notification to hospital if email is provided
       if (formData.hospitalEmail) {
-        await sendHospitalNotification(formData, referenceNumber);
+        await sendHospitalNotification(referenceNumber);
       }
 
       toast({
@@ -136,17 +173,12 @@ const EnhancedHospitalBooking = () => {
         description: `Your appointment has been scheduled. Reference: ${referenceNumber}. ${formData.hospitalEmail ? 'Hospital has been notified via email.' : ''}`
       });
 
-      // Reset form
       setFormData({
         hospitalName: '',
         hospitalEmail: '',
         appointmentDate: '',
         reason: '',
-        fullName: '',
-        phoneNumber: '',
-        emailAddress: '',
-        country: '',
-        address: ''
+        country: profileData.country || ''
       });
       setIsManualHospital(false);
 
@@ -167,66 +199,24 @@ const EnhancedHospitalBooking = () => {
   return (
     <Card className="p-6">
       <h3 className="text-lg font-semibold mb-4">Book Hospital Appointment</h3>
+      {!profileData && (
+        <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md text-sm text-yellow-800">
+          Please ensure your profile is complete with name, phone number, email, and address before booking.
+        </div>
+      )}
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="fullName">Full Name *</Label>
-            <Input
-              id="fullName"
-              value={formData.fullName}
-              onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-              required
-            />
-          </div>
-          
-          <div>
-            <Label htmlFor="phoneNumber">Phone Number *</Label>
-            <Input
-              id="phoneNumber"
-              type="tel"
-              value={formData.phoneNumber}
-              onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
-              required
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="emailAddress">Email Address *</Label>
-            <Input
-              id="emailAddress"
-              type="email"
-              value={formData.emailAddress}
-              onChange={(e) => setFormData({ ...formData, emailAddress: e.target.value })}
-              required
-            />
-          </div>
-          
-          <div>
-            <Label htmlFor="country">Country *</Label>
-            <Select value={formData.country} onValueChange={(value) => setFormData({ ...formData, country: value })}>
-              <SelectTrigger>
-                <SelectValue placeholder="Choose your country" />
-              </SelectTrigger>
-              <SelectContent>
-                {Object.keys(countryHospitals).map(country => (
-                  <SelectItem key={country} value={country}>{country}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-
         <div>
-          <Label htmlFor="address">Home Address *</Label>
-          <Input
-            id="address"
-            value={formData.address}
-            onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-            placeholder="Enter your full address"
-            required
-          />
+          <Label htmlFor="country">Country *</Label>
+          <Select value={formData.country} onValueChange={(value) => setFormData({ ...formData, country: value })}>
+            <SelectTrigger>
+              <SelectValue placeholder="Choose your country" />
+            </SelectTrigger>
+            <SelectContent>
+              {Object.keys(countryHospitals).map(country => (
+                <SelectItem key={country} value={country}>{country}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="space-y-3">
@@ -317,7 +307,7 @@ const EnhancedHospitalBooking = () => {
           />
         </div>
 
-        <Button type="submit" disabled={loading} className="w-full bg-green-600 hover:bg-green-700">
+        <Button type="submit" disabled={loading || !profileData} className="w-full bg-green-600 hover:bg-green-700">
           {loading ? 'Booking Appointment...' : 'Book Appointment'}
         </Button>
       </form>
