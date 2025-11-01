@@ -5,7 +5,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { usePremium } from '@/hooks/usePremium';
 import { Crown, Check, Star, TrendingUp, Heart, Shield, Users, Phone } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-import PaymentModal from '@/components/PaymentModal';
+import PaystackPaymentModal from '@/components/PaystackPaymentModal';
 
 const Premium = () => {
   const { user } = useAuth();
@@ -264,7 +264,7 @@ const Premium = () => {
         )}
       </div>
 
-      <PaymentModal 
+      <PaystackPaymentModal 
         isOpen={showPaymentModal}
         onClose={() => setShowPaymentModal(false)}
         onSuccess={handlePaymentSuccess}

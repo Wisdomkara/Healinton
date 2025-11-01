@@ -269,8 +269,10 @@ export type Database = {
           created_at: string | null
           currency: string | null
           id: string
+          paid_at: string | null
           payment_date: string | null
           payment_method: string | null
+          reference: string | null
           status: string | null
           transaction_id: string | null
           updated_at: string | null
@@ -281,8 +283,10 @@ export type Database = {
           created_at?: string | null
           currency?: string | null
           id?: string
+          paid_at?: string | null
           payment_date?: string | null
           payment_method?: string | null
+          reference?: string | null
           status?: string | null
           transaction_id?: string | null
           updated_at?: string | null
@@ -293,8 +297,10 @@ export type Database = {
           created_at?: string | null
           currency?: string | null
           id?: string
+          paid_at?: string | null
           payment_date?: string | null
           payment_method?: string | null
+          reference?: string | null
           status?: string | null
           transaction_id?: string | null
           updated_at?: string | null
@@ -419,6 +425,7 @@ export type Database = {
           illness_type: string | null
           last_name: string | null
           phone_number: string | null
+          trial_end: string | null
           updated_at: string | null
         }
         Insert: {
@@ -432,6 +439,7 @@ export type Database = {
           illness_type?: string | null
           last_name?: string | null
           phone_number?: string | null
+          trial_end?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -445,6 +453,7 @@ export type Database = {
           illness_type?: string | null
           last_name?: string | null
           phone_number?: string | null
+          trial_end?: string | null
           updated_at?: string | null
         }
         Relationships: []
@@ -767,28 +776,19 @@ export type Database = {
         }
         Returns: boolean
       }
-      check_and_update_subscription_status: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
+      check_and_update_subscription_status: { Args: never; Returns: undefined }
       demote_admin_to_user: {
         Args: { target_user_email: string }
         Returns: boolean
       }
-      ensure_user_profile: {
-        Args: { user_uuid: string }
-        Returns: undefined
-      }
+      ensure_user_profile: { Args: { user_uuid: string }; Returns: undefined }
       generate_weekly_meal_plan: {
         Args: { p_user_id: string }
         Returns: undefined
       }
-      get_current_user_role: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
+      get_current_user_role: { Args: never; Returns: string }
       get_premium_users_admin_data: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           added_by: string
           country: string
@@ -824,6 +824,7 @@ export type Database = {
           status: string
         }[]
       }
+      has_active_access: { Args: { check_user_id: string }; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -831,14 +832,8 @@ export type Database = {
         }
         Returns: boolean
       }
-      is_admin: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
-      is_user_premium: {
-        Args: { check_user_id: string }
-        Returns: boolean
-      }
+      is_admin: { Args: never; Returns: boolean }
+      is_user_premium: { Args: { check_user_id: string }; Returns: boolean }
       promote_user_to_admin: {
         Args: { target_user_email: string }
         Returns: boolean
@@ -851,10 +846,7 @@ export type Database = {
         Args: { p_user_id: string }
         Returns: boolean
       }
-      update_expired_subscriptions: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
+      update_expired_subscriptions: { Args: never; Returns: undefined }
     }
     Enums: {
       app_role: "admin" | "user"

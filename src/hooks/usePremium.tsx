@@ -40,7 +40,35 @@ export const usePremium = (): PremiumStatus => {
       try {
         console.log('Checking premium status for user:', user.id);
         
-        // Use the new free premium function - everyone is premium until Dec 31, 2025
+        // First check trial period from profiles table
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('trial_end')
+          .eq('id', user.id)
+          .maybeSingle();
+
+        // If user has active trial, return trial status
+        if (profile?.trial_end) {
+          const trialEnd = new Date(profile.trial_end);
+          const now = new Date();
+          
+          if (trialEnd > now) {
+            const daysRemaining = Math.ceil((trialEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+            console.log('User has active trial until:', profile.trial_end, '- Days remaining:', daysRemaining);
+            
+            setPremiumStatus({
+              isPremium: true,
+              subscriptionType: 'trial',
+              expiresAt: profile.trial_end,
+              loading: false,
+              daysRemaining,
+              status: 'active',
+            });
+            return;
+          }
+        }
+        
+        // Use the get_user_subscription_free RPC for premium subscriptions
         const { data: subscriptionData, error: subscriptionError } = await supabase
           .rpc('get_user_subscription_free', { check_user_id: user.id });
 
