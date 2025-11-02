@@ -36,8 +36,8 @@ interface PaystackPaymentModalProps {
 const PAYSTACK_PUBLIC_KEY = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || 'pk_test_placeholder';
 
 // Payment configuration
-const PAYMENT_AMOUNT = 500; // Amount in kobo (5.00 NGN) or cents
-const PAYMENT_CURRENCY = 'NGN'; // Nigerian Naira
+const PAYMENT_AMOUNT = 705; // Amount in cents (7.05 USD)
+const PAYMENT_CURRENCY = 'USD'; // US Dollar
 const SUBSCRIPTION_DAYS = 30;
 
 // ================================================================
@@ -268,7 +268,7 @@ const PaystackPaymentModal: React.FC<PaystackPaymentModalProps> = ({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <CreditCard className="h-5 w-5 text-primary" />
-            Premium Subscription - ₦{(PAYMENT_AMOUNT / 100).toFixed(2)}
+            Premium Subscription - ${(PAYMENT_AMOUNT / 100).toFixed(2)} USD
           </DialogTitle>
         </DialogHeader>
         
@@ -313,7 +313,7 @@ const PaystackPaymentModal: React.FC<PaystackPaymentModalProps> = ({
                 ? processingStep === 'paying' 
                   ? 'Opening Payment Window...' 
                   : 'Verifying Payment...'
-                : `Pay ₦${(PAYMENT_AMOUNT / 100).toFixed(2)} - Get ${SUBSCRIPTION_DAYS} Days Premium`
+                : `Pay $${(PAYMENT_AMOUNT / 100).toFixed(2)} USD - Get ${SUBSCRIPTION_DAYS} Days Premium`
               }
             </Button>
             

@@ -60,9 +60,9 @@ const Premium = () => {
     },
     {
       name: 'Premium',
-      price: 'FREE',
-      period: 'until Nov 30, 2025',
-      description: 'Complete health management solution with AI insights - Free for everyone!',
+      price: '$7.05',
+      period: '/month',
+      description: 'Complete health management solution with AI insights',
       features: [
         'Everything in Basic',
         'Advanced health analytics',
