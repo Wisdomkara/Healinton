@@ -11,6 +11,7 @@ import NotificationSettings from '@/components/NotificationSettings';
 import ReminderForm from '@/components/ReminderForm';
 import EnhancedMealTracker from '@/components/EnhancedMealTracker';
 import WeeklyMealCalendar from '@/components/WeeklyMealCalendar';
+import MealAnalytics from '@/components/MealAnalytics';
 import AdminPremiumManager from '@/components/AdminPremiumManager';
 import ShoppingList from '@/components/ShoppingList';
 import AIChat from '@/components/AIChat';
@@ -45,7 +46,12 @@ const Dashboard = () => {
       case 'reminders':
         return <ReminderForm />;
       case 'meal-tracker':
-        return <EnhancedMealTracker />;
+        return (
+          <div className="space-y-8">
+            <EnhancedMealTracker />
+            <MealAnalytics />
+          </div>
+        );
       case 'weekly-calendar':
         return <WeeklyMealCalendar />;
       case 'admin-premium':

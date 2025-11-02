@@ -10,15 +10,15 @@ import { useEnsureProfile } from '@/hooks/useEnsureProfile';
 import { CheckCircle, Circle, Utensils } from 'lucide-react';
 
 const budgetMealPlans = {
-  'low-budget': {
-    breakfast: ['Oatmeal with banana', 'Toast with peanut butter', 'Scrambled eggs'],
-    lunch: ['Rice and beans', 'Vegetable soup', 'Pasta with tomato sauce'],
-    dinner: ['Grilled chicken with rice', 'Fish stew', 'Vegetable stir-fry']
+  'low': {
+    morning: ['Oatmeal with banana', 'Toast with peanut butter', 'Scrambled eggs'],
+    afternoon: ['Rice and beans', 'Vegetable soup', 'Pasta with tomato sauce'],
+    night: ['Grilled chicken with rice', 'Fish stew', 'Vegetable stir-fry']
   },
-  'high-budget': {
-    breakfast: ['Avocado toast with eggs', 'Greek yogurt with berries', 'Protein smoothie bowl'],
-    lunch: ['Grilled salmon salad', 'Quinoa bowl with vegetables', 'Chicken caesar wrap'],
-    dinner: ['Steak with roasted vegetables', 'Lobster with pasta', 'Lamb chops with quinoa']
+  'high': {
+    morning: ['Avocado toast with eggs', 'Greek yogurt with berries', 'Protein smoothie bowl'],
+    afternoon: ['Grilled salmon salad', 'Quinoa bowl with vegetables', 'Chicken caesar wrap'],
+    night: ['Steak with roasted vegetables', 'Lobster with pasta', 'Lamb chops with quinoa']
   }
 };
 
@@ -26,7 +26,7 @@ const EnhancedMealTracker = () => {
   useEnsureProfile(); // Ensure user profile exists
   const { user } = useAuth();
   const { toast } = useToast();
-  const [selectedBudget, setSelectedBudget] = useState<'low-budget' | 'high-budget'>('low-budget');
+  const [selectedBudget, setSelectedBudget] = useState<'low' | 'high'>('low');
   const [completedMeals, setCompletedMeals] = useState<Record<string, boolean>>({});
   const [currentDate] = useState(new Date().toISOString().split('T')[0]);
 
@@ -159,7 +159,7 @@ const EnhancedMealTracker = () => {
   };
 
   const getMealSuggestions = (mealTime: string) => {
-    return budgetMealPlans[selectedBudget][mealTime as keyof typeof budgetMealPlans['low-budget']] || [];
+    return budgetMealPlans[selectedBudget][mealTime as keyof typeof budgetMealPlans['low']] || [];
   };
 
   const getCompletionRate = () => {
@@ -183,16 +183,16 @@ const EnhancedMealTracker = () => {
       {/* Budget Selection */}
       <div className="flex flex-col sm:flex-row gap-3">
         <Button
-          variant={selectedBudget === 'low-budget' ? 'default' : 'outline'}
-          onClick={() => setSelectedBudget('low-budget')}
-          className={`flex-1 ${selectedBudget === 'low-budget' ? 'bg-green-600 hover:bg-green-700' : ''}`}
+          variant={selectedBudget === 'low' ? 'default' : 'outline'}
+          onClick={() => setSelectedBudget('low')}
+          className={`flex-1 ${selectedBudget === 'low' ? 'bg-green-600 hover:bg-green-700' : ''}`}
         >
           Low Budget Meals
         </Button>
         <Button
-          variant={selectedBudget === 'high-budget' ? 'default' : 'outline'}
-          onClick={() => setSelectedBudget('high-budget')}
-          className={`flex-1 ${selectedBudget === 'high-budget' ? 'bg-green-600 hover:bg-green-700' : ''}`}
+          variant={selectedBudget === 'high' ? 'default' : 'outline'}
+          onClick={() => setSelectedBudget('high')}
+          className={`flex-1 ${selectedBudget === 'high' ? 'bg-green-600 hover:bg-green-700' : ''}`}
         >
           High Budget Meals
         </Button>
@@ -200,7 +200,7 @@ const EnhancedMealTracker = () => {
 
       {/* Meal Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {['breakfast', 'lunch', 'dinner'].map((mealTime) => (
+        {['morning', 'afternoon', 'night'].map((mealTime) => (
           <Card key={mealTime} className="p-4 hover:shadow-md transition-shadow">
             <div className="space-y-3">
               <div className="flex items-center justify-between">
@@ -250,14 +250,14 @@ const EnhancedMealTracker = () => {
             Today's Progress ({selectedBudget.replace('-', ' ').toUpperCase()})
           </p>
           <div className="flex justify-center space-x-4 text-sm">
-            <span className={`${completedMeals.breakfast ? 'text-green-600 font-semibold' : 'text-gray-500'}`}>
-              Breakfast ✓
+            <span className={`${completedMeals.morning ? 'text-green-600 font-semibold' : 'text-gray-500'}`}>
+              Morning ✓
             </span>
-            <span className={`${completedMeals.lunch ? 'text-green-600 font-semibold' : 'text-gray-500'}`}>
-              Lunch ✓
+            <span className={`${completedMeals.afternoon ? 'text-green-600 font-semibold' : 'text-gray-500'}`}>
+              Afternoon ✓
             </span>
-            <span className={`${completedMeals.dinner ? 'text-green-600 font-semibold' : 'text-gray-500'}`}>
-              Dinner ✓
+            <span className={`${completedMeals.night ? 'text-green-600 font-semibold' : 'text-gray-500'}`}>
+              Night ✓
             </span>
           </div>
         </div>

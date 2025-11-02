@@ -58,7 +58,7 @@ const Sidebar = ({ isOpen = true, onClose, onSectionChange, activeSection = 'ove
     { icon: Shield, label: 'Health Insurance', section: 'health-insurance', isPremium: false },
     { icon: Star, label: 'Rate Us', section: 'rate-us', isPremium: false },
     { icon: Info, label: 'About', section: 'about', isPremium: false },
-    { icon: Settings, label: 'Settings', section: 'settings', isPremium: false }
+    { icon: Settings, label: 'Profile', section: 'profile', isPremium: false }
   ];
 
   const handleNavClick = (section: string, itemIsPremium: boolean) => {
@@ -71,6 +71,11 @@ const Sidebar = ({ isOpen = true, onClose, onSectionChange, activeSection = 'ove
 
     if (section === 'about') {
       window.location.href = '/about';
+      return;
+    }
+
+    if (section === 'profile') {
+      window.location.href = '/profile';
       return;
     }
 

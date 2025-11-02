@@ -11,6 +11,7 @@ import Layout from '@/components/Layout';
 import Index from './pages/Index';
 import Auth from './pages/Auth';
 import Dashboard from './pages/Dashboard';
+import Profile from './pages/Profile';
 import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
 import Premium from './pages/Premium';
@@ -61,6 +62,7 @@ const App = () => {
                 <Route path="*" element={<NotFound />} />
               </Route>
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/profile" element={<Profile />} />
             </Routes>
           </BrowserRouter>
         </TooltipProvider>
