@@ -5,9 +5,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
+import { AlertCircle } from 'lucide-react';
 
 const countryHospitals = {
   Nigeria: [
@@ -43,6 +46,7 @@ const countryHospitals = {
 const EnhancedHospitalBooking = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     hospitalName: '',
     hospitalEmail: '',
@@ -200,9 +204,19 @@ const EnhancedHospitalBooking = () => {
     <Card className="p-6">
       <h3 className="text-lg font-semibold mb-4">Book Hospital Appointment</h3>
       {!profileData && (
-        <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md text-sm text-yellow-800">
-          Please ensure your profile is complete with name, phone number, email, and address before booking.
-        </div>
+        <Alert className="mb-4 border-yellow-500 bg-yellow-50 dark:bg-yellow-900/20">
+          <AlertCircle className="h-4 w-4 text-yellow-600" />
+          <AlertDescription className="text-yellow-800 dark:text-yellow-200">
+            Please ensure your profile is complete with name, phone number, email, and address before booking.{' '}
+            <Button 
+              variant="link" 
+              className="p-0 h-auto text-yellow-800 dark:text-yellow-200 underline font-semibold"
+              onClick={() => navigate('/dashboard')}
+            >
+              Complete your profile here
+            </Button>
+          </AlertDescription>
+        </Alert>
       )}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>

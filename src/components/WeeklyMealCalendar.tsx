@@ -85,9 +85,13 @@ const WeeklyMealCalendar = () => {
           is_completed: !isCompleted,
           completed_at: !isCompleted ? new Date().toISOString() : null
         })
-        .eq('id', mealId);
+        .eq('id', mealId)
+        .eq('user_id', user.id);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Database error:', error);
+        throw error;
+      }
 
       // Update local state
       setMealPlans(prev => prev.map(meal => 
