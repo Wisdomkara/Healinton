@@ -33,6 +33,7 @@ const Auth = () => {
     country: '',
     illnessType: ''
   });
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   const { signUp, signIn, user } = useAuth();
   const { toast } = useToast();
@@ -697,6 +698,15 @@ const Auth = () => {
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (!agreedToTerms) {
+      toast({
+        title: "Terms Required",
+        description: "You must agree to the Terms of Service and Privacy Policy to continue",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     if (formData.password !== formData.confirmPassword) {
       toast({
         title: "Error",
@@ -1253,10 +1263,34 @@ const Auth = () => {
                     </PopoverContent>
                   </Popover>
                 </div>
+
+                <div className="space-y-3 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700">
+                  <div className="flex items-start space-x-2">
+                    <input
+                      type="checkbox"
+                      id="terms"
+                      checked={agreedToTerms}
+                      onChange={(e) => setAgreedToTerms(e.target.checked)}
+                      className="mt-1 h-4 w-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
+                      required
+                    />
+                    <label htmlFor="terms" className="text-sm text-gray-700 dark:text-gray-300">
+                      I agree to the{' '}
+                      <Link to="/terms" className="text-green-600 hover:text-green-700 underline font-medium" target="_blank">
+                        Terms of Service
+                      </Link>
+                      {' '}and{' '}
+                      <Link to="/privacy" className="text-green-600 hover:text-green-700 underline font-medium" target="_blank">
+                        Privacy Policy
+                      </Link>
+                      . I understand that my health data will be stored securely and handled in accordance with HIPAA compliance standards.
+                    </label>
+                  </div>
+                </div>
               </>
             )}
 
-            <Button type="submit" disabled={loading} className="w-full">
+            <Button type="submit" disabled={loading || (isSignUp && !agreedToTerms)} className="w-full">
               {loading ? 'Please wait...' : (isForgotPassword ? 'Send Reset Link' : (isSignUp ? 'Create Account' : 'Sign In'))}
             </Button>
           </form>

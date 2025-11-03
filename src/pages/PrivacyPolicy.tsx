@@ -29,7 +29,7 @@ const PrivacyPolicy = () => {
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Data Protection</h2>
               </div>
               <p className="text-gray-700 dark:text-gray-300 mb-4">
-                At Carevital, we implement enterprise-grade security measures to protect your health information:
+                At Healinton, we implement enterprise-grade security measures to protect your health information:
               </p>
               <ul className="space-y-2 text-gray-700 dark:text-gray-300">
                 <li>• End-to-end encryption for all health data</li>
@@ -102,15 +102,18 @@ const PrivacyPolicy = () => {
                 If you have any questions about this Privacy Policy or your data rights, please contact us at:
               </p>
               <div className="mt-4 space-y-2 text-gray-700 dark:text-gray-300">
-                <p>Email: privacy@carevital.com</p>
-                <p>Phone: +1-800-CAREVITAL</p>
+                <p>Email: privacy@healinton.com</p>
+                <p>Phone: +1-800-HEALINTON</p>
                 <p>Address: 123 Healthcare Ave, Medical District, NY 10001</p>
               </div>
             </section>
 
             <div className="pt-6 border-t border-gray-200 dark:border-gray-700">
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                Last updated: December 28, 2024
+                Last updated: November 3, 2025
+              </p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                This Privacy Policy is HIPAA compliant and adheres to all applicable healthcare data protection regulations.
               </p>
             </div>
           </div>

@@ -183,6 +183,12 @@ const TermsOfService = () => {
                   By using Healinton, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service.
                 </p>
               </div>
+
+              <div className="pt-6 border-t border-gray-200 dark:border-gray-700 mt-6">
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Last updated: November 3, 2025
+                </p>
+              </div>
             </div>
           </div>
         </Card>

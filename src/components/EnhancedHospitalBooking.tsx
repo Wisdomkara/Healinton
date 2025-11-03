@@ -211,7 +211,7 @@ const EnhancedHospitalBooking = () => {
             <Button 
               variant="link" 
               className="p-0 h-auto text-yellow-800 dark:text-yellow-200 underline font-semibold"
-              onClick={() => navigate('/dashboard')}
+              onClick={() => navigate('/profile')}
             >
               Complete your profile here
             </Button>

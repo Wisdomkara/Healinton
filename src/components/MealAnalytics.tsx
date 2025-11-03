@@ -23,6 +23,32 @@ const MealAnalytics = () => {
     }
   }, [user]);
 
+  // Set up a subscription to listen for changes in meal_completions
+  useEffect(() => {
+    if (!user) return;
+
+    const channel = supabase
+      .channel('meal-analytics-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'meal_completions',
+          filter: `user_id=eq.${user.id}`
+        },
+        () => {
+          console.log('Meal completion updated, refreshing analytics...');
+          fetchMonthlyData();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user]);
+
   const fetchMonthlyData = async () => {
     if (!user) return;
 
