@@ -34,6 +34,15 @@ const Auth = () => {
     illnessType: ''
   });
   const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePosition({ x: e.clientX, y: e.clientY });
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
 
   const { signUp, signIn, user } = useAuth();
   const { toast } = useToast();
@@ -871,8 +880,13 @@ const Auth = () => {
   // Show password update form when user clicks reset link from email
   if (isPasswordRecovery) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4 pt-24">
-        <Card className="w-full max-w-md">
+      <div className="min-h-screen bg-background flex items-center justify-center p-4 pt-24 relative overflow-hidden">
+        {/* Animated Background */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute w-64 h-64 bg-primary/10 rounded-full blur-3xl animate-float" style={{ top: '10%', left: '10%' }} />
+          <div className="absolute w-96 h-96 bg-accent/5 rounded-full blur-3xl" style={{ top: '50%', right: '5%', animation: 'float 25s ease-in-out infinite 5s' }} />
+        </div>
+        <Card className="w-full max-w-md relative z-10 backdrop-blur-sm bg-card/95">
           <CardHeader className="text-center">
             <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
               <Lock className="h-8 w-8 text-green-600" />
@@ -947,8 +961,13 @@ const Auth = () => {
   // Show password reset email sent message
   if (resetEmailSent) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4 pt-24">
-        <Card className="w-full max-w-md">
+      <div className="min-h-screen bg-background flex items-center justify-center p-4 pt-24 relative overflow-hidden">
+        {/* Animated Background */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute w-64 h-64 bg-primary/10 rounded-full blur-3xl animate-float" style={{ top: '10%', left: '10%' }} />
+          <div className="absolute w-96 h-96 bg-accent/5 rounded-full blur-3xl" style={{ top: '50%', right: '5%', animation: 'float 25s ease-in-out infinite 5s' }} />
+        </div>
+        <Card className="w-full max-w-md relative z-10 backdrop-blur-sm bg-card/95">
           <CardHeader className="text-center">
             <div className="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
               <Mail className="h-8 w-8 text-blue-600" />
@@ -987,8 +1006,13 @@ const Auth = () => {
   // Show verification success page
   if (verificationComplete) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4 pt-24">
-        <Card className="w-full max-w-md">
+      <div className="min-h-screen bg-background flex items-center justify-center p-4 pt-24 relative overflow-hidden">
+        {/* Animated Background */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute w-64 h-64 bg-primary/10 rounded-full blur-3xl animate-float" style={{ top: '10%', left: '10%' }} />
+          <div className="absolute w-96 h-96 bg-accent/5 rounded-full blur-3xl" style={{ top: '50%', right: '5%', animation: 'float 25s ease-in-out infinite 5s' }} />
+        </div>
+        <Card className="w-full max-w-md relative z-10 backdrop-blur-sm bg-card/95">
           <CardHeader className="text-center">
             <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
               <CheckCircle className="h-8 w-8 text-green-600" />
@@ -1017,8 +1041,13 @@ const Auth = () => {
   // Show email verification message
   if (isEmailVerified && !verificationComplete) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4 pt-24">
-        <Card className="w-full max-w-md">
+      <div className="min-h-screen bg-background flex items-center justify-center p-4 pt-24 relative overflow-hidden">
+        {/* Animated Background */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute w-64 h-64 bg-primary/10 rounded-full blur-3xl animate-float" style={{ top: '10%', left: '10%' }} />
+          <div className="absolute w-96 h-96 bg-accent/5 rounded-full blur-3xl" style={{ top: '50%', right: '5%', animation: 'float 25s ease-in-out infinite 5s' }} />
+        </div>
+        <Card className="w-full max-w-md relative z-10 backdrop-blur-sm bg-card/95">
           <CardHeader className="text-center">
             <div className="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
               <Mail className="h-8 w-8 text-blue-600" />
@@ -1062,8 +1091,60 @@ const Auth = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4 pt-24">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4 pt-24 relative overflow-hidden">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Floating Green Circles */}
+        <div 
+          className="absolute w-64 h-64 bg-primary/10 rounded-full blur-3xl animate-float"
+          style={{
+            top: '10%',
+            left: '10%',
+            animation: 'float 20s ease-in-out infinite'
+          }}
+        />
+        <div 
+          className="absolute w-96 h-96 bg-accent/5 rounded-full blur-3xl animate-float-delayed"
+          style={{
+            top: '50%',
+            right: '5%',
+            animation: 'float 25s ease-in-out infinite 5s'
+          }}
+        />
+        <div 
+          className="absolute w-48 h-48 bg-primary/15 rounded-full blur-2xl animate-float"
+          style={{
+            bottom: '10%',
+            left: '60%',
+            animation: 'float 18s ease-in-out infinite 10s'
+          }}
+        />
+        
+        {/* Interactive Mouse Follow Element */}
+        <div 
+          className="absolute w-32 h-32 bg-primary/5 rounded-full blur-2xl transition-all duration-700 ease-out"
+          style={{
+            left: `${mousePosition.x - 64}px`,
+            top: `${mousePosition.y - 64}px`,
+          }}
+        />
+        
+        {/* Animated Grid Lines */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute inset-0" style={{
+            backgroundImage: 'linear-gradient(hsl(var(--primary)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--primary)) 1px, transparent 1px)',
+            backgroundSize: '50px 50px',
+          }} />
+        </div>
+        
+        {/* Pulsing Rings */}
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 opacity-20">
+          <div className="absolute inset-0 border-2 border-primary rounded-full animate-ping-slow" style={{ animation: 'ping 4s cubic-bezier(0, 0, 0.2, 1) infinite' }} />
+          <div className="absolute inset-8 border-2 border-accent rounded-full animate-ping-slow" style={{ animation: 'ping 4s cubic-bezier(0, 0, 0.2, 1) infinite 1s' }} />
+        </div>
+      </div>
+      
+      <Card className="w-full max-w-md relative z-10 backdrop-blur-sm bg-card/95 shadow-2xl border-primary/20">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">
             {isForgotPassword ? 'Reset Password' : (isSignUp ? 'Create Account' : 'Welcome Back')}
