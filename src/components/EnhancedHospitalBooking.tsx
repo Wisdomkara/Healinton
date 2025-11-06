@@ -11,6 +11,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { AlertCircle } from 'lucide-react';
+import { z } from 'zod';
+import { sanitizeText, validateFormData } from '@/utils/validation';
 
 const countryHospitals = {
   Nigeria: [
@@ -149,6 +151,31 @@ const EnhancedHospitalBooking = () => {
       return;
     }
 
+    // Validate appointment reason
+    const bookingSchema = z.object({
+      reason: z.string()
+        .min(10, 'Please provide at least 10 characters for the reason')
+        .max(500, 'Reason must be less than 500 characters')
+        .transform(sanitizeText),
+      hospitalName: z.string().min(1, 'Hospital name is required'),
+      appointmentDate: z.string().min(1, 'Appointment date is required')
+    });
+
+    const validation = validateFormData(bookingSchema, {
+      reason: formData.reason,
+      hospitalName: formData.hospitalName,
+      appointmentDate: formData.appointmentDate
+    });
+
+    if (!validation.success) {
+      toast({
+        title: 'Invalid Input',
+        description: validation.error,
+        variant: 'destructive'
+      });
+      return;
+    }
+
     setLoading(true);
     
     try {
@@ -158,10 +185,10 @@ const EnhancedHospitalBooking = () => {
         .from('hospital_bookings')
         .insert({
           user_id: user.id,
-          hospital_name: formData.hospitalName,
+          hospital_name: validation.data.hospitalName,
           hospital_email: formData.hospitalEmail,
-          appointment_date: formData.appointmentDate,
-          reason: formData.reason,
+          appointment_date: validation.data.appointmentDate,
+          reason: validation.data.reason, // Now sanitized
           country: formData.country,
           reference_number: referenceNumber
         });

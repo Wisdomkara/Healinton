@@ -131,8 +131,6 @@ const PaystackPaymentModal: React.FC<PaystackPaymentModalProps> = ({
       // Generate unique reference for this transaction
       const reference = `healinton_${Date.now()}_${user.id.slice(0, 8)}`;
 
-      console.log(`Initiating payment - Reference: ${reference}, Email: ${user.email}`);
-
       // ================================================================
       // STEP 2: Open Paystack Payment Popup
       // ================================================================
@@ -157,7 +155,6 @@ const PaystackPaymentModal: React.FC<PaystackPaymentModalProps> = ({
         // We then verify the payment server-side for security
         // ================================================================
         callback: async (response) => {
-          console.log('Payment completed, verifying...', response);
           setProcessingStep('verifying');
           
           try {
@@ -172,7 +169,6 @@ const PaystackPaymentModal: React.FC<PaystackPaymentModalProps> = ({
         // User closed payment popup without completing
         // ================================================================
         onClose: () => {
-          console.log('Payment popup closed by user');
           setLoading(false);
           setProcessingStep('idle');
           toast({
@@ -206,8 +202,6 @@ const PaystackPaymentModal: React.FC<PaystackPaymentModalProps> = ({
   // ================================================================
   const verifyPayment = async (reference: string, email: string) => {
     try {
-      console.log(`Verifying payment with Edge Function - Reference: ${reference}`);
-
       // Call our secure Edge Function to verify with Paystack
       // This function uses PAYSTACK_SECRET_KEY (server-side only)
       const { data, error } = await supabase.functions.invoke('verify-paystack-payment', {
@@ -227,8 +221,6 @@ const PaystackPaymentModal: React.FC<PaystackPaymentModalProps> = ({
       if (!data || !data.success) {
         throw new Error(data?.error || 'Payment verification failed');
       }
-
-      console.log('Payment verified successfully:', data);
 
       // ================================================================
       // STEP 5: Success - Update UI and Redirect

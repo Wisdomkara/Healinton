@@ -38,8 +38,6 @@ export const usePremium = (): PremiumStatus => {
       }
 
       try {
-        console.log('Checking premium status for user:', user.id);
-        
         // First check trial period from profiles table
         const { data: profile } = await supabase
           .from('profiles')
@@ -54,7 +52,6 @@ export const usePremium = (): PremiumStatus => {
           
           if (trialEnd > now) {
             const daysRemaining = Math.ceil((trialEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-            console.log('User has active trial until:', profile.trial_end, '- Days remaining:', daysRemaining);
             
             setPremiumStatus({
               isPremium: true,
@@ -84,8 +81,6 @@ export const usePremium = (): PremiumStatus => {
           });
           return;
         }
-
-        console.log('Subscription status result:', subscriptionData);
 
         if (subscriptionData && subscriptionData.length > 0) {
           const subscription = subscriptionData[0];

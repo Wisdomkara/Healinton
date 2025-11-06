@@ -1,4 +1,17 @@
 project_id = "xuyioczahgozvdbfodht"
 
+# ================================================================
+# AI Chat Function - Authentication Required for HIPAA Compliance
+# ================================================================
+# Users MUST be authenticated to use the health AI assistant
+# This ensures proper audit trails and protects against API abuse
+[functions.ai-chat]
+# verify_jwt defaults to true - authentication is REQUIRED
+
+# ================================================================
+# Payment Verification - No Authentication Required
+# ================================================================
+# This function is called with transaction references that are
+# verified server-side with Paystack API, so no JWT needed
 [functions.verify-paystack-payment]
 verify_jwt = false

@@ -156,8 +156,6 @@ const handler = async (req: Request): Promise<Response> => {
       country: requestBody.country ? sanitizeInput(requestBody.country) : undefined
     }
 
-    console.log("Sending appointment notification to:", sanitizedData.hospitalEmail);
-
     const formattedDate = new Date(sanitizedData.appointmentDate).toLocaleString();
 
     const emailResponse = await resend.emails.send({
@@ -198,9 +196,7 @@ const handler = async (req: Request): Promise<Response> => {
       `,
     });
 
-    console.log("Email sent successfully:", emailResponse);
-
-    return new Response(JSON.stringify({ 
+    return new Response(JSON.stringify({
       success: true, 
       emailId: emailResponse.data?.id,
       message: "Email sent successfully"

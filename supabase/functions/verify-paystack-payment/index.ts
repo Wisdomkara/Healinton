@@ -216,8 +216,6 @@ serve(async (req) => {
 
     const { reference, email, amount: expectedAmount, currency: expectedCurrency } = validation.data!;
 
-    console.log(`Verifying payment - Reference: ${reference}, Email: ${email}`);
-
     // ================================================================
     // Step 3: Get Paystack Secret Key from Environment
     // ================================================================
@@ -251,7 +249,6 @@ serve(async (req) => {
       .maybeSingle();
 
     if (existingPayment && existingPayment.status === 'completed') {
-      console.log(`Payment already verified: ${reference}`);
       return new Response(
         JSON.stringify({ 
           success: true, 
@@ -267,8 +264,6 @@ serve(async (req) => {
     // ================================================================
     // Call Paystack's verification endpoint to confirm the payment
     // https://paystack.com/docs/payments/verify-payments/
-    console.log(`Calling Paystack API to verify reference: ${reference}`);
-    
     const paystackResponse = await fetch(
       `https://api.paystack.co/transaction/verify/${encodeURIComponent(reference)}`,
       {
@@ -352,8 +347,6 @@ serve(async (req) => {
       );
     }
 
-    console.log(`Payment verified successfully: ${reference} - Amount: ${paymentData.amount} ${paymentData.currency}`);
-
     // ================================================================
     // Step 8: Get User ID from Email
     // ================================================================
@@ -405,8 +398,6 @@ serve(async (req) => {
       );
     }
 
-    console.log(`Payment stored in database: ID ${payment.id}`);
-
     // ================================================================
     // Step 10: Activate Premium Subscription
     // ================================================================
@@ -419,8 +410,6 @@ serve(async (req) => {
       // Payment was recorded but subscription failed - log for manual intervention
       console.error(`MANUAL INTERVENTION REQUIRED: Payment ${payment.id} succeeded but subscription activation failed for user ${userId}`);
     } else {
-      console.log(`Subscription activated for user: ${userId}`);
-      
       // Link payment to subscription
       const { data: activeSubscription } = await supabase
         .from('subscriptions')

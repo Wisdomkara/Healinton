@@ -109,8 +109,6 @@ serve(async (req) => {
       )
     }
 
-    console.log('Sending message to OpenAI API:', sanitizedMessage.substring(0, 100) + '...')
-
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -141,7 +139,6 @@ serve(async (req) => {
     }
 
     const result = await response.json()
-    console.log('OpenAI API response received')
 
     if (!result.choices || result.choices.length === 0) {
       throw new Error('Invalid response format from API')
