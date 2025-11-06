@@ -4,6 +4,7 @@ import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, Calendar, User, Clock, Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import DOMPurify from 'dompurify';
 
 const BlogPost = () => {
   const { id } = useParams();
@@ -99,7 +100,12 @@ const BlogPost = () => {
         <Card className="p-8 mb-8 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
           <div 
             className="prose prose-lg max-w-none dark:prose-invert"
-            dangerouslySetInnerHTML={{ __html: blogPost.content }}
+            dangerouslySetInnerHTML={{ 
+              __html: DOMPurify.sanitize(blogPost.content, {
+                ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'a'],
+                ALLOWED_ATTR: ['href', 'title', 'class']
+              })
+            }}
           />
         </Card>
 

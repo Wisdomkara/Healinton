@@ -10,6 +10,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { Save, User, Bell, Shield, Palette } from 'lucide-react';
+import { z } from 'zod';
+import { emailSchema, phoneSchema, nameSchema, validateFormData } from '@/utils/validation';
 
 const Settings = () => {
   const { user } = useAuth();
@@ -65,10 +67,32 @@ const Settings = () => {
   const handleProfileUpdate = async () => {
     if (!user) return;
 
+    // Validate profile data
+    const profileSchema = z.object({
+      first_name: nameSchema,
+      last_name: nameSchema,
+      email: emailSchema,
+      gender: z.string().optional().or(z.literal('')),
+      country: z.string().optional().or(z.literal('')),
+      illness_type: z.string().optional().or(z.literal('')),
+      phone_number: phoneSchema.optional().or(z.literal('')),
+      delivery_address: z.string().max(200, 'Address too long').optional().or(z.literal(''))
+    });
+
+    const validation = validateFormData(profileSchema, profile);
+    if (!validation.success) {
+      toast({
+        title: 'Invalid Input',
+        description: validation.error,
+        variant: 'destructive'
+      });
+      return;
+    }
+
     setLoading(true);
     const { error } = await supabase
       .from('profiles')
-      .update(profile)
+      .update(validation.data)
       .eq('id', user.id);
 
     if (error) {

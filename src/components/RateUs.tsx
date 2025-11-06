@@ -9,6 +9,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { Star, Send, Heart } from 'lucide-react';
+import { z } from 'zod';
+import { emailSchema, nameSchema, sanitizeText, validateFormData } from '@/utils/validation';
 
 const RateUs = () => {
   const { user } = useAuth();
@@ -49,6 +51,27 @@ const RateUs = () => {
       return;
     }
 
+    // Validate input data
+    const ratingSchema = z.object({
+      userName: nameSchema.optional().or(z.literal('')),
+      userEmail: emailSchema.optional().or(z.literal('')),
+      feedback: z.string()
+        .max(1000, 'Feedback must be less than 1000 characters')
+        .transform(sanitizeText)
+        .optional()
+        .or(z.literal(''))
+    });
+
+    const validation = validateFormData(ratingSchema, { userName, userEmail, feedback });
+    if (!validation.success) {
+      toast({
+        title: 'Invalid Input',
+        description: validation.error,
+        variant: 'destructive'
+      });
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -57,10 +80,10 @@ const RateUs = () => {
         .from('ratings')
         .insert({
           user_id: user.id,
-          user_name: userName || `${user.user_metadata?.first_name} ${user.user_metadata?.last_name}`.trim() || 'Anonymous',
-          user_email: userEmail || user.email,
+          user_name: validation.data.userName || `${user.user_metadata?.first_name} ${user.user_metadata?.last_name}`.trim() || 'Anonymous',
+          user_email: validation.data.userEmail || user.email,
           rating,
-          feedback: feedback || null
+          feedback: validation.data.feedback || null
         });
 
       if (error) {

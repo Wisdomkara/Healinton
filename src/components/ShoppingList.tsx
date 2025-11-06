@@ -9,6 +9,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { useEnsureProfile } from '@/hooks/useEnsureProfile';
 import { ShoppingCart, Trash2, Package, Clock } from 'lucide-react';
+import { z } from 'zod';
+import { emailSchema, phoneSchema, nameSchema, validateFormData } from '@/utils/validation';
 
 const ShoppingList = () => {
   useEnsureProfile(); // Ensure user profile exists
@@ -52,6 +54,26 @@ const ShoppingList = () => {
     e.preventDefault();
     if (!user) return;
 
+    // Validate input data
+    const shoppingListSchema = z.object({
+      medicationName: nameSchema,
+      pharmacyName: nameSchema.optional().or(z.literal('')),
+      fullName: nameSchema,
+      phoneNumber: phoneSchema,
+      emailAddress: emailSchema,
+      country: nameSchema
+    });
+
+    const validation = validateFormData(shoppingListSchema, formData);
+    if (!validation.success) {
+      toast({
+        title: 'Invalid Input',
+        description: validation.error,
+        variant: 'destructive'
+      });
+      return;
+    }
+
     setLoading(true);
     
     try {
@@ -61,12 +83,12 @@ const ShoppingList = () => {
         .from('shopping_lists')
         .insert({
           user_id: user.id,
-          medication_name: formData.medicationName,
-          pharmacy_name: formData.pharmacyName,
-          full_name: formData.fullName,
-          phone_number: formData.phoneNumber,
-          email_address: formData.emailAddress,
-          country: formData.country,
+          medication_name: validation.data.medicationName,
+          pharmacy_name: validation.data.pharmacyName || null,
+          full_name: validation.data.fullName,
+          phone_number: validation.data.phoneNumber,
+          email_address: validation.data.emailAddress,
+          country: validation.data.country,
           reference_number: referenceNumber
         });
 
