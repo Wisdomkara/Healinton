@@ -425,6 +425,8 @@ export type Database = {
           illness_type: string | null
           last_name: string | null
           phone_number: string | null
+          privacy_accepted_at: string | null
+          terms_accepted_at: string | null
           trial_end: string | null
           updated_at: string | null
         }
@@ -439,6 +441,8 @@ export type Database = {
           illness_type?: string | null
           last_name?: string | null
           phone_number?: string | null
+          privacy_accepted_at?: string | null
+          terms_accepted_at?: string | null
           trial_end?: string | null
           updated_at?: string | null
         }
@@ -453,6 +457,8 @@ export type Database = {
           illness_type?: string | null
           last_name?: string | null
           phone_number?: string | null
+          privacy_accepted_at?: string | null
+          terms_accepted_at?: string | null
           trial_end?: string | null
           updated_at?: string | null
         }
@@ -464,27 +470,21 @@ export type Database = {
           feedback: string | null
           id: string
           rating: number
-          user_email: string | null
           user_id: string
-          user_name: string | null
         }
         Insert: {
           created_at?: string
           feedback?: string | null
           id?: string
           rating: number
-          user_email?: string | null
           user_id: string
-          user_name?: string | null
         }
         Update: {
           created_at?: string
           feedback?: string | null
           id?: string
           rating?: number
-          user_email?: string | null
           user_id?: string
-          user_name?: string | null
         }
         Relationships: []
       }
@@ -520,41 +520,29 @@ export type Database = {
       }
       shopping_lists: {
         Row: {
-          country: string | null
           created_at: string | null
-          email_address: string | null
-          full_name: string | null
           id: string
           is_purchased: boolean | null
           medication_name: string
           pharmacy_name: string | null
-          phone_number: string | null
           reference_number: string | null
           user_id: string
         }
         Insert: {
-          country?: string | null
           created_at?: string | null
-          email_address?: string | null
-          full_name?: string | null
           id?: string
           is_purchased?: boolean | null
           medication_name: string
           pharmacy_name?: string | null
-          phone_number?: string | null
           reference_number?: string | null
           user_id: string
         }
         Update: {
-          country?: string | null
           created_at?: string | null
-          email_address?: string | null
-          full_name?: string | null
           id?: string
           is_purchased?: boolean | null
           medication_name?: string
           pharmacy_name?: string | null
-          phone_number?: string | null
           reference_number?: string | null
           user_id?: string
         }

@@ -741,7 +741,9 @@ const Auth = () => {
       last_name: formData.lastName,
       gender: formData.gender,
       country: formData.country,
-      illness_type: formData.illnessType
+      illness_type: formData.illnessType,
+      terms_accepted_at: new Date().toISOString(),
+      privacy_accepted_at: new Date().toISOString()
     };
 
     const { error } = await signUp(formData.email, formData.password, userData);

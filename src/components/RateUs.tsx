@@ -18,8 +18,6 @@ const RateUs = () => {
   const [rating, setRating] = useState(0);
   const [hoveredRating, setHoveredRating] = useState(0);
   const [feedback, setFeedback] = useState('');
-  const [userName, setUserName] = useState('');
-  const [userEmail, setUserEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleStarClick = (value) => {
@@ -53,8 +51,6 @@ const RateUs = () => {
 
     // Validate input data
     const ratingSchema = z.object({
-      userName: nameSchema.optional().or(z.literal('')),
-      userEmail: emailSchema.optional().or(z.literal('')),
       feedback: z.string()
         .max(1000, 'Feedback must be less than 1000 characters')
         .transform(sanitizeText)
@@ -62,7 +58,7 @@ const RateUs = () => {
         .or(z.literal(''))
     });
 
-    const validation = validateFormData(ratingSchema, { userName, userEmail, feedback });
+    const validation = validateFormData(ratingSchema, { feedback });
     if (!validation.success) {
       toast({
         title: 'Invalid Input',
@@ -80,8 +76,6 @@ const RateUs = () => {
         .from('ratings')
         .insert({
           user_id: user.id,
-          user_name: validation.data.userName || `${user.user_metadata?.first_name} ${user.user_metadata?.last_name}`.trim() || 'Anonymous',
-          user_email: validation.data.userEmail || user.email,
           rating,
           feedback: validation.data.feedback || null
         });
@@ -105,8 +99,8 @@ const RateUs = () => {
               ratingData: {
                 rating,
                 feedback,
-                userName: userName || `${user.user_metadata?.first_name} ${user.user_metadata?.last_name}`.trim() || 'Anonymous',
-                userEmail: userEmail || user.email,
+                userName: `${user.user_metadata?.first_name} ${user.user_metadata?.last_name}`.trim() || 'Anonymous',
+                userEmail: user.email,
                 submittedAt: new Date().toISOString()
               }
             })
@@ -132,8 +126,6 @@ const RateUs = () => {
       setRating(0);
       setHoveredRating(0);
       setFeedback('');
-      setUserName('');
-      setUserEmail('');
 
     } catch (error) {
       console.error('Error submitting rating:', error);
@@ -202,31 +194,6 @@ const RateUs = () => {
                 {getRatingText(rating)}
               </p>
             )}
-          </div>
-
-          {/* User Information */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="userName">Your Name (Optional)</Label>
-              <Input
-                id="userName"
-                value={userName}
-                onChange={(e) => setUserName(e.target.value)}
-                placeholder="Enter your name"
-                className="mt-1"
-              />
-            </div>
-            <div>
-              <Label htmlFor="userEmail">Your Email (Optional)</Label>
-              <Input
-                id="userEmail"
-                type="email"
-                value={userEmail}
-                onChange={(e) => setUserEmail(e.target.value)}
-                placeholder="Enter your email"
-                className="mt-1"
-              />
-            </div>
           </div>
 
           {/* Feedback */}

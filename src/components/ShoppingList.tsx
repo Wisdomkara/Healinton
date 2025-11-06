@@ -13,18 +13,14 @@ import { z } from 'zod';
 import { emailSchema, phoneSchema, nameSchema, validateFormData } from '@/utils/validation';
 
 const ShoppingList = () => {
-  useEnsureProfile(); // Ensure user profile exists
+  useEnsureProfile();
   const { user } = useAuth();
   const { toast } = useToast();
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     medicationName: '',
-    pharmacyName: '',
-    fullName: '',
-    phoneNumber: '',
-    emailAddress: '',
-    country: ''
+    pharmacyName: ''
   });
 
   useEffect(() => {
@@ -57,11 +53,7 @@ const ShoppingList = () => {
     // Validate input data
     const shoppingListSchema = z.object({
       medicationName: nameSchema,
-      pharmacyName: nameSchema.optional().or(z.literal('')),
-      fullName: nameSchema,
-      phoneNumber: phoneSchema,
-      emailAddress: emailSchema,
-      country: nameSchema
+      pharmacyName: nameSchema.optional().or(z.literal(''))
     });
 
     const validation = validateFormData(shoppingListSchema, formData);
@@ -85,10 +77,6 @@ const ShoppingList = () => {
           user_id: user.id,
           medication_name: validation.data.medicationName,
           pharmacy_name: validation.data.pharmacyName || null,
-          full_name: validation.data.fullName,
-          phone_number: validation.data.phoneNumber,
-          email_address: validation.data.emailAddress,
-          country: validation.data.country,
           reference_number: referenceNumber
         });
 
@@ -102,11 +90,7 @@ const ShoppingList = () => {
       // Reset form
       setFormData({
         medicationName: '',
-        pharmacyName: '',
-        fullName: '',
-        phoneNumber: '',
-        emailAddress: '',
-        country: ''
+        pharmacyName: ''
       });
 
       fetchItems();
@@ -184,52 +168,6 @@ const ShoppingList = () => {
                 id="pharmacyName"
                 value={formData.pharmacyName}
                 onChange={(e) => setFormData({ ...formData, pharmacyName: e.target.value })}
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="fullName">Full Name *</Label>
-              <Input
-                id="fullName"
-                value={formData.fullName}
-                onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                required
-              />
-            </div>
-            
-            <div>
-              <Label htmlFor="phoneNumber">Phone Number *</Label>
-              <Input
-                id="phoneNumber"
-                type="tel"
-                value={formData.phoneNumber}
-                onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
-                required
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="emailAddress">Email Address *</Label>
-              <Input
-                id="emailAddress"
-                type="email"
-                value={formData.emailAddress}
-                onChange={(e) => setFormData({ ...formData, emailAddress: e.target.value })}
-                required
-              />
-            </div>
-            
-            <div>
-              <Label htmlFor="country">Country *</Label>
-              <Input
-                id="country"
-                value={formData.country}
-                onChange={(e) => setFormData({ ...formData, country: e.target.value })}
-                required
               />
             </div>
           </div>
