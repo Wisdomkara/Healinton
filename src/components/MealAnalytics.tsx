@@ -49,6 +49,13 @@ const MealAnalytics = () => {
     };
   }, [user]);
 
+  // Local event listener as a fallback when realtime isn't available
+  useEffect(() => {
+    const handler = () => fetchMonthlyData();
+    window.addEventListener('meal-completions/updated', handler);
+    return () => window.removeEventListener('meal-completions/updated', handler);
+  }, []);
+
   const fetchMonthlyData = async () => {
     if (!user) return;
 

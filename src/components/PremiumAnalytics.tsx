@@ -26,14 +26,37 @@ const PremiumAnalytics = () => {
     }
   }, [user]);
 
+  // Realtime updates when meal completions change for this user
+  useEffect(() => {
+    if (!user) return;
+    const channel = supabase
+      .channel('premium-analytics-changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'meal_completions', filter: `user_id=eq.${user.id}` },
+        () => {
+          fetchAnalyticsData();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user]);
+
   const fetchAnalyticsData = async () => {
     try {
-      // Fetch meal completion data
+      // Fetch meal completion data (last 30 days by meal_date)
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - 30);
+      const startStr = startDate.toISOString().split('T')[0];
+
       const { data: mealData } = await supabase
         .from('meal_completions')
         .select('*')
         .eq('user_id', user?.id)
-        .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString());
+        .gte('meal_date', startStr);
 
       // Fetch health metrics data
       const { data: healthData } = await supabase

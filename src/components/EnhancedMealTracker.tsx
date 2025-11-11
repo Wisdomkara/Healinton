@@ -141,6 +141,11 @@ const EnhancedMealTracker = () => {
           onConflict: 'user_id,date,metric_type'
         });
 
+      // Notify other components (graphs) locally
+      window.dispatchEvent(new CustomEvent('meal-completions/updated', {
+        detail: { userId: user.id, date: currentDate }
+      }));
+
       toast({
         title: isCompleted ? 'Meal Completed!' : 'Meal Unchecked',
         description: isCompleted 
