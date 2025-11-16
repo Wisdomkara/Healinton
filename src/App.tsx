@@ -23,6 +23,7 @@ import HealthInsurance from './pages/HealthInsurance';
 import Community from './pages/Community';
 import Accessibility from './pages/Accessibility';
 import DrugsPage from './pages/DrugsPage';
+import AdminOrders from './pages/AdminOrders';
 import NotFound from './pages/NotFound';
 
 const App = () => {
@@ -59,10 +60,11 @@ const App = () => {
                 <Route path="community" element={<Community />} />
                 <Route path="accessibility" element={<Accessibility />} />
                 <Route path="drugs" element={<DrugsPage />} />
-                <Route path="*" element={<NotFound />} />
-              </Route>
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/profile" element={<Profile />} />
+              <Route path="*" element={<NotFound />} />
+            </Route>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/admin/orders" element={<AdminOrders />} />
             </Routes>
           </BrowserRouter>
         </TooltipProvider>
