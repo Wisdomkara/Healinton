@@ -118,6 +118,19 @@ const DrugStore = () => {
 
       if (error) throw error;
 
+      // Send admin notification
+      const { data: insertedOrder } = await supabase
+        .from('drug_orders')
+        .select('id')
+        .eq('reference_number', referenceNumber)
+        .single();
+
+      if (insertedOrder) {
+        supabase.functions.invoke('notify-admin-order', {
+          body: { type: 'drug_order', orderId: insertedOrder.id }
+        }).catch(err => console.error('Failed to send admin notification:', err));
+      }
+
       toast({
         title: 'Order Placed Successfully!',
         description: `Your order for ${selectedDrug.name} has been placed. Reference: ${referenceNumber}`,
