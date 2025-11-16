@@ -8,12 +8,12 @@
   "description": "Complete healthcare management platform for managing chronic conditions, appointments, and health insights.",
   "icons": [
     {
-      "src": "/healinton-logo-192.png",
+      "src": "/healinton-logo.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/healinton-logo-192.png",
+      "src": "/healinton-logo.png",
       "sizes": "512x512",
       "type": "image/png"
     }
