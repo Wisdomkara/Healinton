@@ -25,12 +25,12 @@ export default defineConfig(({ mode }) => ({
         start_url: "/",
         icons: [
           {
-            src: "/your-icon-192.png",
+            src: "/healinton-logo.png",
             sizes: "192x192",
             type: "image/png",
           },
           {
-            src: "/your-icon-512.png",
+            src: "/healinton-logo.png",
             sizes: "512x512",
             type: "image/png",
           },
