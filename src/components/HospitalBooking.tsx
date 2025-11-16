@@ -148,6 +148,19 @@ const HospitalBooking = () => {
 
       if (error) throw error;
 
+      // Send admin notification
+      const { data: insertedBooking } = await supabase
+        .from('hospital_bookings')
+        .select('id')
+        .eq('reference_number', referenceNumber)
+        .single();
+
+      if (insertedBooking) {
+        supabase.functions.invoke('notify-admin-order', {
+          body: { type: 'hospital_booking', orderId: insertedBooking.id }
+        }).catch(err => console.error('Failed to send admin notification:', err));
+      }
+
       toast({
         title: "Appointment Booked Successfully!",
         description: `Your appointment at ${formData.hospitalName} has been scheduled. Reference: ${referenceNumber}.`

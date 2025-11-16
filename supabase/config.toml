@@ -15,3 +15,11 @@ project_id = "xuyioczahgozvdbfodht"
 # verified server-side with Paystack API, so no JWT needed
 [functions.verify-paystack-payment]
 verify_jwt = false
+
+# ================================================================
+# Admin Order Notification - No Authentication Required
+# ================================================================
+# Internal function called by the system to notify admins
+# Uses service role key for database access
+[functions.notify-admin-order]
+verify_jwt = false

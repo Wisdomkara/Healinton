@@ -20,9 +20,15 @@ import {
   Calendar, 
   FileText, 
   Users,
-  RefreshCw
+  RefreshCw,
+  Download
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import {
+  exportDrugOrdersToCSV,
+  exportHospitalBookingsToCSV,
+  exportPremiumSubmissionsToCSV
+} from '@/utils/exportToCSV';
 
 const AdminOrders = () => {
   const { user } = useAuth();
@@ -217,10 +223,16 @@ const AdminOrders = () => {
             <Card className="p-6">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-semibold">Drug Orders ({drugOrders.length})</h2>
-                <Button onClick={fetchDrugOrders} variant="outline" size="sm">
-                  <RefreshCw className="w-4 h-4 mr-2" />
-                  Refresh
-                </Button>
+                <div className="flex gap-2">
+                  <Button onClick={() => exportDrugOrdersToCSV(drugOrders)} variant="outline" size="sm">
+                    <Download className="w-4 h-4 mr-2" />
+                    Export CSV
+                  </Button>
+                  <Button onClick={fetchDrugOrders} variant="outline" size="sm">
+                    <RefreshCw className="w-4 h-4 mr-2" />
+                    Refresh
+                  </Button>
+                </div>
               </div>
               <div className="overflow-x-auto">
                 <Table>
@@ -296,10 +308,16 @@ const AdminOrders = () => {
             <Card className="p-6">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-semibold">Hospital Bookings ({hospitalBookings.length})</h2>
-                <Button onClick={fetchHospitalBookings} variant="outline" size="sm">
-                  <RefreshCw className="w-4 h-4 mr-2" />
-                  Refresh
-                </Button>
+                <div className="flex gap-2">
+                  <Button onClick={() => exportHospitalBookingsToCSV(hospitalBookings)} variant="outline" size="sm">
+                    <Download className="w-4 h-4 mr-2" />
+                    Export CSV
+                  </Button>
+                  <Button onClick={fetchHospitalBookings} variant="outline" size="sm">
+                    <RefreshCw className="w-4 h-4 mr-2" />
+                    Refresh
+                  </Button>
+                </div>
               </div>
               <div className="overflow-x-auto">
                 <Table>
@@ -373,10 +391,16 @@ const AdminOrders = () => {
             <Card className="p-6">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-semibold">Premium Form Submissions ({premiumSubmissions.length})</h2>
-                <Button onClick={fetchPremiumSubmissions} variant="outline" size="sm">
-                  <RefreshCw className="w-4 h-4 mr-2" />
-                  Refresh
-                </Button>
+                <div className="flex gap-2">
+                  <Button onClick={() => exportPremiumSubmissionsToCSV(premiumSubmissions)} variant="outline" size="sm">
+                    <Download className="w-4 h-4 mr-2" />
+                    Export CSV
+                  </Button>
+                  <Button onClick={fetchPremiumSubmissions} variant="outline" size="sm">
+                    <RefreshCw className="w-4 h-4 mr-2" />
+                    Refresh
+                  </Button>
+                </div>
               </div>
               <div className="overflow-x-auto">
                 <Table>
