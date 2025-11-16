@@ -7,7 +7,7 @@ import { TrendingUp, Heart, Shield, Users, Phone, Calendar, Pill, Brain } from '
 const PremiumFeatures = () => {
   const features = [
     {
-      icon: <TrendingUp className="h-8 w-8 text-green-600" />,
+      icon: <TrendingUp className="h-8 w-8 text-green-700" />,
       title: 'Advanced Health Analytics',
       description: 'Detailed insights into your health patterns, meal completion rates, and progress tracking with AI-powered recommendations.',
       status: 'Active'
@@ -43,7 +43,7 @@ const PremiumFeatures = () => {
       status: 'Active'
     },
     {
-      icon: <Users className="h-8 w-8 text-green-500" />,
+      icon: <Users className="h-8 w-8 text-green-600" />,
       title: 'Family Health Management',
       description: 'Manage health records for up to 6 family members with coordinated care plans.',
       status: 'Active'
