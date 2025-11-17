@@ -3,7 +3,7 @@ import { Resend } from "npm:resend@2.0.0";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.50.2';
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
-const ADMIN_EMAIL = "healinton1@gmail.com";
+const ADMIN_EMAIL = "officialhealinton@gmail.com";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
