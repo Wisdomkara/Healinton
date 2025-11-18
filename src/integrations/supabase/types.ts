@@ -101,6 +101,7 @@ export type Database = {
       drug_orders: {
         Row: {
           country: string | null
+          delivery_address: string | null
           drug_id: string
           id: string
           order_date: string | null
@@ -109,9 +110,11 @@ export type Database = {
           status: string | null
           total_amount: number | null
           user_id: string
+          user_name: string | null
         }
         Insert: {
           country?: string | null
+          delivery_address?: string | null
           drug_id: string
           id?: string
           order_date?: string | null
@@ -120,9 +123,11 @@ export type Database = {
           status?: string | null
           total_amount?: number | null
           user_id: string
+          user_name?: string | null
         }
         Update: {
           country?: string | null
+          delivery_address?: string | null
           drug_id?: string
           id?: string
           order_date?: string | null
@@ -131,6 +136,7 @@ export type Database = {
           status?: string | null
           total_amount?: number | null
           user_id?: string
+          user_name?: string | null
         }
         Relationships: [
           {
@@ -138,6 +144,13 @@ export type Database = {
             columns: ["drug_id"]
             isOneToOne: false
             referencedRelation: "drug_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "drug_orders_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
