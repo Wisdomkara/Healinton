@@ -12,6 +12,12 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
+import { 
+  emailSchema, 
+  passwordSchema, 
+  nameSchema, 
+  validateFormData 
+} from '@/utils/validation';
 
 const Auth = () => {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -716,6 +722,28 @@ const Auth = () => {
       return;
     }
     
+    // Validate email
+    const emailValidation = validateFormData(emailSchema, formData.email);
+    if (!emailValidation.success) {
+      toast({
+        title: 'Invalid Email',
+        description: emailValidation.error,
+        variant: 'destructive'
+      });
+      return;
+    }
+    
+    // Validate password
+    const passwordValidation = validateFormData(passwordSchema, formData.password);
+    if (!passwordValidation.success) {
+      toast({
+        title: 'Weak Password',
+        description: passwordValidation.error,
+        variant: 'destructive'
+      });
+      return;
+    }
+    
     if (formData.password !== formData.confirmPassword) {
       toast({
         title: "Error",
@@ -724,12 +752,16 @@ const Auth = () => {
       });
       return;
     }
-
-    if (formData.password.length < 6) {
+    
+    // Validate names
+    const firstNameValidation = validateFormData(nameSchema, formData.firstName);
+    const lastNameValidation = validateFormData(nameSchema, formData.lastName);
+    
+    if (!firstNameValidation.success || !lastNameValidation.success) {
       toast({
-        title: "Error",
-        description: "Password must be at least 6 characters long",
-        variant: "destructive"
+        title: 'Invalid Name',
+        description: firstNameValidation.error || lastNameValidation.error,
+        variant: 'destructive'
       });
       return;
     }
@@ -737,8 +769,8 @@ const Auth = () => {
     setLoading(true);
 
     const userData = {
-      first_name: formData.firstName,
-      last_name: formData.lastName,
+      first_name: firstNameValidation.data,
+      last_name: lastNameValidation.data,
       gender: formData.gender,
       country: formData.country,
       illness_type: formData.illnessType,
@@ -746,7 +778,7 @@ const Auth = () => {
       privacy_accepted_at: new Date().toISOString()
     };
 
-    const { error } = await signUp(formData.email, formData.password, userData);
+    const { error } = await signUp(emailValidation.data, passwordValidation.data, userData);
     
     if (error) {
       toast({
@@ -767,9 +799,21 @@ const Auth = () => {
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate email format
+    const emailValidation = validateFormData(emailSchema, formData.email);
+    if (!emailValidation.success) {
+      toast({
+        title: 'Invalid Email',
+        description: emailValidation.error,
+        variant: 'destructive'
+      });
+      return;
+    }
+    
     setLoading(true);
 
-    const { error } = await signIn(formData.email, formData.password);
+    const { error } = await signIn(emailValidation.data, formData.password);
     
     if (error) {
       toast({
@@ -792,10 +836,12 @@ const Auth = () => {
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.email) {
+    // Validate email format
+    const emailValidation = validateFormData(emailSchema, formData.email);
+    if (!emailValidation.success) {
       toast({
-        title: "Error",
-        description: "Please enter your email address",
+        title: "Invalid Email",
+        description: emailValidation.error,
         variant: "destructive"
       });
       return;
@@ -803,7 +849,7 @@ const Auth = () => {
 
     setLoading(true);
 
-    const { error } = await supabase.auth.resetPasswordForEmail(formData.email, {
+    const { error } = await supabase.auth.resetPasswordForEmail(emailValidation.data, {
       redirectTo: `${window.location.origin}/auth?type=recovery`
     });
 
@@ -827,10 +873,12 @@ const Auth = () => {
   const handlePasswordUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.password) {
+    // Validate password strength
+    const passwordValidation = validateFormData(passwordSchema, formData.password);
+    if (!passwordValidation.success) {
       toast({
-        title: "Error",
-        description: "Please enter a new password",
+        title: "Weak Password",
+        description: passwordValidation.error,
         variant: "destructive"
       });
       return;
