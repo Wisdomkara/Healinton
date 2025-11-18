@@ -17,9 +17,9 @@ project_id = "xuyioczahgozvdbfodht"
 verify_jwt = false
 
 # ================================================================
-# Admin Order Notification - No Authentication Required
+# Admin Order Notification - Authentication Required
 # ================================================================
-# Internal function called by the system to notify admins
+# Called from authenticated client code to notify admins
 # Uses service role key for database access
 [functions.notify-admin-order]
-verify_jwt = false
+# verify_jwt defaults to true - authentication is REQUIRED
