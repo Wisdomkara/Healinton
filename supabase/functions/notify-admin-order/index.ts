@@ -50,7 +50,7 @@ const handler = async (req: Request): Promise<Response> => {
         .select(`
           *,
           drug_categories(name, type),
-          profiles(first_name, last_name, email, phone_number, country)
+          profiles(first_name, last_name, email, phone_number, country, delivery_address)
         `)
         .eq('id', orderId)
         .single();
@@ -75,10 +75,11 @@ const handler = async (req: Request): Promise<Response> => {
           
           <div style="background-color: #eff6ff; padding: 20px; border-radius: 8px; margin: 20px 0;">
             <h3 style="margin-top: 0;">Customer Information</h3>
-            <p><strong>Name:</strong> ${order.profiles?.first_name} ${order.profiles?.last_name}</p>
+            <p><strong>Name:</strong> ${order.user_name || `${order.profiles?.first_name} ${order.profiles?.last_name}`}</p>
             <p><strong>Email:</strong> ${order.profiles?.email}</p>
             <p><strong>Phone:</strong> ${order.profiles?.phone_number}</p>
             <p><strong>Country:</strong> ${order.country}</p>
+            <p><strong>Delivery Address:</strong> ${order.delivery_address || 'Not provided'}</p>
           </div>
           
           <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">

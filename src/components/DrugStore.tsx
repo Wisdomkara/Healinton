@@ -103,6 +103,7 @@ const DrugStore = () => {
     try {
       const totalAmount = selectedDrug.price * orderForm.quantity;
       const referenceNumber = `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const userName = `${profile.first_name || ''} ${profile.last_name || ''}`.trim();
 
       const { error } = await supabase
         .from('drug_orders')
@@ -113,7 +114,9 @@ const DrugStore = () => {
           total_amount: totalAmount,
           status: 'pending',
           reference_number: referenceNumber,
-          country: profile.country
+          country: profile.country,
+          delivery_address: profile.delivery_address || '',
+          user_name: userName || 'Unknown'
         });
 
       if (error) throw error;

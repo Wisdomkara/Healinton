@@ -85,7 +85,7 @@ const AdminOrders = () => {
       .select(`
         *,
         drug_categories(name, type),
-        profiles(first_name, last_name, email, phone_number)
+        profiles(first_name, last_name, email, phone_number, delivery_address)
       `)
       .order('order_date', { ascending: false });
 
@@ -256,6 +256,7 @@ const AdminOrders = () => {
                       <TableHead>Quantity</TableHead>
                       <TableHead>Amount</TableHead>
                       <TableHead>Country</TableHead>
+                      <TableHead>Delivery Address</TableHead>
                       <TableHead>Status</TableHead>
                       <TableHead>Date</TableHead>
                       <TableHead>Actions</TableHead>
@@ -264,7 +265,7 @@ const AdminOrders = () => {
                   <TableBody>
                     {drugOrders.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={11} className="text-center text-muted-foreground">
+                        <TableCell colSpan={12} className="text-center text-muted-foreground">
                           No drug orders found
                         </TableCell>
                       </TableRow>
@@ -281,6 +282,9 @@ const AdminOrders = () => {
                           <TableCell>{order.quantity}</TableCell>
                           <TableCell>${order.total_amount}</TableCell>
                           <TableCell>{order.country}</TableCell>
+                          <TableCell className="max-w-xs truncate">
+                            {order.delivery_address || 'Not provided'}
+                          </TableCell>
                           <TableCell>
                             <Badge variant={
                               order.status === 'completed' ? 'default' :
