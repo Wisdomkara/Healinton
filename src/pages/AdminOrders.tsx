@@ -21,7 +21,8 @@ import {
   FileText, 
   Users,
   RefreshCw,
-  Download
+  Download,
+  Settings
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -198,9 +199,18 @@ const AdminOrders = () => {
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Admin Dashboard</h1>
-          <p className="text-muted-foreground">Manage all orders and submissions</p>
+        <div className="mb-8 flex justify-between items-start">
+          <div>
+            <h1 className="text-3xl font-bold mb-2">Admin Dashboard</h1>
+            <p className="text-muted-foreground">Manage all orders and submissions</p>
+          </div>
+          <Button
+            variant="outline"
+            onClick={() => navigate("/admin/settings")}
+          >
+            <Settings className="mr-2 h-4 w-4" />
+            Settings
+          </Button>
         </div>
 
         <Tabs defaultValue="drug-orders" className="space-y-6">

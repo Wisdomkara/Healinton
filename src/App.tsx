@@ -24,6 +24,7 @@ import Community from './pages/Community';
 import Accessibility from './pages/Accessibility';
 import DrugsPage from './pages/DrugsPage';
 import AdminOrders from './pages/AdminOrders';
+import AdminSettings from './pages/AdminSettings';
 import NotFound from './pages/NotFound';
 
 const App = () => {
@@ -64,7 +65,8 @@ const App = () => {
             </Route>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/profile" element={<Profile />} />
-            <Route path="/admin/orders" element={<AdminOrders />} />
+          <Route path="/admin/orders" element={<AdminOrders />} />
+          <Route path="/admin/settings" element={<AdminSettings />} />
             </Routes>
           </BrowserRouter>
         </TooltipProvider>
