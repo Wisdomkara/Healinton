@@ -3,7 +3,6 @@ import { Resend } from "npm:resend@2.0.0";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.50.2';
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
-const ADMIN_EMAIL = "healinton1@gmail.com";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -27,6 +26,20 @@ const handler = async (req: Request): Promise<Response> => {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // Fetch admin email from settings
+    const { data: settingsData, error: settingsError } = await supabase
+      .from('admin_settings')
+      .select('setting_value')
+      .eq('setting_key', 'notification_email')
+      .single();
+
+    if (settingsError || !settingsData) {
+      console.error('Error fetching admin email:', settingsError);
+      throw new Error('Failed to fetch admin notification email');
+    }
+
+    const ADMIN_EMAIL = settingsData.setting_value;
 
     let emailSubject = '';
     let emailHtml = '';
