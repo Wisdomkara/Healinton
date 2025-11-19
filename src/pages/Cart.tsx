@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { ShoppingCart, Trash2, Plus, Minus, ArrowLeft } from 'lucide-react';
 
 const Cart = () => {
-  const { items, removeItem, updateQuantity, clearCart, getTotalPrice } = useCart();
+  const { items, removeItem, updateQuantity, clearCart, getTotalPrice, getVAT, getTotalWithVAT, getVATRate, userCountry } = useCart();
   const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -77,13 +77,14 @@ const Cart = () => {
         
         if (item.type === 'drug' && item.drugId) {
           // Create drug order
+          const itemTotal = item.price * item.quantity;
           const { error, data } = await supabase
             .from('drug_orders')
             .insert({
               user_id: user.id,
               drug_id: item.drugId,
               quantity: item.quantity,
-              total_amount: item.price * item.quantity,
+              total_amount: itemTotal,
               status: 'pending',
               reference_number: referenceNumber,
               country: profile.country,
@@ -249,9 +250,23 @@ const Cart = () => {
                     <span>Items ({items.length})</span>
                     <span>{items.reduce((sum, item) => sum + item.quantity, 0)} total</span>
                   </div>
+                  <div className="flex justify-between">
+                    <span>Subtotal:</span>
+                    <span>${getTotalPrice().toFixed(2)}</span>
+                  </div>
+                  
+                  {getVATRate() > 0 && (
+                    <div className="flex justify-between text-sm text-muted-foreground">
+                      <span>VAT ({getVATRate()}%{userCountry ? ` - ${userCountry}` : ''}):</span>
+                      <span>${getVAT().toFixed(2)}</span>
+                    </div>
+                  )}
+                  
+                  <div className="border-t border-border pt-2 mt-2"></div>
+                  
                   <div className="flex justify-between text-lg font-bold">
                     <span>Total:</span>
-                    <span className="text-green-600">${getTotalPrice().toFixed(2)}</span>
+                    <span className="text-green-600">${getTotalWithVAT().toFixed(2)}</span>
                   </div>
                 </div>
 

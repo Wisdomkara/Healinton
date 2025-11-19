@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
+import { calculateVAT, calculateTotalWithVAT, getVATRate } from '@/utils/vatRates';
 
 export interface CartItem {
   id: string;
@@ -19,6 +21,10 @@ interface CartContextType {
   clearCart: () => void;
   getTotalPrice: () => number;
   getTotalItems: () => number;
+  getVAT: () => number;
+  getTotalWithVAT: () => number;
+  getVATRate: () => number;
+  userCountry: string | null;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -26,6 +32,26 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user } = useAuth();
   const [items, setItems] = useState<CartItem[]>([]);
+  const [userCountry, setUserCountry] = useState<string | null>(null);
+
+  // Fetch user's country
+  useEffect(() => {
+    const fetchUserCountry = async () => {
+      if (user) {
+        const { data } = await supabase
+          .from('profiles')
+          .select('country')
+          .eq('id', user.id)
+          .single();
+        
+        if (data?.country) {
+          setUserCountry(data.country);
+        }
+      }
+    };
+    
+    fetchUserCountry();
+  }, [user]);
 
   // Load cart from localStorage on mount
   useEffect(() => {
@@ -78,6 +104,20 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return items.reduce((total, item) => total + item.quantity, 0);
   };
 
+  const getVAT = () => {
+    const subtotal = getTotalPrice();
+    return calculateVAT(subtotal, userCountry);
+  };
+
+  const getTotalWithVAT = () => {
+    const subtotal = getTotalPrice();
+    return calculateTotalWithVAT(subtotal, userCountry);
+  };
+
+  const getVATRateValue = () => {
+    return getVATRate(userCountry);
+  };
+
   return (
     <CartContext.Provider value={{
       items,
@@ -86,7 +126,11 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       updateQuantity,
       clearCart,
       getTotalPrice,
-      getTotalItems
+      getTotalItems,
+      getVAT,
+      getTotalWithVAT,
+      getVATRate: getVATRateValue,
+      userCountry
     }}>
       {children}
     </CartContext.Provider>
