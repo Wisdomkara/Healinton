@@ -152,13 +152,29 @@ const AdminOrders = () => {
         description: 'Failed to update order status',
         variant: 'destructive'
       });
-    } else {
-      toast({
-        title: 'Success',
-        description: 'Order status updated successfully'
-      });
-      fetchDrugOrders();
+      return;
     }
+
+    // Send email notification to user if status changed to delivered
+    if (newStatus === 'delivered') {
+      try {
+        const { error: emailError } = await supabase.functions.invoke('notify-user-delivery', {
+          body: { orderId }
+        });
+
+        if (emailError) {
+          console.error('Failed to send delivery notification:', emailError);
+        }
+      } catch (emailError) {
+        console.error('Error sending delivery notification:', emailError);
+      }
+    }
+
+    toast({
+      title: 'Success',
+      description: 'Order status updated successfully'
+    });
+    fetchDrugOrders();
   };
 
   const updateBookingStatus = async (bookingId: string, newStatus: string) => {

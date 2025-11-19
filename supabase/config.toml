@@ -23,3 +23,10 @@ verify_jwt = false
 # Uses service role key for database access
 [functions.notify-admin-order]
 # verify_jwt defaults to true - authentication is REQUIRED
+
+# ================================================================
+# User Delivery Notification - Authentication Required
+# ================================================================
+# Called from admin dashboard to notify users of delivery status
+[functions.notify-user-delivery]
+# verify_jwt defaults to true - authentication is REQUIRED
