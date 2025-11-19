@@ -7,6 +7,7 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from '@/hooks/useAuth';
+import { CartProvider } from '@/contexts/CartContext';
 import Layout from '@/components/Layout';
 import Index from './pages/Index';
 import Auth from './pages/Auth';
@@ -25,6 +26,7 @@ import Accessibility from './pages/Accessibility';
 import DrugsPage from './pages/DrugsPage';
 import AdminOrders from './pages/AdminOrders';
 import AdminSettings from './pages/AdminSettings';
+import Cart from './pages/Cart';
 import NotFound from './pages/NotFound';
 
 const App = () => {
@@ -42,10 +44,11 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
+        <CartProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
             <Routes>
               <Route path="/" element={<Layout />}>
                 <Route index element={<Index />} />
@@ -63,13 +66,15 @@ const App = () => {
                 <Route path="drugs" element={<DrugsPage />} />
               <Route path="*" element={<NotFound />} />
             </Route>
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/profile" element={<Profile />} />
-          <Route path="/admin/orders" element={<AdminOrders />} />
-          <Route path="/admin/settings" element={<AdminSettings />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/admin/orders" element={<AdminOrders />} />
+              <Route path="/admin/settings" element={<AdminSettings />} />
+              <Route path="/cart" element={<Cart />} />
             </Routes>
           </BrowserRouter>
-        </TooltipProvider>
+            </TooltipProvider>
+          </CartProvider>
       </AuthProvider>
     </QueryClientProvider>
   );

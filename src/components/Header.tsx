@@ -2,12 +2,16 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
-import { Plus, User, Menu } from 'lucide-react';
+import { useCart } from '@/contexts/CartContext';
+import { Plus, User, Menu, ShoppingCart } from 'lucide-react';
 
 const Header = () => {
   const { user } = useAuth();
+  const { getTotalItems } = useCart();
   const location = useLocation();
+  const cartItemCount = getTotalItems();
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -71,6 +75,20 @@ const Header = () => {
 
           {/* CTA Buttons */}
           <div className="flex items-center space-x-4">
+            {user && (
+              <Link to="/cart" className="relative">
+                <Button variant="ghost" size="icon" className="relative">
+                  <ShoppingCart className="h-5 w-5" />
+                  {cartItemCount > 0 && (
+                    <Badge 
+                      className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-green-600 text-white text-xs"
+                    >
+                      {cartItemCount}
+                    </Badge>
+                  )}
+                </Button>
+              </Link>
+            )}
             {user ? (
               <Link to="/dashboard">
                 <Button className="bg-green-600 hover:bg-green-700 text-white flex items-center space-x-2">

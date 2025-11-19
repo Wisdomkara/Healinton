@@ -8,6 +8,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { useEnsureProfile } from '@/hooks/useEnsureProfile';
+import { useCart } from '@/contexts/CartContext';
 import { ShoppingCart, Trash2, Package, Clock } from 'lucide-react';
 import { z } from 'zod';
 import { emailSchema, phoneSchema, nameSchema, validateFormData } from '@/utils/validation';
@@ -16,6 +17,7 @@ const ShoppingList = () => {
   useEnsureProfile();
   const { user } = useAuth();
   const { toast } = useToast();
+  const { addItem } = useCart();
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -46,9 +48,15 @@ const ShoppingList = () => {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!user) return;
+  const handleAddToCart = () => {
+    if (!user) {
+      toast({
+        title: 'Error',
+        description: 'You must be logged in',
+        variant: 'destructive'
+      });
+      return;
+    }
 
     // Validate input data
     const shoppingListSchema = z.object({
@@ -66,44 +74,20 @@ const ShoppingList = () => {
       return;
     }
 
-    setLoading(true);
-    
-    try {
-      const referenceNumber = `MED-${Date.now().toString().slice(-6)}`;
+    addItem({
+      name: validation.data.medicationName,
+      price: 0,
+      quantity: 1,
+      type: 'shopping_list',
+      pharmacyName: validation.data.pharmacyName || undefined
+    });
 
-      const { error } = await supabase
-        .from('shopping_lists')
-        .insert({
-          user_id: user.id,
-          medication_name: validation.data.medicationName,
-          pharmacy_name: validation.data.pharmacyName || null,
-          reference_number: referenceNumber
-        });
+    toast({
+      title: 'Added to Cart',
+      description: `${validation.data.medicationName} has been added to your cart.`,
+    });
 
-      if (error) throw error;
-
-      toast({
-        title: "Medication Added Successfully!",
-        description: `${formData.medicationName} has been added to your shopping list. Reference: ${referenceNumber}`
-      });
-
-      // Reset form
-      setFormData({
-        medicationName: '',
-        pharmacyName: ''
-      });
-
-      fetchItems();
-    } catch (error) {
-      console.error('Error adding medication:', error);
-      toast({
-        title: "Error",
-        description: "Failed to add medication. Please try again.",
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
-    }
+    setFormData({ medicationName: '', pharmacyName: '' });
   };
 
   const clearAllItems = async () => {
@@ -150,7 +134,7 @@ const ShoppingList = () => {
 
       <Card className="p-6">
         <h3 className="text-lg font-semibold mb-4">Add Medication</h3>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="medicationName">Medication Name *</Label>
@@ -158,7 +142,6 @@ const ShoppingList = () => {
                 id="medicationName"
                 value={formData.medicationName}
                 onChange={(e) => setFormData({ ...formData, medicationName: e.target.value })}
-                required
               />
             </div>
             
@@ -172,10 +155,15 @@ const ShoppingList = () => {
             </div>
           </div>
 
-          <Button type="submit" disabled={loading} className="w-full bg-blue-600 hover:bg-blue-700">
-            {loading ? 'Adding Medication...' : 'Add to Shopping List'}
+          <Button 
+            onClick={handleAddToCart}
+            disabled={loading}
+            className="w-full bg-blue-600 hover:bg-blue-700"
+          >
+            <ShoppingCart className="h-4 w-4 mr-2" />
+            Add to Cart
           </Button>
-        </form>
+        </div>
       </Card>
 
       {/* Shopping List Items */}
