@@ -4,52 +4,26 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useEnsureProfile } from '@/hooks/useEnsureProfile';
+import { useCart } from '@/contexts/CartContext';
 import { Pill, Search, ShoppingCart, Star, AlertCircle, CheckCircle2 } from 'lucide-react';
 
 const DrugStore = () => {
-  useEnsureProfile(); // Ensure user profile exists
+  useEnsureProfile();
   const { user } = useAuth();
   const { toast } = useToast();
+  const { addItem } = useCart();
   const [drugs, setDrugs] = useState<any[]>([]);
   const [filteredDrugs, setFilteredDrugs] = useState<any[]>([]);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
-  const [isOrdering, setIsOrdering] = useState(false);
-  const [selectedDrug, setSelectedDrug] = useState<any>(null);
-  const [orderForm, setOrderForm] = useState({
-    quantity: 1,
-    notes: ''
-  });
-  const [profile, setProfile] = useState<any>(null);
 
   useEffect(() => {
     fetchDrugs();
-    if (user) {
-      fetchProfile();
-    }
-  }, [user]);
-
-  const fetchProfile = async () => {
-    if (!user) return;
-    
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('first_name, last_name, email, phone_number, delivery_address, country')
-      .eq('id', user.id)
-      .single();
-    
-    if (error) {
-      console.error('Error fetching profile:', error);
-    } else {
-      setProfile(data);
-    }
-  };
+  }, []);
 
   useEffect(() => {
     filterDrugs();
@@ -86,75 +60,28 @@ const DrugStore = () => {
     setFilteredDrugs(filtered);
   };
 
-  const handleOrder = async () => {
-    if (!user || !selectedDrug || !profile) return;
-
-    // Validate profile has required fields
-    if (!profile.phone_number || !profile.delivery_address) {
+  const handleAddToCart = (drug: any) => {
+    if (!user) {
       toast({
-        title: 'Profile Incomplete',
-        description: 'Please update your profile with phone number and delivery address in Settings.',
+        title: 'Sign In Required',
+        description: 'Please sign in to add items to cart.',
         variant: 'destructive'
       });
       return;
     }
 
-    setIsOrdering(true);
-    try {
-      const totalAmount = selectedDrug.price * orderForm.quantity;
-      const referenceNumber = `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      const userName = `${profile.first_name || ''} ${profile.last_name || ''}`.trim();
+    addItem({
+      name: drug.name,
+      price: drug.price,
+      quantity: 1,
+      type: 'drug',
+      drugId: drug.id
+    });
 
-      const { error } = await supabase
-        .from('drug_orders')
-        .insert({
-          user_id: user.id,
-          drug_id: selectedDrug.id,
-          quantity: orderForm.quantity,
-          total_amount: totalAmount,
-          status: 'pending',
-          reference_number: referenceNumber,
-          country: profile.country,
-          delivery_address: profile.delivery_address || '',
-          user_name: userName || 'Unknown'
-        });
-
-      if (error) throw error;
-
-      // Send admin notification
-      const { data: insertedOrder } = await supabase
-        .from('drug_orders')
-        .select('id')
-        .eq('reference_number', referenceNumber)
-        .single();
-
-      if (insertedOrder) {
-        supabase.functions.invoke('notify-admin-order', {
-          body: { type: 'drug_order', orderId: insertedOrder.id }
-        }).catch(err => console.error('Failed to send admin notification:', err));
-      }
-
-      toast({
-        title: 'Order Placed Successfully!',
-        description: `Your order for ${selectedDrug.name} has been placed. Reference: ${referenceNumber}`,
-      });
-
-      setSelectedDrug(null);
-      setOrderForm({ 
-        quantity: 1, 
-        notes: ''
-      });
-
-    } catch (error) {
-      console.error('Error placing order:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to place order. Please try again.',
-        variant: 'destructive'
-      });
-    } finally {
-      setIsOrdering(false);
-    }
+    toast({
+      title: 'Added to Cart',
+      description: `${drug.name} has been added to your cart.`,
+    });
   };
 
   const getCategoryColor = (type: string) => {
@@ -253,111 +180,17 @@ const DrugStore = () => {
               </div>
               
               <Button
-                onClick={() => setSelectedDrug(drug)}
+                onClick={() => handleAddToCart(drug)}
                 disabled={!drug.availability}
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50"
               >
                 <ShoppingCart className="h-4 w-4 mr-2" />
-                {drug.availability ? 'Order Now' : 'Out of Stock'}
+                {drug.availability ? 'Add to Cart' : 'Out of Stock'}
               </Button>
             </div>
           </Card>
         ))}
       </div>
-
-      {/* Order Modal */}
-      {selectedDrug && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <Card className="w-full max-w-md p-6">
-            <div className="flex justify-between items-start mb-4">
-              <h3 className="text-xl font-semibold">Order {selectedDrug.name}</h3>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setSelectedDrug(null)}
-              >
-                ✕
-              </Button>
-            </div>
-            
-            <div className="space-y-4">
-              <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg mb-4">
-                <p className="text-sm text-blue-900 dark:text-blue-100">
-                  <strong>Delivery Details:</strong><br/>
-                  {profile?.first_name} {profile?.last_name}<br/>
-                  {profile?.email}<br/>
-                  {profile?.phone_number || 'No phone number'}<br/>
-                  {profile?.delivery_address || 'No delivery address'}
-                </p>
-                <p className="text-xs text-blue-700 dark:text-blue-300 mt-2">
-                  Update your delivery details in Settings if needed.
-                </p>
-              </div>
-              
-              <div>
-                <Label htmlFor="quantity">Quantity</Label>
-                <Input
-                  id="quantity"
-                  type="number"
-                  min="1"
-                  value={orderForm.quantity}
-                  onChange={(e) => setOrderForm(prev => ({
-                    ...prev,
-                    quantity: parseInt(e.target.value) || 1
-                  }))}
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="notes">Special Instructions (Optional)</Label>
-                <Textarea
-                  id="notes"
-                  placeholder="Any special instructions for your order..."
-                  value={orderForm.notes}
-                  onChange={(e) => setOrderForm(prev => ({
-                    ...prev,
-                    notes: e.target.value
-                  }))}
-                />
-              </div>
-              
-              <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                <div className="flex justify-between items-center mb-2">
-                  <span>Price per unit:</span>
-                  <span className="font-semibold">${selectedDrug.price}</span>
-                </div>
-                <div className="flex justify-between items-center mb-2">
-                  <span>Quantity:</span>
-                  <span className="font-semibold">{orderForm.quantity}</span>
-                </div>
-                <div className="flex justify-between items-center text-lg font-bold">
-                  <span>Total:</span>
-                  <span className="text-green-600">
-                    ${(selectedDrug.price * orderForm.quantity).toFixed(2)}
-                  </span>
-                </div>
-              </div>
-              
-              <div className="flex space-x-3">
-                <Button
-                  variant="outline"
-                  onClick={() => setSelectedDrug(null)}
-                  className="flex-1"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={handleOrder}
-                  disabled={isOrdering}
-                  className="flex-1 bg-green-600 hover:bg-green-700"
-                >
-                  {isOrdering ? 'Placing Order...' : 'Place Order'}
-                </Button>
-              </div>
-            </div>
-          </Card>
-        </div>
-      )}
 
       {filteredDrugs.length === 0 && (
         <div className="text-center py-12">
