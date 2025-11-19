@@ -57,26 +57,26 @@ const DrugOrdersList = () => {
     }
   };
 
-  const updateOrderStatus = async (orderId: string, status: string) => {
+  const markAsReceived = async (orderId: string) => {
     try {
       const { error } = await supabase
         .from('drug_orders')
-        .update({ status })
+        .delete()
         .eq('id', orderId);
 
       if (error) throw error;
 
       toast({
-        title: 'Status Updated',
-        description: `Order marked as ${status}`,
+        title: 'Order Completed',
+        description: 'Order marked as received and removed from list',
       });
 
       fetchOrders();
     } catch (error) {
-      console.error('Error updating order status:', error);
+      console.error('Error completing order:', error);
       toast({
         title: 'Error',
-        description: 'Failed to update order status',
+        description: 'Failed to complete order',
         variant: 'destructive'
       });
     }
@@ -246,14 +246,14 @@ const DrugOrdersList = () => {
 
             {/* Actions */}
             <div className="flex justify-end space-x-2 pt-2">
-              {order.status === 'delivered' && (
+              {(order.status === 'delivered' || order.status === 'pending') && (
                 <Button
-                  onClick={() => updateOrderStatus(order.id, 'received')}
+                  onClick={() => markAsReceived(order.id)}
                   size="sm"
-                  className="bg-blue-600 hover:bg-blue-700"
+                  className="bg-green-600 hover:bg-green-700"
                 >
                   <CheckCircle className="h-4 w-4 mr-2" />
-                  Mark as Received
+                  Mark as Completed
                 </Button>
               )}
               <Button

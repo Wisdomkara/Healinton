@@ -1,9 +1,10 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Menu, LogOut } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Menu, LogOut, ShoppingCart } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
+import { useCart } from '@/contexts/CartContext';
 import ThemeToggle from '@/components/ThemeToggle';
 
 interface DashboardHeaderProps {
@@ -14,6 +15,8 @@ interface DashboardHeaderProps {
 const DashboardHeader = ({ onMenuClick, userName }: DashboardHeaderProps) => {
   const { signOut } = useAuth();
   const navigate = useNavigate();
+  const { getTotalItems } = useCart();
+  const cartItemCount = getTotalItems();
 
   const handleSignOut = async () => {
     try {
@@ -48,6 +51,21 @@ const DashboardHeader = ({ onMenuClick, userName }: DashboardHeaderProps) => {
         </div>
         
         <div className="flex items-center space-x-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate('/cart')}
+            className="relative"
+          >
+            <ShoppingCart className="h-5 w-5" />
+            {cartItemCount > 0 && (
+              <Badge 
+                className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-green-600 text-white text-xs"
+              >
+                {cartItemCount}
+              </Badge>
+            )}
+          </Button>
           <ThemeToggle />
           <Button
             variant="ghost"
