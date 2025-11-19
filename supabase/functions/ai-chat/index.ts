@@ -95,11 +95,11 @@ serve(async (req) => {
     // Sanitize and validate input
     const sanitizedMessage = sanitizeMessage(message)
 
-    // Get API key from environment variables
-    const apiKey = Deno.env.get('OPENAI_API_KEY')
+    // Get Lovable AI API key from environment variables
+    const apiKey = Deno.env.get('LOVABLE_API_KEY')
     
     if (!apiKey) {
-      console.error('OPENAI_API_KEY environment variable is not set')
+      console.error('LOVABLE_API_KEY environment variable is not set')
       return new Response(
         JSON.stringify({ error: 'Service temporarily unavailable' }),
         { 
@@ -109,14 +109,14 @@ serve(async (req) => {
       )
     }
 
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
+        model: 'google/gemini-2.5-flash',
         messages: [
           {
             role: 'system',
@@ -128,7 +128,6 @@ serve(async (req) => {
           }
         ],
         max_tokens: 300,
-        temperature: 0.7,
       }),
     })
 
