@@ -52,6 +52,7 @@ const Sidebar = ({ isOpen = true, onClose, onSectionChange, activeSection = 'ove
     { icon: Crown, label: 'Admin Premium', section: 'admin-premium', isPremium: false },
     { icon: ShoppingCart, label: 'Shopping List', section: 'shopping', isPremium: false },
     { icon: Pill, label: 'Drug Store', section: 'drugs', isPremium: false },
+    { icon: Activity, label: 'Drug Orders', section: 'drug-orders', isPremium: false },
     { icon: Building2, label: 'My Hospitals', section: 'hospital-info', isPremium: false },
     { icon: MessageSquare, label: 'AI Chat', section: 'chat', isPremium: false },
     { icon: FileText, label: 'Health Blog', section: 'blog', isPremium: false },

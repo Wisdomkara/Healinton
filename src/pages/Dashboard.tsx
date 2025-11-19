@@ -1,6 +1,8 @@
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { useCart } from '@/contexts/CartContext';
 import Sidebar from '@/components/Sidebar';
 import DashboardHeader from '@/components/DashboardHeader';
 import DashboardOverview from '@/components/DashboardOverview';
@@ -21,11 +23,18 @@ import DrugStore from '@/components/DrugStore';
 import HospitalForm from '@/components/HospitalForm';
 import RateUs from '@/components/RateUs';
 import ThemeToggle from '@/components/ThemeToggle';
+import DrugOrdersList from '@/components/DrugOrdersList';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { ShoppingCart } from 'lucide-react';
 
 const Dashboard = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const { getTotalItems } = useCart();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('overview');
+  const cartItemCount = getTotalItems();
 
   // Get user's first name from metadata or email
   const userName = user?.user_metadata?.first_name || 
@@ -60,6 +69,8 @@ const Dashboard = () => {
         return <ShoppingList />;
       case 'drugs':
         return <DrugStore />;
+      case 'drug-orders':
+        return <DrugOrdersList />;
       case 'hospital-info':
         return <HospitalForm />;
       case 'chat':
@@ -120,8 +131,23 @@ const Dashboard = () => {
           />
         </div>
 
-        {/* Desktop theme toggle - positioned at top right */}
-        <div className="hidden lg:block absolute top-4 right-4 z-30">
+        {/* Desktop controls - positioned at top right */}
+        <div className="hidden lg:flex absolute top-4 right-4 z-30 items-center space-x-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate('/cart')}
+            className="relative"
+          >
+            <ShoppingCart className="h-5 w-5" />
+            {cartItemCount > 0 && (
+              <Badge 
+                className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-green-600 text-white text-xs"
+              >
+                {cartItemCount}
+              </Badge>
+            )}
+          </Button>
           <div className="bg-white dark:bg-gray-800 rounded-lg p-2 shadow-lg border border-gray-200 dark:border-gray-700">
             <div className="flex items-center space-x-2">
               <span className="text-sm text-gray-600 dark:text-gray-300">Theme:</span>
