@@ -76,17 +76,20 @@ const AdminPremiumManager = () => {
     if (!user || !formData.email) return;
 
     try {
-      // First check if user exists in auth.users
+      const trimmedEmail = formData.email.trim();
+
+      // First check if user exists in profiles (linked to auth.users)
       const { data: userData, error: userError } = await supabase
         .from('profiles')
         .select('id, email')
-        .eq('email', formData.email)
-        .single();
+        .ilike('email', trimmedEmail)
+        .maybeSingle();
 
       if (userError || !userData) {
+        console.error('Error finding user for premium:', userError);
         toast({
-          title: 'Error',
-          description: 'User with this email not found. They must register first.',
+          title: 'User not found',
+          description: 'No registered Healinton user matches this email. Ask them to sign up first and check for typos.',
           variant: 'destructive'
         });
         return;
