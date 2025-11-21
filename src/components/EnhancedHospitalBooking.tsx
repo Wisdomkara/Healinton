@@ -11,129 +11,76 @@ import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { AlertCircle } from 'lucide-react';
-import { z } from 'zod';
-import { sanitizeText, validateFormData } from '@/utils/validation';
-
-const countryHospitals = {
-  Nigeria: [
-    'Lagos University Teaching Hospital',
-    'University College Hospital Ibadan',
-    'Ahmadu Bello University Teaching Hospital',
-    'Federal Medical Centre Abuja',
-    'National Hospital Abuja'
-  ],
-  USA: [
-    'Mayo Clinic Rochester',
-    'Cleveland Clinic',
-    'Johns Hopkins Hospital',
-    'Massachusetts General Hospital',
-    'UCLA Medical Center'
-  ],
-  UK: [
-    'Royal London Hospital',
-    'St. Bartholomew\'s Hospital',
-    'Guy\'s Hospital',
-    'King\'s College Hospital',
-    'Imperial College Healthcare'
-  ],
-  Canada: [
-    'Toronto General Hospital',
-    'Montreal General Hospital',
-    'Vancouver General Hospital',
-    'Ottawa Hospital',
-    'Calgary Medical Center'
-  ]
-};
 
 const EnhancedHospitalBooking = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    hospitalName: '',
-    hospitalEmail: '',
+    hospital_id: '',
     appointmentDate: '',
+    appointmentTime: '',
     reason: '',
-    country: ''
+    user_name: '',
+    phone_number: '',
+    country: '',
+    state: '',
   });
   const [loading, setLoading] = useState(false);
-  const [isManualHospital, setIsManualHospital] = useState(false);
-  const [profileData, setProfileData] = useState<any>(null);
+  const [profile, setProfile] = useState<any>(null);
+  const [userHospitals, setUserHospitals] = useState<any[]>([]);
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      if (!user) return;
-      
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('first_name, last_name, phone_number, email, country, delivery_address')
-        .eq('id', user.id)
-        .single();
+    const fetchData = async () => {
+      if (user) {
+        // Fetch profile
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+        
+        if (profileError) {
+          console.error('Error fetching profile:', profileError);
+        } else {
+          setProfile(profileData);
+          setFormData(prev => ({
+            ...prev,
+            user_name: `${profileData.first_name || ''} ${profileData.last_name || ''}`.trim(),
+            phone_number: profileData.phone_number || '',
+            country: profileData.country || '',
+          }));
+        }
 
-      if (error) {
-        console.error('Error fetching profile:', error);
-        toast({
-          title: "Profile Error",
-          description: "Please complete your profile before booking.",
-          variant: "destructive"
-        });
-        return;
-      }
-
-      if (!data?.first_name || !data?.phone_number || !data?.email) {
-        toast({
-          title: "Incomplete Profile",
-          description: "Please complete your profile information before booking.",
-          variant: "destructive"
-        });
-      } else {
-        setProfileData(data);
-        if (data.country) {
-          setFormData(prev => ({ ...prev, country: data.country }));
+        // Fetch user's selected hospitals
+        const { data: hospitalsData, error: hospitalsError } = await supabase
+          .from('user_hospitals')
+          .select('*, hospitals(*)')
+          .eq('user_id', user.id);
+        
+        if (hospitalsError) {
+          console.error('Error fetching hospitals:', hospitalsError);
+        } else {
+          setUserHospitals(hospitalsData || []);
+          
+          // If no hospitals selected, redirect to hospital selection
+          if (!hospitalsData || hospitalsData.length === 0) {
+            toast({
+              title: 'Select a Hospital First',
+              description: 'Please select a hospital before booking an appointment',
+            });
+            navigate('/hospitals');
+          }
         }
       }
     };
-
-    fetchProfile();
-  }, [user, toast]);
-
-  const sendHospitalNotification = async (referenceNumber: string) => {
-    if (!profileData) return;
-
-    try {
-      const { data, error } = await supabase.functions.invoke('send-hospital-notification', {
-        body: {
-          hospitalEmail: formData.hospitalEmail,
-          hospitalName: formData.hospitalName,
-          patientName: `${profileData.first_name} ${profileData.last_name}`,
-          patientEmail: profileData.email,
-          patientPhone: profileData.phone_number,
-          appointmentDate: formData.appointmentDate,
-          reason: formData.reason,
-          referenceNumber: referenceNumber,
-          patientAddress: profileData.delivery_address || '',
-          country: formData.country
-        }
-      });
-
-      if (error) {
-        console.error('Error sending hospital notification:', error);
-        toast({
-          title: "Email Warning",
-          description: "Appointment booked successfully, but hospital notification email failed to send.",
-          variant: "destructive"
-        });
-      } else {
-        console.log('Hospital notification sent successfully:', data);
-      }
-    } catch (error) {
-      console.error('Error calling email function:', error);
-    }
-  };
+    
+    fetchData();
+  }, [user, navigate, toast]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user || !profileData) {
+    if (!user || !profile) {
       toast({
         title: "Profile Required",
         description: "Please complete your profile before booking.",
@@ -142,36 +89,11 @@ const EnhancedHospitalBooking = () => {
       return;
     }
 
-    if (isManualHospital && !formData.hospitalEmail) {
+    if (!formData.hospital_id) {
       toast({
-        title: "Hospital Email Required",
-        description: "Please provide the hospital email address for manual entries.",
+        title: "Hospital Required",
+        description: "Please select a hospital",
         variant: "destructive"
-      });
-      return;
-    }
-
-    // Validate appointment reason
-    const bookingSchema = z.object({
-      reason: z.string()
-        .min(10, 'Please provide at least 10 characters for the reason')
-        .max(500, 'Reason must be less than 500 characters')
-        .transform(sanitizeText),
-      hospitalName: z.string().min(1, 'Hospital name is required'),
-      appointmentDate: z.string().min(1, 'Appointment date is required')
-    });
-
-    const validation = validateFormData(bookingSchema, {
-      reason: formData.reason,
-      hospitalName: formData.hospitalName,
-      appointmentDate: formData.appointmentDate
-    });
-
-    if (!validation.success) {
-      toast({
-        title: 'Invalid Input',
-        description: validation.error,
-        variant: 'destructive'
       });
       return;
     }
@@ -179,39 +101,61 @@ const EnhancedHospitalBooking = () => {
     setLoading(true);
     
     try {
-      const referenceNumber = `APT-${Date.now().toString().slice(-6)}`;
+      const selectedHospital = userHospitals.find(h => h.hospital_id === formData.hospital_id)?.hospitals;
+      if (!selectedHospital) throw new Error('Hospital not found');
 
+      const referenceNumber = `APT-${Date.now().toString().slice(-6)}`;
+      const appointmentDateTime = `${formData.appointmentDate}T${formData.appointmentTime}`;
+
+      // Insert booking
       const { error } = await supabase
         .from('hospital_bookings')
         .insert({
           user_id: user.id,
-          hospital_name: validation.data.hospitalName,
-          hospital_email: formData.hospitalEmail,
-          appointment_date: validation.data.appointmentDate,
-          reason: validation.data.reason, // Now sanitized
+          hospital_name: selectedHospital.name,
+          hospital_email: selectedHospital.email,
+          appointment_date: appointmentDateTime,
+          reason: formData.reason,
           country: formData.country,
-          reference_number: referenceNumber
+          state: formData.state,
+          reference_number: referenceNumber,
+          user_name: formData.user_name,
+          phone_number: formData.phone_number,
         });
 
       if (error) throw error;
 
-      if (formData.hospitalEmail) {
-        await sendHospitalNotification(referenceNumber);
-      }
+      // Send notification emails
+      await supabase.functions.invoke('send-appointment-notification', {
+        body: {
+          hospital_email: selectedHospital.email,
+          hospital_name: selectedHospital.name,
+          user_name: formData.user_name,
+          user_email: profile.email,
+          user_phone: formData.phone_number,
+          appointment_date: formData.appointmentDate,
+          appointment_time: formData.appointmentTime,
+          reason: formData.reason,
+          country: formData.country,
+          state: formData.state,
+          reference_number: referenceNumber,
+        }
+      });
 
       toast({
-        title: "Appointment Booked Successfully!",
-        description: `Your appointment has been scheduled. Reference: ${referenceNumber}. ${formData.hospitalEmail ? 'Hospital has been notified via email.' : ''}`
+        title: "Success!",
+        description: `Appointment booked successfully. Reference: ${referenceNumber}`,
       });
 
-      setFormData({
-        hospitalName: '',
-        hospitalEmail: '',
+      // Reset form
+      setFormData(prev => ({
+        ...prev,
+        hospital_id: '',
         appointmentDate: '',
+        appointmentTime: '',
         reason: '',
-        country: profileData.country || ''
-      });
-      setIsManualHospital(false);
+        state: '',
+      }));
 
     } catch (error) {
       console.error('Error booking appointment:', error);
@@ -225,115 +169,106 @@ const EnhancedHospitalBooking = () => {
     }
   };
 
-  const availableHospitals = formData.country ? countryHospitals[formData.country as keyof typeof countryHospitals] || [] : [];
-
   return (
-    <Card className="p-6">
+    <Card className="p-6 bg-gradient-to-br from-card via-green-50/20 to-card dark:from-card dark:via-green-950/10 dark:to-card">
       <h3 className="text-lg font-semibold mb-4">Book Hospital Appointment</h3>
-      {!profileData && (
+      
+      {!profile?.first_name || !profile?.phone_number ? (
         <Alert className="mb-4 border-yellow-500 bg-yellow-50 dark:bg-yellow-900/20">
           <AlertCircle className="h-4 w-4 text-yellow-600" />
           <AlertDescription className="text-yellow-800 dark:text-yellow-200">
-            Please ensure your profile is complete with name, phone number, email, and address before booking.{' '}
+            Please complete your profile before booking.{' '}
             <Button 
               variant="link" 
               className="p-0 h-auto text-yellow-800 dark:text-yellow-200 underline font-semibold"
               onClick={() => navigate('/profile')}
             >
-              Complete your profile here
+              Complete profile
             </Button>
           </AlertDescription>
         </Alert>
-      )}
+      ) : null}
+
       <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="user_name">Full Name *</Label>
+            <Input
+              id="user_name"
+              value={formData.user_name}
+              onChange={(e) => setFormData({ ...formData, user_name: e.target.value })}
+              required
+            />
+          </div>
+          <div>
+            <Label htmlFor="phone_number">Phone Number *</Label>
+            <Input
+              id="phone_number"
+              value={formData.phone_number}
+              onChange={(e) => setFormData({ ...formData, phone_number: e.target.value })}
+              required
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="country">Country *</Label>
+            <Input
+              id="country"
+              value={formData.country}
+              onChange={(e) => setFormData({ ...formData, country: e.target.value })}
+              required
+            />
+          </div>
+          <div>
+            <Label htmlFor="state">State *</Label>
+            <Input
+              id="state"
+              value={formData.state}
+              onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+              required
+            />
+          </div>
+        </div>
+
         <div>
-          <Label htmlFor="country">Country *</Label>
-          <Select value={formData.country} onValueChange={(value) => setFormData({ ...formData, country: value })}>
+          <Label htmlFor="hospital">Select Hospital *</Label>
+          <Select value={formData.hospital_id} onValueChange={(value) => setFormData({ ...formData, hospital_id: value })}>
             <SelectTrigger>
-              <SelectValue placeholder="Choose your country" />
+              <SelectValue placeholder="Choose a hospital" />
             </SelectTrigger>
             <SelectContent>
-              {Object.keys(countryHospitals).map(country => (
-                <SelectItem key={country} value={country}>{country}</SelectItem>
+              {userHospitals.map((hospitalRelation) => (
+                <SelectItem key={hospitalRelation.hospital_id} value={hospitalRelation.hospital_id}>
+                  {hospitalRelation.hospitals?.name}
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
 
-        <div className="space-y-3">
-          <div className="flex items-center space-x-4">
-            <Label>Hospital Selection</Label>
-            <div className="flex items-center space-x-2">
-              <input
-                type="radio"
-                id="preset"
-                name="hospitalType"
-                checked={!isManualHospital}
-                onChange={() => setIsManualHospital(false)}
-              />
-              <label htmlFor="preset" className="text-sm">Select from list</label>
-              
-              <input
-                type="radio"
-                id="manual"
-                name="hospitalType"
-                checked={isManualHospital}
-                onChange={() => setIsManualHospital(true)}
-              />
-              <label htmlFor="manual" className="text-sm">Add manually</label>
-            </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="date">Appointment Date *</Label>
+            <Input
+              id="date"
+              type="date"
+              value={formData.appointmentDate}
+              onChange={(e) => setFormData({ ...formData, appointmentDate: e.target.value })}
+              required
+            />
           </div>
-
-          {!isManualHospital ? (
-            <div>
-              <Label htmlFor="hospital">Select Hospital *</Label>
-              <Select value={formData.hospitalName} onValueChange={(value) => setFormData({ ...formData, hospitalName: value })}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Choose a hospital" />
-                </SelectTrigger>
-                <SelectContent>
-                  {availableHospitals.map(hospital => (
-                    <SelectItem key={hospital} value={hospital}>{hospital}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="manualHospital">Hospital Name *</Label>
-                <Input
-                  id="manualHospital"
-                  value={formData.hospitalName}
-                  onChange={(e) => setFormData({ ...formData, hospitalName: e.target.value })}
-                  placeholder="Enter hospital name"
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="hospitalEmail">Hospital Email *</Label>
-                <Input
-                  id="hospitalEmail"
-                  type="email"
-                  value={formData.hospitalEmail}
-                  onChange={(e) => setFormData({ ...formData, hospitalEmail: e.target.value })}
-                  placeholder="Enter hospital email"
-                  required
-                />
-              </div>
-            </div>
-          )}
-        </div>
-
-        <div>
-          <Label htmlFor="date">Preferred Date & Time *</Label>
-          <Input
-            id="date"
-            type="datetime-local"
-            value={formData.appointmentDate}
-            onChange={(e) => setFormData({ ...formData, appointmentDate: e.target.value })}
-            required
-          />
+          <div>
+            <Label htmlFor="time">Appointment Time *</Label>
+            <Input
+              id="time"
+              type="time"
+              value={formData.appointmentTime}
+              onChange={(e) => setFormData({ ...formData, appointmentTime: e.target.value })}
+              required
+            />
+          </div>
         </div>
 
         <div>
@@ -348,7 +283,11 @@ const EnhancedHospitalBooking = () => {
           />
         </div>
 
-        <Button type="submit" disabled={loading || !profileData} className="w-full bg-green-600 hover:bg-green-700">
+        <Button 
+          type="submit" 
+          disabled={loading || !profile?.first_name || userHospitals.length === 0} 
+          className="w-full bg-green-600 hover:bg-green-700"
+        >
           {loading ? 'Booking Appointment...' : 'Book Appointment'}
         </Button>
       </form>

@@ -105,6 +105,9 @@ export type Database = {
           drug_id: string
           id: string
           order_date: string | null
+          pharmacy_email: string | null
+          pharmacy_id: string | null
+          pharmacy_name: string | null
           quantity: number | null
           reference_number: string | null
           status: string | null
@@ -118,6 +121,9 @@ export type Database = {
           drug_id: string
           id?: string
           order_date?: string | null
+          pharmacy_email?: string | null
+          pharmacy_id?: string | null
+          pharmacy_name?: string | null
           quantity?: number | null
           reference_number?: string | null
           status?: string | null
@@ -131,6 +137,9 @@ export type Database = {
           drug_id?: string
           id?: string
           order_date?: string | null
+          pharmacy_email?: string | null
+          pharmacy_id?: string | null
+          pharmacy_name?: string | null
           quantity?: number | null
           reference_number?: string | null
           status?: string | null
@@ -193,10 +202,13 @@ export type Database = {
           hospital_email: string | null
           hospital_name: string
           id: string
+          phone_number: string | null
           reason: string | null
           reference_number: string | null
+          state: string | null
           status: string | null
           user_id: string
+          user_name: string | null
         }
         Insert: {
           appointment_date: string
@@ -205,10 +217,13 @@ export type Database = {
           hospital_email?: string | null
           hospital_name: string
           id?: string
+          phone_number?: string | null
           reason?: string | null
           reference_number?: string | null
+          state?: string | null
           status?: string | null
           user_id: string
+          user_name?: string | null
         }
         Update: {
           appointment_date?: string
@@ -217,10 +232,49 @@ export type Database = {
           hospital_email?: string | null
           hospital_name?: string
           id?: string
+          phone_number?: string | null
           reason?: string | null
           reference_number?: string | null
+          state?: string | null
           status?: string | null
           user_id?: string
+          user_name?: string | null
+        }
+        Relationships: []
+      }
+      hospitals: {
+        Row: {
+          address: string
+          country: string
+          created_at: string | null
+          email: string
+          id: string
+          image_url: string | null
+          name: string
+          phone: string
+          state: string | null
+        }
+        Insert: {
+          address: string
+          country?: string
+          created_at?: string | null
+          email: string
+          id?: string
+          image_url?: string | null
+          name: string
+          phone: string
+          state?: string | null
+        }
+        Update: {
+          address?: string
+          country?: string
+          created_at?: string | null
+          email?: string
+          id?: string
+          image_url?: string | null
+          name?: string
+          phone?: string
+          state?: string | null
         }
         Relationships: []
       }
@@ -342,6 +396,39 @@ export type Database = {
           transaction_id?: string | null
           updated_at?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      pharmacies: {
+        Row: {
+          address: string
+          country: string
+          created_at: string | null
+          email: string
+          id: string
+          name: string
+          phone: string
+          state: string | null
+        }
+        Insert: {
+          address: string
+          country?: string
+          created_at?: string | null
+          email: string
+          id?: string
+          name: string
+          phone: string
+          state?: string | null
+        }
+        Update: {
+          address?: string
+          country?: string
+          created_at?: string | null
+          email?: string
+          id?: string
+          name?: string
+          phone?: string
+          state?: string | null
         }
         Relationships: []
       }
@@ -702,6 +789,7 @@ export type Database = {
           address: string | null
           created_at: string | null
           email: string | null
+          hospital_id: string | null
           hospital_name: string
           id: string
           is_default: boolean | null
@@ -712,6 +800,7 @@ export type Database = {
           address?: string | null
           created_at?: string | null
           email?: string | null
+          hospital_id?: string | null
           hospital_name: string
           id?: string
           is_default?: boolean | null
@@ -722,13 +811,22 @@ export type Database = {
           address?: string | null
           created_at?: string | null
           email?: string | null
+          hospital_id?: string | null
           hospital_name?: string
           id?: string
           is_default?: boolean | null
           phone?: string | null
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "user_hospitals_hospital_id_fkey"
+            columns: ["hospital_id"]
+            isOneToOne: false
+            referencedRelation: "hospitals"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
