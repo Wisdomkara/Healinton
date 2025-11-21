@@ -29,6 +29,8 @@ import AdminSettings from './pages/AdminSettings';
 import Cart from './pages/Cart';
 import Hospitals from './pages/Hospitals';
 import Pharmacies from './pages/Pharmacies';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 import NotFound from './pages/NotFound';
 
 const App = () => {
@@ -68,6 +70,8 @@ const App = () => {
                 <Route path="drugs" element={<DrugsPage />} />
                 <Route path="hospitals" element={<Hospitals />} />
                 <Route path="pharmacies" element={<Pharmacies />} />
+                <Route path="forgot-password" element={<ForgotPassword />} />
+                <Route path="reset-password" element={<ResetPassword />} />
               <Route path="*" element={<NotFound />} />
             </Route>
               <Route path="/dashboard" element={<Dashboard />} />

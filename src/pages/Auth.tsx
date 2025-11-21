@@ -1292,14 +1292,15 @@ const Auth = () => {
                 </div>
                 {!isSignUp && (
                   <div className="text-right mt-1">
-                    <Button
-                      type="button"
-                      variant="link"
-                      className="p-0 h-auto text-sm text-blue-600 hover:text-blue-700"
-                      onClick={() => setIsForgotPassword(true)}
-                    >
-                      Forgot password?
-                    </Button>
+                    <Link to="/forgot-password">
+                      <Button
+                        type="button"
+                        variant="link"
+                        className="p-0 h-auto text-sm text-green-600 hover:text-green-700"
+                      >
+                        Forgot password?
+                      </Button>
+                    </Link>
                   </div>
                 )}
               </div>
