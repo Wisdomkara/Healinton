@@ -10,17 +10,15 @@ const corsHeaders = {
 };
 
 interface DrugOrderNotification {
-  pharmacy_email: string;
-  pharmacy_name: string;
-  user_name: string;
-  user_email: string;
-  user_phone: string;
-  drug_name: string;
+  orderId: string;
+  pharmacyEmail: string;
+  pharmacyName: string;
+  userName: string;
+  userEmail: string;
+  drugName: string;
   quantity: number;
-  total_amount: number;
-  delivery_address: string;
-  country: string;
-  reference_number: string;
+  totalAmount: number;
+  referenceNumber: string;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -30,13 +28,13 @@ const handler = async (req: Request): Promise<Response> => {
 
   try {
     const data: DrugOrderNotification = await req.json();
-    console.log("Sending drug order notifications for:", data.reference_number);
+    console.log("Sending drug order notifications for:", data.referenceNumber);
 
     // Email to pharmacy
     const pharmacyEmail = await resend.emails.send({
       from: "Healinton <onboarding@resend.dev>",
-      to: [data.pharmacy_email],
-      subject: `New Drug Order - ${data.reference_number}`,
+      to: [data.pharmacyEmail],
+      subject: `New Drug Order - ${data.referenceNumber}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: linear-gradient(to bottom, #ffffff, #f0fdf4); padding: 20px; border-radius: 10px;">
           <div style="background: linear-gradient(135deg, #10b981, #059669); padding: 20px; border-radius: 8px; margin-bottom: 20px;">
@@ -45,17 +43,14 @@ const handler = async (req: Request): Promise<Response> => {
           
           <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
             <h2 style="color: #10b981; margin-top: 0;">Customer Details</h2>
-            <p><strong>Name:</strong> ${data.user_name}</p>
-            <p><strong>Email:</strong> ${data.user_email}</p>
-            <p><strong>Phone:</strong> ${data.user_phone}</p>
-            <p><strong>Country:</strong> ${data.country}</p>
+            <p><strong>Name:</strong> ${data.userName}</p>
+            <p><strong>Email:</strong> ${data.userEmail}</p>
             
             <h2 style="color: #10b981;">Order Details</h2>
-            <p><strong>Drug:</strong> ${data.drug_name}</p>
+            <p><strong>Drug:</strong> ${data.drugName}</p>
             <p><strong>Quantity:</strong> ${data.quantity}</p>
-            <p><strong>Total Amount:</strong> ₦${data.total_amount.toLocaleString()}</p>
-            <p><strong>Delivery Address:</strong> ${data.delivery_address}</p>
-            <p><strong>Reference Number:</strong> ${data.reference_number}</p>
+            <p><strong>Total Amount:</strong> $${data.totalAmount.toLocaleString()}</p>
+            <p><strong>Reference Number:</strong> ${data.referenceNumber}</p>
           </div>
           
           <div style="margin-top: 20px; padding: 15px; background: #f0fdf4; border-left: 4px solid #10b981; border-radius: 4px;">
@@ -75,18 +70,22 @@ const handler = async (req: Request): Promise<Response> => {
     const adminEmail = await resend.emails.send({
       from: "Healinton <onboarding@resend.dev>",
       to: ["officialhealinton@gmail.com"],
-      subject: `Drug Order - ${data.reference_number}`,
+      subject: `Drug Order - ${data.referenceNumber}`,
       html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2>New Drug Order</h2>
-          <p><strong>Pharmacy:</strong> ${data.pharmacy_name}</p>
-          <p><strong>Customer:</strong> ${data.user_name}</p>
-          <p><strong>Email:</strong> ${data.user_email}</p>
-          <p><strong>Phone:</strong> ${data.user_phone}</p>
-          <p><strong>Drug:</strong> ${data.drug_name}</p>
-          <p><strong>Quantity:</strong> ${data.quantity}</p>
-          <p><strong>Amount:</strong> ₦${data.total_amount.toLocaleString()}</p>
-          <p><strong>Reference:</strong> ${data.reference_number}</p>
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: linear-gradient(to bottom, #ffffff, #f0fdf4); padding: 20px;">
+          <div style="background: linear-gradient(135deg, #10b981, #059669); padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+            <h2 style="color: white; margin: 0;">New Drug Order</h2>
+          </div>
+          
+          <div style="background: white; padding: 20px; border-radius: 8px;">
+            <p><strong>Pharmacy:</strong> ${data.pharmacyName}</p>
+            <p><strong>Customer:</strong> ${data.userName}</p>
+            <p><strong>Email:</strong> ${data.userEmail}</p>
+            <p><strong>Drug:</strong> ${data.drugName}</p>
+            <p><strong>Quantity:</strong> ${data.quantity}</p>
+            <p><strong>Amount:</strong> $${data.totalAmount.toLocaleString()}</p>
+            <p><strong>Reference:</strong> ${data.referenceNumber}</p>
+          </div>
         </div>
       `,
     });

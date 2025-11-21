@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { MapPin, Mail, Phone } from 'lucide-react';
+import { MapPin, Mail, Phone, Check } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface Pharmacy {
   id: string;
@@ -11,12 +13,17 @@ interface Pharmacy {
   email: string;
   phone: string;
   state: string;
+  image_url: string | null;
 }
 
 const Pharmacies = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [pharmacies, setPharmacies] = useState<Pharmacy[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedPharmacy, setSelectedPharmacy] = useState<string | null>(
+    localStorage.getItem('selectedPharmacyId')
+  );
 
   useEffect(() => {
     fetchPharmacies();
@@ -40,6 +47,16 @@ const Pharmacies = () => {
     setLoading(false);
   };
 
+  const handleSelectPharmacy = (pharmacyId: string) => {
+    localStorage.setItem('selectedPharmacyId', pharmacyId);
+    setSelectedPharmacy(pharmacyId);
+    toast({
+      title: 'Pharmacy Selected',
+      description: 'You can now order drugs from this pharmacy',
+    });
+    navigate('/drugs');
+  };
+
   if (loading) {
     return <div className="p-8 text-center">Loading pharmacies...</div>;
   }
@@ -49,10 +66,10 @@ const Pharmacies = () => {
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
           <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
-            Available Pharmacies
+            Select a Pharmacy
           </h1>
           <p className="text-muted-foreground">
-            Browse pharmacies for your drug orders
+            Choose a pharmacy to order your medications from
           </p>
         </div>
 
@@ -60,24 +77,51 @@ const Pharmacies = () => {
           {pharmacies.map((pharmacy) => (
             <Card
               key={pharmacy.id}
-              className="p-6 space-y-4 bg-card hover:shadow-lg transition-all"
+              className={`overflow-hidden bg-white dark:bg-card hover:shadow-lg transition-all border-2 ${
+                selectedPharmacy === pharmacy.id
+                  ? 'border-green-500'
+                  : 'border-border'
+              }`}
             >
-              <h3 className="font-semibold text-lg text-foreground">
-                {pharmacy.name}
-              </h3>
-              <div className="space-y-2 text-sm text-muted-foreground">
-                <div className="flex items-start gap-2">
-                  <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0 text-green-600" />
-                  <span>{pharmacy.address}</span>
+              {pharmacy.image_url && (
+                <div className="relative h-48 w-full overflow-hidden">
+                  <img
+                    src={pharmacy.image_url}
+                    alt={pharmacy.name}
+                    className="w-full h-full object-cover"
+                  />
+                  {selectedPharmacy === pharmacy.id && (
+                    <div className="absolute top-2 right-2 bg-green-500 text-white p-2 rounded-full">
+                      <Check className="h-5 w-5" />
+                    </div>
+                  )}
                 </div>
-                <div className="flex items-center gap-2">
-                  <Mail className="h-4 w-4 flex-shrink-0 text-green-600" />
-                  <span>{pharmacy.email}</span>
+              )}
+              <div className="p-6 space-y-4">
+                <h3 className="font-semibold text-lg text-foreground">
+                  {pharmacy.name}
+                </h3>
+                <div className="space-y-2 text-sm text-muted-foreground">
+                  <div className="flex items-start gap-2">
+                    <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0 text-green-600" />
+                    <span>{pharmacy.address}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Mail className="h-4 w-4 flex-shrink-0 text-green-600" />
+                    <span className="text-xs break-all">{pharmacy.email}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Phone className="h-4 w-4 flex-shrink-0 text-green-600" />
+                    <span>{pharmacy.phone}</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Phone className="h-4 w-4 flex-shrink-0 text-green-600" />
-                  <span>{pharmacy.phone}</span>
-                </div>
+                <Button
+                  onClick={() => handleSelectPharmacy(pharmacy.id)}
+                  className="w-full bg-green-600 hover:bg-green-700 text-white"
+                  variant={selectedPharmacy === pharmacy.id ? 'outline' : 'default'}
+                >
+                  {selectedPharmacy === pharmacy.id ? 'Selected' : 'Select Pharmacy'}
+                </Button>
               </div>
             </Card>
           ))}
