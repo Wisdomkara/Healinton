@@ -72,6 +72,19 @@ const Cart = () => {
 
     try {
       const userName = `${profile.first_name || ''} ${profile.last_name || ''}`.trim();
+      const selectedPharmacyId = localStorage.getItem('selectedPharmacyId');
+      let pharmacyData = null;
+      
+      // Fetch pharmacy details if a pharmacy is selected
+      if (selectedPharmacyId) {
+        const { data } = await supabase
+          .from('pharmacies')
+          .select('*')
+          .eq('id', selectedPharmacyId)
+          .single();
+        pharmacyData = data;
+      }
+      
       const orderPromises = items.map(async (item) => {
         const referenceNumber = `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
         
@@ -89,18 +102,31 @@ const Cart = () => {
               reference_number: referenceNumber,
               country: profile.country,
               delivery_address: profile.delivery_address || '',
-              user_name: userName || 'Unknown'
+              user_name: userName || 'Unknown',
+              pharmacy_id: pharmacyData?.id || null,
+              pharmacy_name: pharmacyData?.name || null,
+              pharmacy_email: pharmacyData?.email || null
             })
             .select('id')
             .single();
 
           if (error) throw error;
 
-          // Send admin notification
-          if (data) {
-            supabase.functions.invoke('notify-admin-order', {
-              body: { type: 'drug_order', orderId: data.id }
-            }).catch(err => console.error('Failed to send admin notification:', err));
+          // Send drug order notification to pharmacy and admin
+          if (data && pharmacyData) {
+            supabase.functions.invoke('send-drug-order-notification', {
+              body: { 
+                orderId: data.id,
+                pharmacyEmail: pharmacyData.email,
+                pharmacyName: pharmacyData.name,
+                userName: userName,
+                userEmail: profile.email,
+                drugName: item.name,
+                quantity: item.quantity,
+                totalAmount: itemTotal,
+                referenceNumber: referenceNumber
+              }
+            }).catch(err => console.error('Failed to send drug order notification:', err));
           }
         } else {
           // Create shopping list order

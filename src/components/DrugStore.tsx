@@ -9,6 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useEnsureProfile } from '@/hooks/useEnsureProfile';
 import { useCart } from '@/contexts/CartContext';
+import { useNavigate } from 'react-router-dom';
 import { Pill, Search, ShoppingCart, Star, AlertCircle, CheckCircle2 } from 'lucide-react';
 
 const DrugStore = () => {
@@ -16,18 +17,39 @@ const DrugStore = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const { addItem } = useCart();
+  const navigate = useNavigate();
   const [drugs, setDrugs] = useState<any[]>([]);
   const [filteredDrugs, setFilteredDrugs] = useState<any[]>([]);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedPharmacyId, setSelectedPharmacyId] = useState<string | null>(null);
+  const [selectedPharmacy, setSelectedPharmacy] = useState<any>(null);
 
   useEffect(() => {
+    const pharmacyId = localStorage.getItem('selectedPharmacyId');
+    setSelectedPharmacyId(pharmacyId);
+    
+    if (pharmacyId) {
+      fetchPharmacyDetails(pharmacyId);
+    }
     fetchDrugs();
   }, []);
 
   useEffect(() => {
     filterDrugs();
   }, [drugs, selectedCategory, searchTerm]);
+
+  const fetchPharmacyDetails = async (pharmacyId: string) => {
+    const { data } = await supabase
+      .from('pharmacies')
+      .select('*')
+      .eq('id', pharmacyId)
+      .single();
+    
+    if (data) {
+      setSelectedPharmacy(data);
+    }
+  };
 
   const fetchDrugs = async () => {
     const { data, error } = await supabase
@@ -102,11 +124,50 @@ const DrugStore = () => {
     }
   };
 
+  if (!selectedPharmacyId) {
+    return (
+      <div className="min-h-[400px] flex items-center justify-center bg-gradient-to-br from-white via-green-50/30 to-white dark:from-background dark:via-green-950/10 dark:to-background rounded-lg p-8">
+        <div className="text-center space-y-4 max-w-md">
+          <Pill className="h-16 w-16 text-green-600 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-foreground">Select a Pharmacy First</h2>
+          <p className="text-muted-foreground">
+            Please select a pharmacy before browsing our drug store. This helps us ensure your order is fulfilled by your preferred pharmacy.
+          </p>
+          <Button 
+            onClick={() => navigate('/pharmacies')}
+            className="bg-green-600 hover:bg-green-700 text-white"
+          >
+            Select Pharmacy
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 bg-gradient-to-br from-white via-green-50/20 to-white dark:from-background dark:via-green-950/5 dark:to-background p-6 rounded-lg">
+      {selectedPharmacy && (
+        <Card className="p-4 bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-800">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-muted-foreground">Ordering from</p>
+              <h3 className="font-semibold text-lg text-foreground">{selectedPharmacy.name}</h3>
+            </div>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => navigate('/pharmacies')}
+              className="border-green-600 text-green-600 hover:bg-green-50"
+            >
+              Change Pharmacy
+            </Button>
+          </div>
+        </Card>
+      )}
+      
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center">
-          <Pill className="h-6 w-6 mr-2 text-blue-600" />
+        <h2 className="text-2xl font-bold text-foreground flex items-center">
+          <Pill className="h-6 w-6 mr-2 text-green-600" />
           Drug Store
         </h2>
         
@@ -148,7 +209,7 @@ const DrugStore = () => {
       {/* Drugs Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {filteredDrugs.map((drug) => (
-          <Card key={drug.id} className="p-4 hover:shadow-lg transition-all border">
+          <Card key={drug.id} className="p-4 hover:shadow-lg transition-all border bg-white dark:bg-card">
             <div className="flex flex-col h-full">
               <div className="flex items-start justify-between mb-3">
                 <Badge className={`${getCategoryColor(drug.type)} flex items-center space-x-1`}>
@@ -160,11 +221,11 @@ const DrugStore = () => {
                 )}
               </div>
               
-              <h3 className="font-semibold text-lg mb-2 text-gray-900 dark:text-white">
+              <h3 className="font-semibold text-lg mb-2 text-foreground">
                 {drug.name}
               </h3>
               
-              <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 flex-grow">
+              <p className="text-sm text-muted-foreground mb-4 flex-grow">
                 {drug.description}
               </p>
               
@@ -182,7 +243,7 @@ const DrugStore = () => {
               <Button
                 onClick={() => handleAddToCart(drug)}
                 disabled={!drug.availability}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50"
+                className="w-full bg-green-600 hover:bg-green-700 text-white disabled:opacity-50"
               >
                 <ShoppingCart className="h-4 w-4 mr-2" />
                 {drug.availability ? 'Add to Cart' : 'Out of Stock'}
