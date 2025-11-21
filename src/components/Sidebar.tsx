@@ -53,6 +53,8 @@ const Sidebar = ({ isOpen = true, onClose, onSectionChange, activeSection = 'ove
     { icon: ShoppingCart, label: 'Shopping List', section: 'shopping', isPremium: false },
     { icon: Pill, label: 'Drug Store', section: 'drugs', isPremium: false },
     { icon: Activity, label: 'Drug Orders', section: 'drug-orders', isPremium: false },
+    { icon: Building2, label: 'Hospitals', section: 'hospitals', link: '/hospitals', isPremium: false },
+    { icon: Pill, label: 'Pharmacies', section: 'pharmacies', link: '/pharmacies', isPremium: false },
     { icon: Building2, label: 'My Hospitals', section: 'hospital-info', isPremium: false },
     { icon: MessageSquare, label: 'AI Chat', section: 'chat', isPremium: false },
     { icon: FileText, label: 'Health Blog', section: 'blog', isPremium: false },
@@ -62,8 +64,13 @@ const Sidebar = ({ isOpen = true, onClose, onSectionChange, activeSection = 'ove
     { icon: Settings, label: 'Profile', section: 'profile', isPremium: false }
   ];
 
-  const handleNavClick = (section: string, itemIsPremium: boolean) => {
+  const handleNavClick = (section: string, itemIsPremium: boolean, link?: string) => {
     // All features are free until November 30, 2025, so no premium checks needed
+    
+    if (link) {
+      window.location.href = link;
+      return;
+    }
     
     if (section === 'health-insurance') {
       window.location.href = '/health-insurance';
@@ -136,7 +143,7 @@ const Sidebar = ({ isOpen = true, onClose, onSectionChange, activeSection = 'ove
                     ? 'bg-green-600 text-white hover:bg-green-700 shadow-sm' 
                     : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-green-600 dark:hover:text-green-400'
                 }`}
-                onClick={() => handleNavClick(item.section, item.isPremium)}
+                onClick={() => handleNavClick(item.section, item.isPremium, (item as any).link)}
               >
                 <Icon className="h-4 w-4 mr-3 flex-shrink-0" />
                 <span className="flex-1 text-left truncate">{item.label}</span>

@@ -27,6 +27,8 @@ import DrugsPage from './pages/DrugsPage';
 import AdminOrders from './pages/AdminOrders';
 import AdminSettings from './pages/AdminSettings';
 import Cart from './pages/Cart';
+import Hospitals from './pages/Hospitals';
+import Pharmacies from './pages/Pharmacies';
 import NotFound from './pages/NotFound';
 
 const App = () => {
@@ -64,6 +66,8 @@ const App = () => {
                 <Route path="community" element={<Community />} />
                 <Route path="accessibility" element={<Accessibility />} />
                 <Route path="drugs" element={<DrugsPage />} />
+                <Route path="hospitals" element={<Hospitals />} />
+                <Route path="pharmacies" element={<Pharmacies />} />
               <Route path="*" element={<NotFound />} />
             </Route>
               <Route path="/dashboard" element={<Dashboard />} />
