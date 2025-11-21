@@ -78,14 +78,11 @@ const AdminPremiumManager = () => {
     try {
       const trimmedEmail = formData.email.trim();
 
-      // First check if user exists in profiles (linked to auth.users)
+      // Use the helper function to find user in both auth.users and profiles
       const { data: userData, error: userError } = await supabase
-        .from('profiles')
-        .select('id, email')
-        .ilike('email', trimmedEmail)
-        .maybeSingle();
+        .rpc('find_user_by_email', { p_user_email: trimmedEmail });
 
-      if (userError || !userData) {
+      if (userError || !userData || userData.length === 0) {
         console.error('Error finding user for premium:', userError);
         toast({
           title: 'User not found',
@@ -95,12 +92,14 @@ const AdminPremiumManager = () => {
         return;
       }
 
+      const targetUser = userData[0];
+
       // Add to premium users admin table
       const { error } = await supabase
         .from('premium_users_admin')
         .insert({
-          user_id: userData.id,
-          email: formData.email,
+          user_id: targetUser.user_id,
+          email: targetUser.email || formData.email,
           full_name: formData.full_name || null,
           added_by: user.email || 'admin',
           notes: formData.notes || null
@@ -311,7 +310,7 @@ const AdminPremiumManager = () => {
               Premium Access Information
             </h4>
             <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
-              All users have free premium access until November 30, 2025. This manager allows you to 
+              All users have free premium access until February 14, 2026. This manager allows you to 
               manually grant extended premium access to specific users beyond that date.
             </p>
           </div>

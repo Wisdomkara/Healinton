@@ -908,6 +908,13 @@ export type Database = {
         Returns: boolean
       }
       ensure_user_profile: { Args: { user_uuid: string }; Returns: undefined }
+      find_user_by_email: {
+        Args: { p_user_email: string }
+        Returns: {
+          email: string
+          user_id: string
+        }[]
+      }
       generate_weekly_meal_plan: {
         Args: { p_user_id: string }
         Returns: undefined
